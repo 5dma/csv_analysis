@@ -39,3 +39,28 @@ GSList *make_headings(char *csv_line) {
 
     return local_list;
 }
+
+GSList *make_forced_headings(char *csv_line) {
+    char *token;
+    char *delimiter = "\t";
+    GSList *local_list = NULL;
+
+    int number_columns = 0;
+    while (strsep(&csv_line, delimiter) != NULL) {
+        number_columns++;
+    }
+
+    gchar buffer[3];
+    for (int i = 0; i < number_columns; i++) {
+        //    gchar *suffix = g_ascii_dtostr(buffer, 2, i);
+        gchar *suffix = g_ascii_formatd(buffer, 3, "%02.2u", i);
+
+        /* heading is long enough to go up to column_99 and \0 */
+        gchar *heading = (gchar *) malloc(strlen("column_") + 3);
+        heading = strdup("column_");
+        g_strlcat(heading, suffix, 10);
+        local_list = g_slist_append(local_list, heading);
+    }
+
+    return local_list;
+}

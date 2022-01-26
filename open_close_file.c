@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
+
 #include "headers.h"
 
 gboolean omg(gboolean has_header_line) {
@@ -23,10 +24,15 @@ gboolean omg(gboolean has_header_line) {
 
     while (getline(&csv_line, &len, fp) != -1) {
         printf("line length: %zd\n", strlen(csv_line));
-        
-        if (has_header_line && on_first_line) {
-            headings = make_headings(csv_line);
+
+        if (on_first_line) {
+            if (has_header_line) {
+                headings = make_headings(csv_line);
+            } else {
+                headings = make_forced_headings(csv_line);
+            }
             on_first_line = FALSE;
+            continue;
         }
 
         char *token;
@@ -38,7 +44,7 @@ gboolean omg(gboolean has_header_line) {
             printf("%d: '%s'\n", j, token);
         }
     }
-   
+
     fclose(fp);
     return TRUE;
 }

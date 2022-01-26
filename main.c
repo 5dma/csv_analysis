@@ -12,7 +12,7 @@
  */
 int main(int argc, char *argv[]) {
 
-    gboolean crap = omg(TRUE);
+    gboolean crap = omg(FALSE);
     GtkApplication *app = gtk_application_new(
         "net.lautman.DepositSlips",
         G_APPLICATION_FLAGS_NONE);
