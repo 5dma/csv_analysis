@@ -42,5 +42,6 @@ typedef struct decimal_sizes {
 
 
 gboolean omg();
+GSList *make_headings(char *csv_line);
 
 #endif
