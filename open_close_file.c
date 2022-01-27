@@ -22,6 +22,9 @@ gboolean omg(gboolean has_header_line) {
     GSList *headings;
     gboolean on_first_line = TRUE;
 
+    char *token;
+    char *delimiter = "\t";
+
     while (getline(&csv_line, &len, fp) != -1) {
         printf("line length: %zd\n", strlen(csv_line));
 
@@ -31,12 +34,17 @@ gboolean omg(gboolean has_header_line) {
             } else {
                 headings = make_forced_headings(csv_line);
             }
+            gchar *barf = (gchar *)malloc(1000);
+            barf = strdup((gchar *)g_slist_nth(headings, 1));
+            printf("Here is the heading: %s\n", barf);
+
             on_first_line = FALSE;
             continue;
         }
 
-        char *token;
-        char *delimiter = "\t";
+        GHashTable *field_analysis_hash = NULL;
+
+        g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
 
         for (int j = 1;; j++) {
             token = strsep(&csv_line, delimiter);

@@ -24,6 +24,9 @@ void clean_column_headings(gpointer original_heading, gpointer data) {
     }
 
     heading = strdup(clean_string);
+    printf("Here is the clean_string: %s\n", clean_string);
+    printf("Here is the heading: %s\n", heading);
+
     g_free(clean_string);
 }
 
@@ -33,9 +36,14 @@ GSList *make_headings(char *csv_line) {
     GSList *local_list = NULL;
 
     while ((token = strsep(&csv_line, delimiter)) != NULL) {
+        
         local_list = g_slist_append(local_list, token);
     }
     g_slist_foreach(local_list, clean_column_headings, NULL);
+
+    gchar *barf = (gchar *)malloc(1000);
+    barf = strdup((gchar *)g_slist_nth_data(local_list, 0));
+    printf("Here is first heading in local_list: %s\n", barf);
 
     return local_list;
 }
@@ -56,7 +64,7 @@ GSList *make_forced_headings(char *csv_line) {
         gchar *suffix = g_ascii_formatd(buffer, 3, "%02.2u", i);
 
         /* heading is long enough to go up to column_99 and \0 */
-        gchar *heading = (gchar *) malloc(strlen("column_") + 3);
+        gchar *heading = (gchar *)malloc(strlen("column_") + 3);
         heading = strdup("column_");
         g_strlcat(heading, suffix, 10);
         local_list = g_slist_append(local_list, heading);

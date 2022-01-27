@@ -27,13 +27,13 @@ enum data_types {
     CHAR
 };
 
-typedef struct Field_analysis {
+typedef struct {
     enum data_types field_type;
     gboolean sql_signed;
     int char_width;
     int precision;
     int scale;
-} field_analysis;
+} Field_analysis;
 
 typedef struct decimal_sizes {
   int precision;
@@ -44,5 +44,6 @@ typedef struct decimal_sizes {
 gboolean omg();
 GSList *make_headings(char *csv_line);
 GSList *make_forced_headings(char *csv_line);
+void initialize_field_analysis(gpointer heading, gpointer data);
 
 #endif
