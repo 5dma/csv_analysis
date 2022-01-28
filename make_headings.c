@@ -1,11 +1,11 @@
 #include <ctype.h>
 #include <gtk/gtk.h>
 
-void clean_column_headings(gpointer original_heading, gpointer data) {
-    char *heading = (char *)original_heading;
+void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
+    char *heading = (gchar *)original_heading_ptr;
     char *clean_string;
-    clean_string = (char *)g_malloc(strlen(heading) + 1);
-    clean_string = strdup(heading);
+
+    clean_string = strdup(heading); /* Memory freed below */
     /* Remove any trailing whitespace, particularly from last item in the list */
     clean_string = g_strchomp(clean_string);
     /* Change characters to lower case */
@@ -23,10 +23,8 @@ void clean_column_headings(gpointer original_heading, gpointer data) {
         ptr++;
     }
 
-    heading = strdup(clean_string);
-    printf("Here is the clean_string: %s\n", clean_string);
-    printf("Here is the heading: %s\n", heading);
-
+    /* Copy the normalized string into the memory holding the original string. */
+    strcpy(heading,clean_string);
     g_free(clean_string);
 }
 
@@ -36,14 +34,9 @@ GSList *make_headings(char *csv_line) {
     GSList *local_list = NULL;
 
     while ((token = strsep(&csv_line, delimiter)) != NULL) {
-        
-        local_list = g_slist_append(local_list, token);
+        local_list = g_slist_append(local_list, (gchar *)token);
     }
     g_slist_foreach(local_list, clean_column_headings, NULL);
-
-    gchar *barf = (gchar *)malloc(1000);
-    barf = strdup((gchar *)g_slist_nth_data(local_list, 0));
-    printf("Here is first heading in local_list: %s\n", barf);
 
     return local_list;
 }
@@ -60,7 +53,7 @@ GSList *make_forced_headings(char *csv_line) {
 
     gchar buffer[3];
     for (int i = 0; i < number_columns; i++) {
-        //    gchar *suffix = g_ascii_dtostr(buffer, 2, i);
+
         gchar *suffix = g_ascii_formatd(buffer, 3, "%02.2u", i);
 
         /* heading is long enough to go up to column_99 and \0 */
@@ -68,6 +61,7 @@ GSList *make_forced_headings(char *csv_line) {
         heading = strdup("column_");
         g_strlcat(heading, suffix, 10);
         local_list = g_slist_append(local_list, heading);
+        g_free(suffix);
     }
 
     return local_list;
