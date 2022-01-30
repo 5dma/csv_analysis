@@ -44,6 +44,8 @@ gboolean omg(gboolean has_header_line) {
 
         g_slist_foreach(headings, initialize_field_analysis, &field_analysis_hash);
 
+        g_slist_free_full(headings, g_object_unref);
+
         Field_analysis *fa = (Field_analysis *)g_hash_table_lookup(field_analysis_hash, "program");
         g_print("OMG\n");
     }
