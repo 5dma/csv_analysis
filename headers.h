@@ -45,5 +45,9 @@ gboolean omg();
 GSList *make_headings(char *csv_line);
 GSList *make_forced_headings(char *csv_line);
 void initialize_field_analysis(gpointer heading, gpointer data);
+GDestroyNotify free_headings(gpointer data);
+
+gboolean field_unsigned_int(const gchar *token, gint min, gint max);
+
 
 #endif
