@@ -36,31 +36,35 @@ gboolean omg(gboolean has_header_line) {
             }
             on_first_line = FALSE;
             g_slist_foreach(headings, initialize_field_analysis, &field_analysis_hash);
-
-        } else {
-            int i = 0;
-            while ((token = strsep(&csv_line, delimiter)) != NULL) {
-                gchar *key = strdup((gchar *)g_slist_nth_data(headings, 1));
-                g_print("The key is %s\n", key);
-                gpointer value = g_hash_table_lookup(field_analysis_hash, key);
-                if (value == NULL) {
-                    g_print("There was a critical failure in looking up the key.\n");
-                    exit(-1);
-                }
-                Field_analysis *field_analysis = (Field_analysis *)value;
-                enum data_types field_type = field_analysis->field_type;
-
-                gboolean passes_test;
-                switch (field_type) {
-                    case TINYINT_UNSIGNED:
-                        passes_test = field_unsigned_int(token, 0, 255);
-                        if (passes_test) break;
-
-                    default:
-                        g_print("Do nothing\n");
-                }
-                g_print("Barf\n");
+            continue;
+        }
+        int i = 0;
+        while ((token = strsep(&csv_line, delimiter)) != NULL) {
+            gchar *key = strdup((gchar *)g_slist_nth_data(headings, 1));
+            g_print("The key is %s\n", key);
+            gpointer value = g_hash_table_lookup(field_analysis_hash, key);
+            if (value == NULL) {
+                g_print("There was a critical failure in looking up the key.\n");
+                exit(-1);
             }
+            Field_analysis *field_analysis = (Field_analysis *)value;
+            enum data_types field_type = field_analysis->field_type;
+
+            gboolean passes_test;
+            switch (field_type) {
+                case TINYINT_UNSIGNED:
+                    passes_test = field_unsigned_int(token, 0, 255);
+                    if (passes_test) break;
+                    passes_test = field_unsigned_int(token, 0, 65535);
+                    if (passes_test) {
+                        field_analysis->field_type = SMALLINT_UNSIGNED;
+                        break;
+                    }
+
+                default:
+                    g_print("Do nothing\n");
+            }
+            g_print("Barf\n");
         }
         /*
         gchar *omg2 = strdup((gchar *)g_slist_nth_data(headings, 1));
