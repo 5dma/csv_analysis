@@ -12,7 +12,7 @@
  */
 int main(int argc, char *argv[]) {
 
-    gboolean crap = omg(TRUE);
+
     GtkApplication *app = gtk_application_new(
         "net.lautman.DepositSlips",
         G_APPLICATION_FLAGS_NONE);
@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
  //   g_signal_connect(app, "activate", G_CALLBACK(on_app_activate), NULL);
 
     int status = g_application_run(G_APPLICATION(app), argc, argv);
+
+        gboolean crap = omg(TRUE);
 
     /* Decrease reference count because assigning it in on_app_activate */
     g_object_unref(app); 

@@ -19,11 +19,13 @@ gboolean omg(gboolean has_header_line) {
         exit(-1);
     }
 
-    GSList *headings;
+    GSList *headings = NULL;
     gboolean on_first_line = TRUE;
 
     char *token;
     char *delimiter = "\t";
+
+    GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_int_equal);
 
     while (getline(&csv_line, &len, fp) != -1) {
         printf("line length: %zd\n", strlen(csv_line));
@@ -34,23 +36,16 @@ gboolean omg(gboolean has_header_line) {
             } else {
                 headings = make_forced_headings(csv_line);
             }
-            gchar *barf = (gchar *)malloc(1000);
-            barf = strdup((gchar *)g_slist_nth(headings, 1));
-            printf("Here is the heading: %s\n", barf);
-
             on_first_line = FALSE;
-            continue;
         }
 
-        GHashTable *field_analysis_hash = NULL;
+        gchar *omg2 = strdup((gchar *)g_slist_nth_data(headings, 1));
+        printf("omg2: %s\n", omg2);
 
-        g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
+        g_slist_foreach(headings, initialize_field_analysis, &field_analysis_hash);
 
-        for (int j = 1;; j++) {
-            token = strsep(&csv_line, delimiter);
-            if (token == NULL) break;
-            printf("%d: '%s'\n", j, token);
-        }
+        Field_analysis *fa = (Field_analysis *)g_hash_table_lookup(field_analysis_hash, "program");
+        g_print("OMG\n");
     }
 
     fclose(fp);
