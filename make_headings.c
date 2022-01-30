@@ -35,9 +35,12 @@ GSList *make_headings(char *csv_line) {
     char *delimiter = "\t";
     GSList *local_list = NULL;
 
+    gchar *heading;
     while ((token = strsep(&csv_line, delimiter)) != NULL) {
-        local_list = g_slist_append(local_list, (gchar *)token);
+        heading = strdup(token);
+        local_list = g_slist_append(local_list, heading);
     }
+    g_free(heading);
     g_slist_foreach(local_list, clean_column_headings, NULL);
 
     gchar *barf = strdup((gchar *)g_slist_nth_data(local_list, 1));
@@ -69,4 +72,10 @@ GSList *make_forced_headings(char *csv_line) {
     }
 
     return local_list;
+}
+
+GDestroyNotify free_headings(gpointer data) {
+    gchar *heading = (gchar *)data;
+    g_print("We are deleting %s\n", heading);
+    g_free(heading);
 }
