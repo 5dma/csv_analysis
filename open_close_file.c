@@ -115,6 +115,11 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = DECIMAL;
                         break;
                     }
+                     passes_test = is_float(token);
+                    if (passes_test) {
+                        field_analysis->field_type = FLOAT;
+                        break;
+                    }
 
                 default:
                     g_print("Do nothing\n");

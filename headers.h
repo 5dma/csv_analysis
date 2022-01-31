@@ -51,6 +51,7 @@ GDestroyNotify free_headings(gpointer data);
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max);
 gboolean is_signed_int(const gchar *token, gint64 min, gint64 max);
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex);
+gboolean is_float(const gchar *token);
 
 
 
