@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <regex.h>
 #ifndef __HEADER
 #define __HEADER
 
@@ -49,6 +50,10 @@ GDestroyNotify free_headings(gpointer data);
 
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max);
 gboolean is_signed_int(const gchar *token, gint64 min, gint64 max);
+gboolean is_decimal(const gchar *token, regex_t *decimal_regex);
 
+
+
+regex_t make_decimal_regex();
 
 #endif

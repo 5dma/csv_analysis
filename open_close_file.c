@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
-#include <stdio.h>
 #include <math.h>
+#include <regex.h>
+#include <stdio.h>
 
 #include "headers.h"
 
@@ -27,6 +28,8 @@ gboolean omg(gboolean has_header_line) {
     char *delimiter = "\t";
 
     GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_int_equal);
+
+    regex_t decimal_regex = make_decimal_regex();
 
     while (getline(&csv_line, &len, fp) != -1) {
         if (on_first_line) {
@@ -71,7 +74,7 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = INT_UNSIGNED;
                         break;
                     }
-                    passes_test = is_unsigned_int(token, 0, (unsigned long long )pow(2,64) - 1);
+                    passes_test = is_unsigned_int(token, 0, (unsigned long long)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
                         break;
@@ -96,9 +99,20 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = INT_SIGNED;
                         break;
                     }
-                   passes_test = is_signed_int(token, -((unsigned long long )pow(2,63) - 1), (unsigned long long )(pow(2,63) - 1));
+                    passes_test = is_signed_int(token, -((unsigned long long)pow(2, 63) - 1), (unsigned long long)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
+                        break;
+                    }
+
+                    passes_test = is_signed_int(token, -((unsigned long long)pow(2, 63) - 1), (unsigned long long)(pow(2, 63) - 1));
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_SIGNED;
+                        break;
+                    }
+                     passes_test = is_decimal(token, &decimal_regex);
+                    if (passes_test) {
+                        field_analysis->field_type = DECIMAL;
                         break;
                     }
 

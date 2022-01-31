@@ -1,9 +1,8 @@
-#include <gtk/gtk.h>
 #include <glib-2.0/glib.h>
-
+#include <gtk/gtk.h>
+#include <regex.h>
 
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
-
     GError *error = NULL;
     guint64 num = 0;
     gboolean success = g_ascii_string_to_unsigned(token, 10, min, max, &num, &error);
@@ -14,7 +13,6 @@ gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
 }
 
 gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
-
     GError *error = NULL;
     guint64 num = 0;
     gboolean success = g_ascii_string_to_signed(token, 10, min, max, &num, &error);
@@ -24,15 +22,10 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
     return FALSE;
 }
 
-gboolean is_decimal(const gchar *token, gint64 min, gint64 max) {
+gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
+    regmatch_t pmatch[2];
 
-    GError *error = NULL;
-    guint64 num = 0;
-    gboolean success = g_ascii_string_to_signed(token, 10, min, max, &num, &error);
-    if (success) {
-        return TRUE;
-    }
-    return FALSE;
+    int success = regexec(decimal_regex, token , 1, pmatch, 0);
+    //gboolean success = TRUE;
+    return (success == 0) ? TRUE : FALSE;
 }
-
-
