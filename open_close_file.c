@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "headers.h"
 
@@ -40,7 +41,7 @@ gboolean omg(gboolean has_header_line) {
         }
         int i = 0;
         while ((token = strsep(&csv_line, delimiter)) != NULL) {
-            gchar *key = strdup((gchar *)g_slist_nth_data(headings, 1));
+            gchar *key = strdup((gchar *)g_slist_nth_data(headings, i));
             g_print("The key is %s\n", key);
             gpointer value = g_hash_table_lookup(field_analysis_hash, key);
             if (value == NULL) {
@@ -60,10 +61,51 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = SMALLINT_UNSIGNED;
                         break;
                     }
+                    passes_test = field_unsigned_int(token, 0, 16777215);
+                    if (passes_test) {
+                        field_analysis->field_type = MEDIUMINT_UNSIGNED;
+                        break;
+                    }
+                    passes_test = field_unsigned_int(token, 0, 4294967295);
+                    if (passes_test) {
+                        field_analysis->field_type = INT_UNSIGNED;
+                        break;
+                    }
+                    passes_test = field_unsigned_int(token, 0, (unsigned long long )pow(2,64) - 1);
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_UNSIGNED;
+                        break;
+                    }
+                    passes_test = field_signed_int(token, -128, 127);
+                    if (passes_test) {
+                        field_analysis->field_type = TINYINT_SIGNED;
+                        break;
+                    }
+                    passes_test = field_signed_int(token, -32768, 32767);
+                    if (passes_test) {
+                        field_analysis->field_type = SMALLINT_SIGNED;
+                        break;
+                    }
+                    passes_test = field_signed_int(token, -8388608, 8388607);
+                    if (passes_test) {
+                        field_analysis->field_type = MEDIUMINT_SIGNED;
+                        break;
+                    }
+                    passes_test = field_signed_int(token, -2147483648, 2147483647);
+                    if (passes_test) {
+                        field_analysis->field_type = INT_SIGNED;
+                        break;
+                    }
+                   passes_test = field_signed_int(token, -((unsigned long long )pow(2,63) - 1), (unsigned long long )(pow(2,63) - 1));
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_SIGNED;
+                        break;
+                    }
 
                 default:
                     g_print("Do nothing\n");
             }
+            i++;
             g_print("Barf\n");
         }
         /*
