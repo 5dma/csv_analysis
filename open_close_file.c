@@ -54,49 +54,49 @@ gboolean omg(gboolean has_header_line) {
             gboolean passes_test;
             switch (field_type) {
                 case TINYINT_UNSIGNED:
-                    passes_test = field_unsigned_int(token, 0, 255);
+                    passes_test = is_unsigned_int(token, 0, 255);
                     if (passes_test) break;
-                    passes_test = field_unsigned_int(token, 0, 65535);
+                    passes_test = is_unsigned_int(token, 0, 65535);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_UNSIGNED;
                         break;
                     }
-                    passes_test = field_unsigned_int(token, 0, 16777215);
+                    passes_test = is_unsigned_int(token, 0, 16777215);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_UNSIGNED;
                         break;
                     }
-                    passes_test = field_unsigned_int(token, 0, 4294967295);
+                    passes_test = is_unsigned_int(token, 0, 4294967295);
                     if (passes_test) {
                         field_analysis->field_type = INT_UNSIGNED;
                         break;
                     }
-                    passes_test = field_unsigned_int(token, 0, (unsigned long long )pow(2,64) - 1);
+                    passes_test = is_unsigned_int(token, 0, (unsigned long long )pow(2,64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
                         break;
                     }
-                    passes_test = field_signed_int(token, -128, 127);
+                    passes_test = is_signed_int(token, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
                         break;
                     }
-                    passes_test = field_signed_int(token, -32768, 32767);
+                    passes_test = is_signed_int(token, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
                         break;
                     }
-                    passes_test = field_signed_int(token, -8388608, 8388607);
+                    passes_test = is_signed_int(token, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
                         break;
                     }
-                    passes_test = field_signed_int(token, -2147483648, 2147483647);
+                    passes_test = is_signed_int(token, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
                         break;
                     }
-                   passes_test = field_signed_int(token, -((unsigned long long )pow(2,63) - 1), (unsigned long long )(pow(2,63) - 1));
+                   passes_test = is_signed_int(token, -((unsigned long long )pow(2,63) - 1), (unsigned long long )(pow(2,63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
                         break;

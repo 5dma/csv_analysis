@@ -47,8 +47,8 @@ GSList *make_forced_headings(char *csv_line);
 void initialize_field_analysis(gpointer heading, gpointer data);
 GDestroyNotify free_headings(gpointer data);
 
-gboolean field_unsigned_int(const gchar *token, gshort min, guint64 max);
-gboolean field_signed_int(const gchar *token, gint64 min, gint64 max);
+gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max);
+gboolean is_signed_int(const gchar *token, gint64 min, gint64 max);
 
 
 #endif
