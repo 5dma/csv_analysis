@@ -6,10 +6,12 @@
 #include "headers.h"
 
 gboolean omg(gboolean has_header_line) {
-    FILE *fp = fopen("/home/abba/maryland-politics/checkbook_2020/checkbook.csv", "r");
-    if (fp == NULL)
+    //FILE *fp = fopen("/home/abba/maryland-politics/checkbook_2020/checkbook.csv", "r");
+    FILE *fp = fopen("/home/abba/Desktop/fiscal_year_period.csv", "r");
+    if (fp == NULL) {
+        g_print("Could not open the file\n");
         return FALSE;
-
+    }
     char *csv_line;
     size_t max_number_characters = 1000;
     size_t len = 0;
@@ -48,7 +50,7 @@ gboolean omg(gboolean has_header_line) {
 
         while ((token = strsep(&csv_line, delimiter)) != NULL) {
             gchar *key = strdup((gchar *)g_slist_nth_data(headings, i));
-            //g_print("The key is %s\n", key);
+            g_print("The key is %s\n", key);
             gpointer value = g_hash_table_lookup(field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
@@ -57,86 +59,88 @@ gboolean omg(gboolean has_header_line) {
             Field_analysis *field_analysis = (Field_analysis *)value;
             enum data_types field_type = field_analysis->field_type;
 
+            gchar *csv_value = g_strstrip(token);
+
             gboolean passes_test;
             switch (field_type) {
                 case TINYINT_UNSIGNED:
-                    passes_test = is_unsigned_int(token, 0, 255);
+                    passes_test = is_unsigned_int(csv_value, 0, 255);
                     if (passes_test) break;
-                    passes_test = is_unsigned_int(token, 0, 65535);
+                    passes_test = is_unsigned_int(csv_value, 0, 65535);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_UNSIGNED;
                         break;
                     }
-                    passes_test = is_unsigned_int(token, 0, 16777215);
+                    passes_test = is_unsigned_int(csv_value, 0, 16777215);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_UNSIGNED;
                         break;
                     }
-                    passes_test = is_unsigned_int(token, 0, 4294967295);
+                    passes_test = is_unsigned_int(csv_value, 0, 4294967295);
                     if (passes_test) {
                         field_analysis->field_type = INT_UNSIGNED;
                         break;
                     }
-                    passes_test = is_unsigned_int(token, 0, (guint64)pow(2, 64) - 1);
+                    passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
                         break;
                     }
-                    passes_test = is_signed_int(token, -128, 127);
+                    passes_test = is_signed_int(csv_value, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
                         break;
                     }
-                    passes_test = is_signed_int(token, -32768, 32767);
+                    passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
                         break;
                     }
-                    passes_test = is_signed_int(token, -8388608, 8388607);
+                    passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
                         break;
                     }
-                    passes_test = is_signed_int(token, -2147483648, 2147483647);
+                    passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
                         break;
                     }
 
-                    passes_test = is_signed_int(token, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
+                    passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
                         break;
                     }
 
-                    passes_test = is_decimal(token, &decimal_regex);
+                    passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
                         break;
                     }
-                    passes_test = is_float(token);
+                    passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
                         break;
                     }
-                    passes_test = is_timestamp(token, &timestamp_regex);
+                    passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
                         break;
                     }
                 default:
                     field_analysis->field_type = CHAR;
-                    guint token_length = strlen(token);
-                    if (field_analysis->char_width < token_length) {
-                        field_analysis->char_width = token_length;
+                    guint csv_value_length = strlen(csv_value);
+                    if (field_analysis->char_width < csv_value_length) {
+                        field_analysis->char_width = csv_value_length;
                     }
             }
             i++;
-            gpointer bozo = g_hash_table_lookup(field_analysis_hash, "po_line");
+          /*   gpointer bozo = g_hash_table_lookup(field_analysis_hash, "po_line");
             if (bozo == NULL) {
                 g_print("OUTISDE There was a critical failure in looking up the key.\n");
                 exit(-1);
-            }
+            } */
         }
         /*
         gchar *omg2 = strdup((gchar *)g_slist_nth_data(headings, 1));

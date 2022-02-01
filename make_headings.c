@@ -31,21 +31,21 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 }
 
 GSList *make_headings(char *csv_line) {
-    char *token;
+    char *token = NULL;
     char *delimiter = "\t";
     GSList *local_list = NULL;
-
-    gchar *heading;
+    gchar *heading = NULL;
     while ((token = strsep(&csv_line, delimiter)) != NULL) {
-        heading = strdup(token);
+        heading = strdup(token); /* Why is the heading variable necessary? */
         local_list = g_slist_append(local_list, heading);
     }
-    g_free(heading);
+
     g_slist_foreach(local_list, clean_column_headings, NULL);
 
-    gchar *barf = strdup((gchar *)g_slist_nth_data(local_list, 1));
-    printf("Here is the heading: %s\n", barf);
-
+    /*   gchar *barf = strdup((gchar *)g_slist_nth_data(local_list, 1));
+    printf("Here is the heading: %s\n", barf); */
+    gchar *omg2 = strdup((gchar *)g_slist_nth_data(local_list, 0));
+    printf("omg2: %s\n", omg2);
     return local_list;
 }
 
