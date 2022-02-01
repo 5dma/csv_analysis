@@ -129,6 +129,66 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = TIMESTAMP;
                         break;
                     }
+                case SMALLINT_UNSIGNED:
+                    passes_test = is_unsigned_int(csv_value, 0, 65535);
+                    if (passes_test) break;
+                    passes_test = is_unsigned_int(csv_value, 0, 16777215);
+                    if (passes_test) {
+                        field_analysis->field_type = MEDIUMINT_UNSIGNED;
+                        break;
+                    }
+                    passes_test = is_unsigned_int(csv_value, 0, 4294967295);
+                    if (passes_test) {
+                        field_analysis->field_type = INT_UNSIGNED;
+                        break;
+                    }
+                    passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_UNSIGNED;
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -128, 127);
+                    if (passes_test) {
+                        field_analysis->field_type = TINYINT_SIGNED;
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -32768, 32767);
+                    if (passes_test) {
+                        field_analysis->field_type = SMALLINT_SIGNED;
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -8388608, 8388607);
+                    if (passes_test) {
+                        field_analysis->field_type = MEDIUMINT_SIGNED;
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
+                    if (passes_test) {
+                        field_analysis->field_type = INT_SIGNED;
+                        break;
+                    }
+
+                    passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_SIGNED;
+                        break;
+                    }
+
+                    passes_test = is_decimal(csv_value, &decimal_regex);
+                    if (passes_test) {
+                        field_analysis->field_type = DECIMAL;
+                        break;
+                    }
+                    passes_test = is_float(csv_value);
+                    if (passes_test) {
+                        field_analysis->field_type = FLOAT;
+                        break;
+                    }
+                    passes_test = is_timestamp(csv_value, &timestamp_regex);
+                    if (passes_test) {
+                        field_analysis->field_type = TIMESTAMP;
+                        break;
+                    }
                 default:
                     field_analysis->field_type = CHAR;
                     guint csv_value_length = strlen(csv_value);
