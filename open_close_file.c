@@ -30,8 +30,10 @@ gboolean omg(gboolean has_header_line) {
     GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_int_equal);
 
     regex_t decimal_regex = make_decimal_regex();
-
+    regex_t timestamp_regex = make_timestamp_regex();
+    int line_number = 1;
     while (getline(&csv_line, &len, fp) != -1) {
+        g_print("Processing line %d\n", line_number++);
         if (on_first_line) {
             if (has_header_line) {
                 headings = make_headings(csv_line);
@@ -43,9 +45,10 @@ gboolean omg(gboolean has_header_line) {
             continue;
         }
         int i = 0;
+
         while ((token = strsep(&csv_line, delimiter)) != NULL) {
             gchar *key = strdup((gchar *)g_slist_nth_data(headings, i));
-            g_print("The key is %s\n", key);
+            //g_print("The key is %s\n", key);
             gpointer value = g_hash_table_lookup(field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
@@ -74,7 +77,7 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = INT_UNSIGNED;
                         break;
                     }
-                    passes_test = is_unsigned_int(token, 0, (unsigned long long)pow(2, 64) - 1);
+                    passes_test = is_unsigned_int(token, 0, (guint64)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
                         break;
@@ -99,43 +102,52 @@ gboolean omg(gboolean has_header_line) {
                         field_analysis->field_type = INT_SIGNED;
                         break;
                     }
-                    passes_test = is_signed_int(token, -((unsigned long long)pow(2, 63) - 1), (unsigned long long)(pow(2, 63) - 1));
+
+                    passes_test = is_signed_int(token, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
                         break;
                     }
 
-                    passes_test = is_signed_int(token, -((unsigned long long)pow(2, 63) - 1), (unsigned long long)(pow(2, 63) - 1));
-                    if (passes_test) {
-                        field_analysis->field_type = BIGINT_SIGNED;
-                        break;
-                    }
-                     passes_test = is_decimal(token, &decimal_regex);
+                    passes_test = is_decimal(token, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
                         break;
                     }
-                     passes_test = is_float(token);
+                    passes_test = is_float(token);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
                         break;
                     }
-
+                    passes_test = is_timestamp(token, &timestamp_regex);
+                    if (passes_test) {
+                        field_analysis->field_type = TIMESTAMP;
+                        break;
+                    }
                 default:
-                    g_print("Do nothing\n");
+                    field_analysis->field_type = CHAR;
+                    guint token_length = strlen(token);
+                    if (field_analysis->char_width < token_length) {
+                        field_analysis->char_width = token_length;
+                    }
             }
             i++;
-            g_print("Barf\n");
+            gpointer bozo = g_hash_table_lookup(field_analysis_hash, "po_line");
+            if (bozo == NULL) {
+                g_print("OUTISDE There was a critical failure in looking up the key.\n");
+                exit(-1);
+            }
         }
         /*
         gchar *omg2 = strdup((gchar *)g_slist_nth_data(headings, 1));
         printf("omg2: %s\n", omg2);
         Field_analysis *fa = (Field_analysis *)g_hash_table_lookup(field_analysis_hash, "program");*/
-        g_print("OMG\n");
     }
-    /* Free memory in the list of headings */
-    g_slist_free_full(headings, (GDestroyNotify)free_headings);
-
     fclose(fp);
+    /* Free memory in the list of headings */
+    //g_slist_free_full(headings, (GDestroyNotify)free_headings);
+
+    display_results(field_analysis_hash);
+
     return TRUE;
 }

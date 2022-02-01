@@ -47,14 +47,17 @@ GSList *make_headings(char *csv_line);
 GSList *make_forced_headings(char *csv_line);
 void initialize_field_analysis(gpointer heading, gpointer data);
 GDestroyNotify free_headings(gpointer data);
+void display_results(GHashTable *field_analysis_hash);
 
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max);
 gboolean is_signed_int(const gchar *token, gint64 min, gint64 max);
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex);
 gboolean is_float(const gchar *token);
+gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex);
 
 
 
 regex_t make_decimal_regex();
+regex_t make_timestamp_regex();
 
 #endif

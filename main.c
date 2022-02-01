@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
 
     int status = g_application_run(G_APPLICATION(app), argc, argv);
 
+
+
         gboolean crap = omg(TRUE);
 
     /* Decrease reference count because assigning it in on_app_activate */
