@@ -15,5 +15,8 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
     field_analysis_struct->precision = 0;
     field_analysis_struct->scale = 0;
 
-    g_hash_table_insert(field_analysis_hash, key, field_analysis_struct);
+    gboolean success = g_hash_table_insert(field_analysis_hash, key, field_analysis_struct);
+    if (success == FALSE) {
+        g_print("Warning! A key was replaced in the hash table!\n");
+    }
 }

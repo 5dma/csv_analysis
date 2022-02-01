@@ -6,8 +6,8 @@
 #include "headers.h"
 
 gboolean omg(gboolean has_header_line) {
-    //FILE *fp = fopen("/home/abba/maryland-politics/checkbook_2020/checkbook.csv", "r");
-    FILE *fp = fopen("/home/abba/Desktop/fiscal_year_period.csv", "r");
+    FILE *fp = fopen("/home/abba/maryland-politics/checkbook_2020/checkbook.csv", "r");
+    //FILE *fp = fopen("/tmp/county_government_checkbook_2020.csv", "r");
     if (fp == NULL) {
         g_print("Could not open the file\n");
         return FALSE;
@@ -29,7 +29,7 @@ gboolean omg(gboolean has_header_line) {
     char *token;
     char *delimiter = "\t";
 
-    GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_int_equal);
+    GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
@@ -47,16 +47,17 @@ gboolean omg(gboolean has_header_line) {
             continue;
         }
         int i = 0;
-
+        gchar *key = NULL;
+        gpointer value = NULL;
         while ((token = strsep(&csv_line, delimiter)) != NULL) {
-            gchar *key = strdup((gchar *)g_slist_nth_data(headings, i));
-            g_print("The key is %s\n", key);
-            gpointer value = g_hash_table_lookup(field_analysis_hash, key);
+            key = strdup((gchar *)g_slist_nth_data(headings, i));
+            value = g_hash_table_lookup(field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
                 exit(-1);
             }
             Field_analysis *field_analysis = (Field_analysis *)value;
+
             enum data_types field_type = field_analysis->field_type;
 
             gchar *csv_value = g_strstrip(token);
@@ -136,7 +137,7 @@ gboolean omg(gboolean has_header_line) {
                     }
             }
             i++;
-          /*   gpointer bozo = g_hash_table_lookup(field_analysis_hash, "po_line");
+            /*   gpointer bozo = g_hash_table_lookup(field_analysis_hash, "po_line");
             if (bozo == NULL) {
                 g_print("OUTISDE There was a critical failure in looking up the key.\n");
                 exit(-1);
