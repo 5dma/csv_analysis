@@ -54,6 +54,8 @@ enum {
 
 
 void on_app_activate(GApplication *app, gpointer data);
+GtkWidget *make_window(GHashTable *pointer_passer);
+void button_choose_clicked (GtkButton *button, gpointer data);
 
 gboolean omg();
 GSList *make_headings(char *csv_line);
@@ -72,5 +74,14 @@ gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
+
+
+/** Hash key for the pointer to the application window. */
+static gint KEY_WINDOW = 0;
+static gint KEY_CSV_FILE = 1;
+static gint KEY_APP = 2;
+static gint KEY_TEXT_FILENAME = 3;
+
+
 
 #endif

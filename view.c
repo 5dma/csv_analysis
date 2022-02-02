@@ -9,14 +9,22 @@
 /**
  * Function that starts the GTK loop.
  * @param app Pointer to the GTK application
- * @param data Pointer to passed data, `NULL` in this case.
 */
-void on_app_activate(GApplication *app, gpointer data) {
+GtkWidget *make_window(GHashTable *pointer_passer) {
+    GApplication *app = (GApplication *)g_hash_table_lookup(pointer_passer, &KEY_APP);
+
     GtkWidget *window = gtk_application_window_new(GTK_APPLICATION(app));
+
+    g_hash_table_insert(pointer_passer, &KEY_WINDOW, window);
 
     GtkWidget *label_csv_file = gtk_label_new("CSV file:");
     GtkWidget *text_filename = gtk_entry_new();
     GtkWidget *button_choose = gtk_button_new_with_label("Choose...");
+
+    g_signal_connect(G_OBJECT(button_choose), "clicked", G_CALLBACK(button_choose_clicked), pointer_passer);
+    g_hash_table_insert(pointer_passer, &KEY_TEXT_FILENAME, text_filename);
+  
+
     GtkWidget *hbox_file_choose = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_file_choose), label_csv_file, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(hbox_file_choose), text_filename, TRUE, TRUE, 10);
@@ -65,25 +73,21 @@ void on_app_activate(GApplication *app, gpointer data) {
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnType);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnDeterminingLine);
 
-
-  GtkWidget *label_table_name = gtk_label_new("Table name:");
+    GtkWidget *label_table_name = gtk_label_new("Table name:");
     GtkWidget *text_table_name = gtk_entry_new();
     GtkWidget *hbox_table_name = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_table_name), label_table_name, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(hbox_table_name), text_table_name, TRUE, TRUE, 10);
 
+    GtkWidget *text_view_sql_command = gtk_text_view_new();
 
-  GtkWidget *text_view_sql_command = gtk_text_view_new();
-
-
- GtkWidget *button_close = gtk_button_new_with_label("Close");
- GtkWidget *button_copy = gtk_button_new_with_label("Copy");
+    GtkWidget *button_close = gtk_button_new_with_label("Close");
+    GtkWidget *button_copy = gtk_button_new_with_label("Copy");
     GtkWidget *hbox_close_copy = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_close_copy), button_close, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(hbox_close_copy), button_copy, TRUE, TRUE, 10);
 
-
-GtkWidget *status_bar = gtk_statusbar_new();
+    GtkWidget *status_bar = gtk_statusbar_new();
 
     GtkWidget *vbox_ui = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), hbox_file_choose, TRUE, TRUE, 10);
@@ -94,10 +98,8 @@ GtkWidget *status_bar = gtk_statusbar_new();
     gtk_box_pack_start(GTK_BOX(vbox_ui), hbox_close_copy, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), status_bar, TRUE, TRUE, 10);
     gtk_container_add(GTK_CONTAINER(window), vbox_ui);
- 
-
-    gtk_widget_show_all(GTK_WIDGET(window));
 
     /* Upon destroying the application, free memory in data structures in pointer_passer. */
     //  g_signal_connect(window, "destroy", G_CALLBACK(free_memory), pointer_passer);
+    return window;
 }
