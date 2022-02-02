@@ -587,16 +587,9 @@ gboolean omg(gboolean has_header_line) {
                     }
             }
             i++;
-            /*   gpointer bozo = g_hash_table_lookup(field_analysis_hash, "po_line");
-            if (bozo == NULL) {
-                g_print("OUTISDE There was a critical failure in looking up the key.\n");
-                exit(-1);
-            } */
+   
         }
-        /*
-        gchar *omg2 = strdup((gchar *)g_slist_nth_data(headings, 1));
-        printf("omg2: %s\n", omg2);
-        Field_analysis *fa = (Field_analysis *)g_hash_table_lookup(field_analysis_hash, "program");*/
+    
         line_number++;
     }
     fclose(fp);

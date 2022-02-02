@@ -42,6 +42,18 @@ typedef struct decimal_sizes {
   int scale;
 } decimal_size;
 
+/**
+ * Enum for declaring a list store of results.
+*/
+enum {
+    COLUMN_NAME, /**< 0 */
+    DATA_TYPE,  /**< 1 */
+    DETERMINING_LINE,  /**< 2 */
+    N_COLUMNS  /**< 5 */
+};
+
+
+void on_app_activate(GApplication *app, gpointer data);
 
 gboolean omg();
 GSList *make_headings(char *csv_line);
