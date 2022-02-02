@@ -34,6 +34,7 @@ typedef struct {
     int char_width;
     int precision;
     int scale;
+    int last_line_change;
 } Field_analysis;
 
 typedef struct decimal_sizes {
