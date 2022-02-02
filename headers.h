@@ -57,7 +57,7 @@ void on_app_activate(GApplication *app, gpointer data);
 GtkWidget *make_window(GHashTable *pointer_passer);
 void button_choose_clicked (GtkButton *button, gpointer data);
 
-gboolean process_file(GHashTable *pointer_passer);
+gboolean process_file(GtkButton *button, gpointer data);
 GSList *make_headings(char *csv_line);
 GSList *make_forced_headings(char *csv_line);
 void initialize_field_analysis(gpointer heading, gpointer data);

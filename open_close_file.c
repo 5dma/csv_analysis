@@ -5,7 +5,8 @@
 
 #include "headers.h"
 
-gboolean process_file(GHashTable *pointer_passer) {
+gboolean process_file(GtkButton *button, gpointer data) {
+    GHashTable *pointer_passer = (GHashTable *)data;
 
     gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
     FILE *fp = fopen(filename, "r");
@@ -38,9 +39,8 @@ gboolean process_file(GHashTable *pointer_passer) {
     int line_number = 1;
 
     GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
-    gboolean has_header_line = gtk_toggle_button_get_active (
-    GTK_TOGGLE_BUTTON(checkbox_has_headers));
-
+    gboolean has_header_line = gtk_toggle_button_get_active(
+        GTK_TOGGLE_BUTTON(checkbox_has_headers));
 
     while (getline(&csv_line, &len, fp) != -1) {
         g_print("Processing line %d\n", line_number);
@@ -595,9 +595,8 @@ gboolean process_file(GHashTable *pointer_passer) {
                     }
             }
             i++;
-   
         }
-    
+
         line_number++;
     }
     fclose(fp);
