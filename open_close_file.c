@@ -5,9 +5,11 @@
 
 #include "headers.h"
 
-gboolean omg(gboolean has_header_line) {
-    FILE *fp = fopen("/home/abba/maryland-politics/checkbook_2020/checkbook.csv", "r");
-    //FILE *fp = fopen("/tmp/county_government_checkbook_2020.csv", "r");
+gboolean process_file(GHashTable *pointer_passer) {
+
+    gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
+    FILE *fp = fopen(filename, "r");
+
     if (fp == NULL) {
         g_print("Could not open the file\n");
         return FALSE;
@@ -34,6 +36,12 @@ gboolean omg(gboolean has_header_line) {
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
     int line_number = 1;
+
+    GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
+    gboolean has_header_line = gtk_toggle_button_get_active (
+    GTK_TOGGLE_BUTTON(checkbox_has_headers));
+
+
     while (getline(&csv_line, &len, fp) != -1) {
         g_print("Processing line %d\n", line_number);
         if (on_first_line) {

@@ -57,7 +57,7 @@ void on_app_activate(GApplication *app, gpointer data);
 GtkWidget *make_window(GHashTable *pointer_passer);
 void button_choose_clicked (GtkButton *button, gpointer data);
 
-gboolean omg();
+gboolean process_file(GHashTable *pointer_passer);
 GSList *make_headings(char *csv_line);
 GSList *make_forced_headings(char *csv_line);
 void initialize_field_analysis(gpointer heading, gpointer data);
@@ -81,6 +81,7 @@ static gint KEY_WINDOW = 0;
 static gint KEY_CSV_FILE = 1;
 static gint KEY_APP = 2;
 static gint KEY_TEXT_FILENAME = 3;
+static gint KEY_CHECKBOX_HEADER = 4;
 
 
 

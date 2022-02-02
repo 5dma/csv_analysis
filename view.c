@@ -31,8 +31,14 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_box_pack_start(GTK_BOX(hbox_file_choose), button_choose, TRUE, TRUE, 10);
 
     GtkWidget *checkbox_has_headers = gtk_check_button_new();
+    g_hash_table_insert(pointer_passer, &KEY_CHECKBOX_HEADER, checkbox_has_headers);
+
+
     GtkWidget *label_has_headers = gtk_label_new("File contains column headers");
     GtkWidget *button_go = gtk_button_new_with_label("Go");
+g_signal_connect(G_OBJECT(button_go), "clicked", G_CALLBACK(process_file), pointer_passer);
+
+
     GtkWidget *hbox_headers_go = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_headers_go), checkbox_has_headers, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(hbox_headers_go), label_has_headers, TRUE, TRUE, 10);
