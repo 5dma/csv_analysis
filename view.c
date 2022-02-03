@@ -17,7 +17,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     g_hash_table_insert(pointer_passer, &KEY_WINDOW, window);
 
-    gtk_window_set_default_size (GTK_WINDOW(window), 500, 400);
+    gtk_window_set_default_size(GTK_WINDOW(window), 500, 400);
 
     GtkWidget *label_csv_file = gtk_label_new("CSV file:");
     GtkWidget *text_filename = gtk_entry_new();
@@ -43,14 +43,13 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 
-    g_hash_table_insert(pointer_passer, &KEY_LIST_STORE,list_store_results);
+    g_hash_table_insert(pointer_passer, &KEY_LIST_STORE, list_store_results);
 
     GtkTreeIter iter;
     GtkWidget *tree;
 
     tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list_store_results));
     g_object_set(tree, "enable-grid-lines", GTK_TREE_VIEW_GRID_LINES_BOTH, NULL);
-   
 
     GtkCellRenderer *rendererColumnName;
     GtkTreeViewColumn *columnName;
@@ -79,17 +78,24 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnType);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnDeterminingLine);
 
-   GtkWidget *scrolled_window = gtk_scrolled_window_new (NULL, NULL);
-   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC,GTK_POLICY_AUTOMATIC);
-   gtk_container_add( GTK_CONTAINER(scrolled_window), tree);
+    GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), tree);
 
     GtkWidget *label_table_name = gtk_label_new("Table name:");
-    GtkWidget *text_table_name = gtk_entry_new();
+
+    GtkEntryBuffer *buffer_table = gtk_entry_buffer_new("mytable", 7);
+    GtkWidget *text_table_name = gtk_entry_new_with_buffer(buffer_table);
+    g_hash_table_insert(pointer_passer, &KEY_BUFFER_TABLE, buffer_table);
+
     GtkWidget *hbox_table_name = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_table_name), label_table_name, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(hbox_table_name), text_table_name, TRUE, TRUE, 10);
 
-    GtkWidget *text_view_sql_command = gtk_text_view_new();
+    GtkWidget *label_mysql_command = gtk_label_new("CREATE TABLE ");
+    gtk_label_set_justify(GTK_LABEL(label_mysql_command), GTK_JUSTIFY_LEFT);
+    gtk_label_set_line_wrap (GTK_LABEL(label_mysql_command), TRUE);
+    g_hash_table_insert(pointer_passer, &KEY_LABEL_MYSQL_COMMAND, label_mysql_command);
 
     GtkWidget *button_close = gtk_button_new_with_label("Close");
     GtkWidget *button_copy = gtk_button_new_with_label("Copy");
@@ -104,11 +110,10 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_box_pack_start(GTK_BOX(vbox_ui), hbox_headers_go, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), scrolled_window, FALSE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), hbox_table_name, TRUE, TRUE, 10);
-    gtk_box_pack_start(GTK_BOX(vbox_ui), text_view_sql_command, TRUE, TRUE, 10);
+    gtk_box_pack_start(GTK_BOX(vbox_ui), label_mysql_command, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), hbox_close_copy, TRUE, TRUE, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), status_bar, TRUE, TRUE, 10);
     gtk_container_add(GTK_CONTAINER(window), vbox_ui);
-
 
     /* Upon destroying the application, free memory in data structures in pointer_passer. */
     //  g_signal_connect(window, "destroy", G_CALLBACK(free_memory), pointer_passer);

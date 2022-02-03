@@ -85,7 +85,9 @@ static gint KEY_CHECKBOX_HEADER = 4;
 static gint KEY_FIELD_ANALYSIS_HASH = 5;
 static gint KEY_DATA_TYPE_STRINGS = 6;
 static gint KEY_LIST_STORE = 7;
-
-
+static gint KEY_BUFFER_TABLE = 8;
+static gint KEY_COLUMN_STRINGS = 9;
+static gint KEY_CURRENT_COLUMN_NUMBER = 10;
+static gint KEY_LABEL_MYSQL_COMMAND = 11;
 
 #endif
