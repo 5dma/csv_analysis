@@ -82,6 +82,9 @@ static gint KEY_CSV_FILE = 1;
 static gint KEY_APP = 2;
 static gint KEY_TEXT_FILENAME = 3;
 static gint KEY_CHECKBOX_HEADER = 4;
+static gint KEY_FIELD_ANALYSIS_HASH = 5;
+static gint KEY_DATA_TYPE_STRINGS = 6;
+static gint KEY_LIST_STORE = 7;
 
 
 

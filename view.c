@@ -43,6 +43,8 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 
+    g_hash_table_insert(pointer_passer, &KEY_LIST_STORE,list_store_results);
+
     GtkTreeIter iter;
     GtkWidget *tree;
 

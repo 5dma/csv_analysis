@@ -33,6 +33,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     char *delimiter = "\t";
 
     GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
+    g_hash_table_insert(pointer_passer, &KEY_FIELD_ANALYSIS_HASH, field_analysis_hash);
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
@@ -603,7 +604,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     /* Free memory in the list of headings */
     //g_slist_free_full(headings, (GDestroyNotify)free_headings);
 
-    display_results(field_analysis_hash);
+    display_results(pointer_passer);
 
     return TRUE;
 }
