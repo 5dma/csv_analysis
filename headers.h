@@ -69,7 +69,8 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max);
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex);
 gboolean is_float(const gchar *token);
 gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex);
-
+void cleanup (GtkWidget* window, gpointer data);
+void closeup(GtkWidget *button_close, gpointer data);
 
 
 regex_t make_decimal_regex();

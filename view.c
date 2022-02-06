@@ -98,6 +98,9 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     g_hash_table_insert(pointer_passer, &KEY_LABEL_MYSQL_COMMAND, label_mysql_command);
 
     GtkWidget *button_close = gtk_button_new_with_label("Close");
+    
+    g_signal_connect(G_OBJECT(button_close),"clicked",G_CALLBACK(closeup) ,pointer_passer);
+
     GtkWidget *button_copy = gtk_button_new_with_label("Copy");
     GtkWidget *hbox_close_copy = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_close_copy), button_close, TRUE, TRUE, 10);
@@ -116,6 +119,6 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_container_add(GTK_CONTAINER(window), vbox_ui);
 
     /* Upon destroying the application, free memory in data structures in pointer_passer. */
-    //  g_signal_connect(window, "destroy", G_CALLBACK(free_memory), pointer_passer);
+    g_signal_connect(window, "destroy", G_CALLBACK(cleanup), pointer_passer);
     return window;
 }
