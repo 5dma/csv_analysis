@@ -91,5 +91,10 @@ static gint KEY_BUFFER_TABLE = 8;
 static gint KEY_COLUMN_STRINGS = 9;
 static gint KEY_CURRENT_COLUMN_NUMBER = 10;
 static gint KEY_LABEL_MYSQL_COMMAND = 11;
+static gint KEY_STATUS_BAR = 12;
+static gint STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID = 13;
+
+static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
+
 
 #endif

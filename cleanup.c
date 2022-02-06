@@ -4,6 +4,7 @@
 
 
 void closeup(GtkWidget *button_close, gpointer data) {
+    /* For some reason, this strategy emits two destroy signals. Need to resolve. */
     GHashTable *pointer_passer = (GHashTable *)data;
     g_print("Got OMG\n");
     GtkWidget *window = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_WINDOW);

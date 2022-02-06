@@ -43,8 +43,20 @@ gboolean process_file(GtkButton *button, gpointer data) {
     gboolean has_header_line = gtk_toggle_button_get_active(
         GTK_TOGGLE_BUTTON(checkbox_has_headers));
 
+    GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
+
+    guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
+
+    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO);
+    gchar progress_message[100];
+
     while (getline(&csv_line, &len, fp) != -1) {
-        g_print("Processing line %d\n", line_number);
+        g_snprintf(progress_message, 50, "Reading line %d...", line_number);
+        //        gtk_statusbar_pop(GTK_STATUSBAR(status_bar), status_bar_context_info);
+        g_print("Processing line %s\n", progress_message);
+        gtk_statusbar_remove(GTK_STATUSBAR(status_bar), status_bar_context_info, status_bar_context_info_message_id);
+        status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, progress_message);
+
         if (on_first_line) {
             if (has_header_line) {
                 headings = make_headings(csv_line);
