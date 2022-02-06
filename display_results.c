@@ -1,6 +1,8 @@
+#include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
-
 #include "headers.h"
+
+
 
 guint get_number_of_fields(GHashTable *field_analysis_hash) {
     GList *keys = g_hash_table_get_keys(field_analysis_hash);
@@ -34,24 +36,11 @@ void display_single_result(gpointer key, gpointer value, gpointer data) {
 
     guint *current_column_number = (guint *)g_hash_table_lookup(pointer_passer, &KEY_CURRENT_COLUMN_NUMBER);
 
-    g_print("The current column number is %d\n", *current_column_number);
-
     gchar **column_strings = (gchar **)g_hash_table_lookup(pointer_passer, &KEY_COLUMN_STRINGS);
 
-  
-
-
-   // column_strings[field_type] = *(g_strconcat(key_char, " ", datatype_string, NULL)); 
-
-   char *barf =  g_strconcat(key_char, " ", datatype_string, NULL);
-     g_print("A barf: %s\n", barf);
-   g_strlcpy (column_strings[field_type], barf, strlen(barf) + 1);
-    g_print ("The destination address is %p\n",column_strings[field_type]);
-      g_print("A column string: %s\n", column_strings[field_type]);
- // char *column_strings[field_type] = *barf;
-
-
-
+    char *intermediate = g_strconcat(key_char, " ", datatype_string, NULL);
+    *(column_strings + *current_column_number) = g_strdup(intermediate);
+ 
     (*current_column_number)++;
 }
 
@@ -77,12 +66,8 @@ void display_results(GHashTable *pointer_passer) {
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
 
     guint number_of_columns = get_number_of_fields(field_analysis_hash);
-    gchar *column_strings[number_of_columns];
+    gchar *column_strings[number_of_columns + 1];
 
-    for (int i=0; i < number_of_columns; i++) {
-        column_strings[i] = (gchar *)malloc(100 * sizeof(char));
-        g_print ("The address allocted starts at %p\n",column_strings[i]);
-    }
 
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, column_strings);
 
@@ -93,10 +78,7 @@ void display_results(GHashTable *pointer_passer) {
 
     GtkEntryBuffer *buffer_table = (GtkEntryBuffer *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
 
-    for (int i = 0; i<25; i++) {
-        g_print("An entry: %s\n", column_strings[i]);
-         g_print ("The returned address is %p\n",column_strings[i]);
-    }
+    column_strings[number_of_columns] = NULL;
 
     gchar *field_clause = g_strjoinv(", ", column_strings);
 
