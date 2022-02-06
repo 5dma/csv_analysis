@@ -71,6 +71,7 @@ gboolean is_float(const gchar *token);
 gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex);
 void cleanup (GtkWidget* window, gpointer data);
 void closeup(GtkWidget *button_close, gpointer data);
+void copy_statement(GtkWidget *button_copy, gpointer data);
 
 
 regex_t make_decimal_regex();
