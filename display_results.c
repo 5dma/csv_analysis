@@ -4,13 +4,14 @@
 #include "headers.h"
 
 void concat_command(GtkEditable* self, gpointer data) {
-        GHashTable *pointer_passer = (GHashTable *)data;
-    GtkEntryBuffer *buffer_table = (GtkEntryBuffer *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
+    
+    GHashTable *pointer_passer = (GHashTable *)data;
+    GtkEntry *buffer_table = (GtkEntry *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
     gchar *field_clause = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_CLAUSE);
 
     GtkWidget *label_mysql_command = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_LABEL_MYSQL_COMMAND);
 
-    gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_buffer_get_text(buffer_table), " ", field_clause, ");", NULL);
+    gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_get_text(buffer_table), " ", field_clause, ");", NULL);
 
     gtk_label_set_text(GTK_LABEL(label_mysql_command), complete_command);
 }
@@ -90,7 +91,7 @@ void display_results(GHashTable *pointer_passer) {
 
     gchar *field_clause = g_strjoinv(", ", column_strings);
     g_hash_table_insert(pointer_passer, &KEY_FIELD_CLAUSE, field_clause);
-  //  concat_command(pointer_passer);
+    concat_command(NULL, (gpointer) pointer_passer);
 }
 
 /**
