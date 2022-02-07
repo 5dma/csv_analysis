@@ -1,8 +1,22 @@
 #include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
+
 #include "headers.h"
 
+void concat_command(GHashTable *pointer_passer) {
+   
+    GtkEntryBuffer *buffer_table = (GtkEntryBuffer *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
+    gchar *field_clause = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_CLAUSE);
+   
+    GtkWidget *label_mysql_command = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_LABEL_MYSQL_COMMAND);
 
+
+   gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_buffer_get_text(buffer_table), " ", field_clause, ");", NULL);
+
+    gtk_label_set_text(GTK_LABEL(label_mysql_command), complete_command);
+
+    return ;
+}
 
 guint get_number_of_fields(GHashTable *field_analysis_hash) {
     GList *keys = g_hash_table_get_keys(field_analysis_hash);
@@ -40,7 +54,7 @@ void display_single_result(gpointer key, gpointer value, gpointer data) {
 
     char *intermediate = g_strconcat(key_char, " ", datatype_string, NULL);
     *(column_strings + *current_column_number) = g_strdup(intermediate);
- 
+
     (*current_column_number)++;
 }
 
@@ -68,7 +82,6 @@ void display_results(GHashTable *pointer_passer) {
     guint number_of_columns = get_number_of_fields(field_analysis_hash);
     gchar *column_strings[number_of_columns + 1];
 
-
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, column_strings);
 
     guint current_column_number = 0;
@@ -76,15 +89,40 @@ void display_results(GHashTable *pointer_passer) {
 
     g_hash_table_foreach(field_analysis_hash, display_single_result, pointer_passer);
 
-    GtkEntryBuffer *buffer_table = (GtkEntryBuffer *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
-
     column_strings[number_of_columns] = NULL;
 
     gchar *field_clause = g_strjoinv(", ", column_strings);
+    g_hash_table_insert(pointer_passer, &KEY_FIELD_CLAUSE, field_clause);
+    concat_command(pointer_passer);
+}
 
-    gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_buffer_get_text(buffer_table), " ", field_clause, ");", NULL);
+/**
+* Callback that prevents the user from entering anything in a `GtkCellEditable` other than digits and a decimal point. The actual allowed keys are [0-9], decimal point, backspace, delete, cursor right, and cursor left.
+* @param widget Widget where the edit is occurring.
+* @param event Key that was pressed.
+* @param user_data `NULL` in this case.
+* @return  `FALSE` if an allowed key was pressed, `TRUE` otherwise.
+* \sa started_cell_editing()
+*/
+gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer data) {
+      GHashTable *pointer_passer = (GHashTable *)data;
+    g_print("I got to the update\n");
+    if (
+        (event->keyval >= GDK_KEY_0) && (event->keyval <= GDK_KEY_9) ||
+        (event->keyval >= GDK_KEY_KP_0) && (event->keyval <= GDK_KEY_KP_9) ||
+        (event->keyval >= GDK_KEY_A) && (event->keyval <= GDK_KEY_Z) ||
+        (event->keyval >= GDK_KEY_a) && (event->keyval <= GDK_KEY_z) ||
+        (event->keyval == GDK_KEY_dollar) ||
+        (event->keyval == GDK_KEY_underscore) ||
+        (event->keyval == GDK_KEY_BackSpace) ||
+        (event->keyval == GDK_KEY_Left) ||
+        (event->keyval == GDK_KEY_Right) ||
+        (event->keyval == GDK_KEY_KP_Left) ||
+        (event->keyval == GDK_KEY_KP_Right) ||
+        (event->keyval == GDK_KEY_Delete)) {
+        concat_command(pointer_passer);
 
-    GtkWidget *label_mysql_command = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_LABEL_MYSQL_COMMAND);
-
-    gtk_label_set_text(GTK_LABEL(label_mysql_command), complete_command);
+        return FALSE;
+    }
+    return TRUE;
 }

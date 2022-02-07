@@ -85,12 +85,16 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkWidget *label_table_name = gtk_label_new("Table name:");
 
     GtkEntryBuffer *buffer_table = gtk_entry_buffer_new("mytable", 7);
-    GtkWidget *text_table_name = gtk_entry_new_with_buffer(buffer_table);
+    GtkWidget *entry_table_name = gtk_entry_new_with_buffer(buffer_table);
+
+    g_signal_connect(G_OBJECT(entry_table_name), "key-press-event", G_CALLBACK(table_name_formatter), pointer_passer);
+
+
     g_hash_table_insert(pointer_passer, &KEY_BUFFER_TABLE, buffer_table);
 
     GtkWidget *hbox_table_name = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_table_name), label_table_name, TRUE, TRUE, 10);
-    gtk_box_pack_start(GTK_BOX(hbox_table_name), text_table_name, TRUE, TRUE, 10);
+    gtk_box_pack_start(GTK_BOX(hbox_table_name), entry_table_name, TRUE, TRUE, 10);
 
     GtkWidget *label_mysql_command = gtk_label_new("CREATE TABLE ");
     gtk_label_set_justify(GTK_LABEL(label_mysql_command), GTK_JUSTIFY_LEFT);
@@ -112,11 +116,10 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkWidget *status_bar = gtk_statusbar_new();
     g_hash_table_insert(pointer_passer, &KEY_STATUS_BAR, status_bar);
 
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar),STATUS_BAR_CONTEXT_INFO);
+    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO);
 
     guint status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Ready");
-       g_hash_table_insert(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID, &status_bar_context_info_message_id);
-
+    g_hash_table_insert(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID, &status_bar_context_info_message_id);
 
     GtkWidget *vbox_ui = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(vbox_ui), hbox_file_choose, TRUE, TRUE, 10);

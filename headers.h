@@ -72,7 +72,7 @@ gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex);
 void cleanup (GtkWidget* window, gpointer data);
 void closeup(GtkWidget *button_close, gpointer data);
 void copy_statement(GtkWidget *button_copy, gpointer data);
-
+gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
@@ -94,6 +94,8 @@ static gint KEY_LABEL_MYSQL_COMMAND = 11;
 static gint KEY_STATUS_BAR = 12;
 static gint STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID = 13;
 static gint KEY_CURRENT_LINE_NUMBER = 14;
+static gint KEY_FIELD_CLAUSE = 15;
+
 
 static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
 

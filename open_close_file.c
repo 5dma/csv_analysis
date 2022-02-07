@@ -19,7 +19,7 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
      g_snprintf(progress_message, 100, "Reading line %d...", line_number);
     status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, progress_message);
      while(g_main_context_pending (g_main_context_default())) {
-        g_main_context_iteration (g_main_context_default(),TRUE);
+        g_main_context_iteration (g_main_context_default(),FALSE);
 
     }
 }
@@ -95,7 +95,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     while (getline(&csv_line, &len, fp) != -1) {
       //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
-        line_number_in_status_bar(line_number, data);
+     //   line_number_in_status_bar(line_number, data);
 
      //   g_print("Processing line %s\n", progress_message);
         /* gtk_statusbar_remove(GTK_STATUSBAR(status_bar), status_bar_context_info, status_bar_context_info_message_id);
