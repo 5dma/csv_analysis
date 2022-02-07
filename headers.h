@@ -73,6 +73,7 @@ void cleanup (GtkWidget* window, gpointer data);
 void closeup(GtkWidget *button_close, gpointer data);
 void copy_statement(GtkWidget *button_copy, gpointer data);
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
+void concat_command(GtkEditable* self,  gpointer data);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();

@@ -3,19 +3,16 @@
 
 #include "headers.h"
 
-void concat_command(GHashTable *pointer_passer) {
-   
+void concat_command(GtkEditable* self, gpointer data) {
+        GHashTable *pointer_passer = (GHashTable *)data;
     GtkEntryBuffer *buffer_table = (GtkEntryBuffer *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
     gchar *field_clause = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_CLAUSE);
-   
+
     GtkWidget *label_mysql_command = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_LABEL_MYSQL_COMMAND);
 
-
-   gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_buffer_get_text(buffer_table), " ", field_clause, ");", NULL);
+    gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_buffer_get_text(buffer_table), " ", field_clause, ");", NULL);
 
     gtk_label_set_text(GTK_LABEL(label_mysql_command), complete_command);
-
-    return ;
 }
 
 guint get_number_of_fields(GHashTable *field_analysis_hash) {
@@ -93,7 +90,7 @@ void display_results(GHashTable *pointer_passer) {
 
     gchar *field_clause = g_strjoinv(", ", column_strings);
     g_hash_table_insert(pointer_passer, &KEY_FIELD_CLAUSE, field_clause);
-    concat_command(pointer_passer);
+  //  concat_command(pointer_passer);
 }
 
 /**
@@ -105,7 +102,7 @@ void display_results(GHashTable *pointer_passer) {
 * \sa started_cell_editing()
 */
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer data) {
-      GHashTable *pointer_passer = (GHashTable *)data;
+    GHashTable *pointer_passer = (GHashTable *)data;
     g_print("I got to the update\n");
     if (
         (event->keyval >= GDK_KEY_0) && (event->keyval <= GDK_KEY_9) ||
@@ -120,7 +117,7 @@ gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer da
         (event->keyval == GDK_KEY_KP_Left) ||
         (event->keyval == GDK_KEY_KP_Right) ||
         (event->keyval == GDK_KEY_Delete)) {
-        concat_command(pointer_passer);
+        g_print("I pressed OK character\n");
 
         return FALSE;
     }

@@ -86,11 +86,11 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     GtkEntryBuffer *buffer_table = gtk_entry_buffer_new("mytable", 7);
     GtkWidget *entry_table_name = gtk_entry_new_with_buffer(buffer_table);
+    g_hash_table_insert(pointer_passer, &KEY_BUFFER_TABLE, buffer_table);
 
     g_signal_connect(G_OBJECT(entry_table_name), "key-press-event", G_CALLBACK(table_name_formatter), pointer_passer);
-
-
-    g_hash_table_insert(pointer_passer, &KEY_BUFFER_TABLE, buffer_table);
+    g_signal_connect(G_OBJECT(buffer_table), "deleted-text", G_CALLBACK(concat_command), pointer_passer);
+    g_signal_connect(G_OBJECT(buffer_table), "inserted-text", G_CALLBACK(concat_command), pointer_passer);
 
     GtkWidget *hbox_table_name = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(hbox_table_name), label_table_name, TRUE, TRUE, 10);
