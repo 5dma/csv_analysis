@@ -124,6 +124,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_widget_set_halign(button_copy, GTK_ALIGN_CENTER);
     g_signal_connect(G_OBJECT(button_copy), "clicked", G_CALLBACK(copy_statement), pointer_passer);
     gtk_widget_set_sensitive(button_copy, FALSE);
+        g_hash_table_insert(pointer_passer, &KEY_BUTTON_COPY, button_copy);
 
     GtkWidget *status_bar = gtk_statusbar_new();
     g_hash_table_insert(pointer_passer, &KEY_STATUS_BAR, status_bar);

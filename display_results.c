@@ -3,8 +3,7 @@
 
 #include "headers.h"
 
-void concat_command(GtkEditable* self, gpointer data) {
-    
+void concat_command(GtkEditable *self, gpointer data) {
     GHashTable *pointer_passer = (GHashTable *)data;
     GtkEntry *buffer_table = (GtkEntry *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
     gchar *field_clause = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_CLAUSE);
@@ -91,7 +90,13 @@ void display_results(GHashTable *pointer_passer) {
 
     gchar *field_clause = g_strjoinv(", ", column_strings);
     g_hash_table_insert(pointer_passer, &KEY_FIELD_CLAUSE, field_clause);
-    concat_command(NULL, (gpointer) pointer_passer);
+    concat_command(NULL, (gpointer)pointer_passer);
+
+    GtkWidget *button_copy = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUTTON_COPY);
+    gtk_widget_set_sensitive(button_copy, TRUE);
+
+    GtkWidget *entry_table_name = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
+    gtk_widget_set_sensitive(entry_table_name, TRUE);
 }
 
 /**
