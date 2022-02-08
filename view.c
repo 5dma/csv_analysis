@@ -99,8 +99,9 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_box_pack_start(GTK_BOX(hbox_table_name), entry_table_name, FALSE, FALSE, 10);
 
     GtkWidget *label_mysql_command = gtk_label_new("CREATE TABLE ");
-    gtk_label_set_justify(GTK_LABEL(label_mysql_command), GTK_JUSTIFY_LEFT);
+    gtk_widget_set_halign(label_mysql_command,GTK_ALIGN_START);
     gtk_label_set_line_wrap(GTK_LABEL(label_mysql_command), TRUE);
+    gtk_label_set_selectable (GTK_LABEL(label_mysql_command), TRUE);
     g_hash_table_insert(pointer_passer, &KEY_LABEL_MYSQL_COMMAND, label_mysql_command);
 
     GtkWidget *scrolled_window_command = gtk_scrolled_window_new(NULL, NULL);
