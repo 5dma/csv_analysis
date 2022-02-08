@@ -4,8 +4,8 @@
 
 void initialize_field_analysis(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
-    GHashTable **field_analysis_hash_ptr = (GHashTable **)data;
-    GHashTable *field_analysis_hash = *field_analysis_hash_ptr;
+   // GHashTable **field_analysis_hash_ptr = (GHashTable **)data;
+    GHashTable *field_analysis_hash = (GHashTable *) data;
 
     Field_analysis *field_analysis_struct = (Field_analysis *)malloc(sizeof(Field_analysis));
 

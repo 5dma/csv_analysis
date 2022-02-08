@@ -116,7 +116,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 headings = make_forced_headings(csv_line);
             }
             on_first_line = FALSE;
-            g_slist_foreach(headings, initialize_field_analysis, &field_analysis_hash);
+            g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
             continue;
         }
         int i = 0;

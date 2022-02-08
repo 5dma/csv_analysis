@@ -59,18 +59,15 @@ GSList *make_forced_headings(char *csv_line) {
         number_columns++;
     }
 
-    gchar buffer[3];
-    for (int i = 0; i < number_columns; i++) {
-        gchar *suffix = g_ascii_formatd(buffer, 3, "%02.2u", i);
+    gchar *prefix = strdup("column_");
+    gchar suffix[3];
+    for (gdouble i = 0; i < number_columns; i++) {
+        g_ascii_formatd(suffix, sizeof(suffix), "%02.0f", i);
+        gchar *buffer = g_strconcat(prefix, suffix, NULL);
 
-        /* heading is long enough to go up to column_99 and \0 */
-        gchar *heading = (gchar *)malloc(strlen("column_") + 3);
-        heading = strdup("column_");
-        g_strlcat(heading, suffix, 10);
-        local_list = g_slist_append(local_list, heading);
-        g_free(suffix);
+        local_list = g_slist_append(local_list, buffer);
     }
-
+    g_free(prefix);
     return local_list;
 }
 
