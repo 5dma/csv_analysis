@@ -32,3 +32,13 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
     }
     gtk_widget_destroy(dialog);
 }
+
+void filename_changed(GtkEntry *text_filename, gpointer data) {
+    GHashTable *pointer_passer = (GHashTable *)data;
+    GtkWidget *button_go = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUTTON_GO);
+    if (gtk_entry_get_text_length(text_filename) == 0) {
+        gtk_widget_set_sensitive(button_go, FALSE);
+    } else {
+        gtk_widget_set_sensitive(button_go, TRUE);
+    }
+}
