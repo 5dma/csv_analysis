@@ -99,6 +99,7 @@ static gint KEY_CURRENT_LINE_NUMBER = 14;
 static gint KEY_FIELD_CLAUSE = 15;
 static gint KEY_BUTTON_GO = 16;
 static gint KEY_BUTTON_COPY = 17;
+static gint KEY_HEADINGS = 18;
 
 static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
 

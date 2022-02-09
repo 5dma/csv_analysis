@@ -59,7 +59,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     FILE *fp = fopen(filename, "r");
 
     if (fp == NULL) {
-           status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Could not open the file.");
+        status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Could not open the file.");
         g_print("Could not open the file\n");
         return FALSE;
     }
@@ -74,7 +74,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
         exit(-1);
     }
 
-  status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Reading file...");
+    status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Reading file...");
 
     GSList *headings = NULL;
     gboolean on_first_line = TRUE;
@@ -90,8 +90,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     gint line_number = 1;
 
     GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
-    gboolean has_header_line = gtk_toggle_button_get_active(
-        GTK_TOGGLE_BUTTON(checkbox_has_headers));
+    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox_has_headers));
 
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
@@ -119,6 +118,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
             g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
             continue;
         }
+        g_hash_table_insert(pointer_passer, &KEY_HEADINGS, headings);
         int i = 0;
         gchar *key = NULL;
         gpointer value = NULL;

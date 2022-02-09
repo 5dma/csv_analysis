@@ -15,18 +15,23 @@ void concat_command(GtkEditable *self, gpointer data) {
     gtk_label_set_text(GTK_LABEL(label_mysql_command), complete_command);
 }
 
-guint get_number_of_fields(GHashTable *field_analysis_hash) {
+guint get_number_of_columns(GHashTable *field_analysis_hash) {
     GList *keys = g_hash_table_get_keys(field_analysis_hash);
     return g_list_length(keys);
 }
 
-void display_single_result(gpointer key, gpointer value, gpointer data) {
+void display_single_result(gpointer heading, gpointer data) {
+    gchar *key = (gchar *)heading;
     GHashTable *pointer_passer = (GHashTable *)data;
 
-    gchar *key_char = (gchar *)key;
-    Field_analysis *field_analysis = (Field_analysis *)value;
+    GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
+
+    Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(field_analysis_hash, key);
+    //  Field_analysis *field_analysis = (Field_analysis *)value;
     enum data_types field_type = field_analysis->field_type;
     char **datatype_strings = (char **)g_hash_table_lookup(pointer_passer, &KEY_DATA_TYPE_STRINGS);
+
+ //   GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
 
     gchar datatype_string[100];
     if (field_type == CHAR) {
@@ -40,7 +45,7 @@ void display_single_result(gpointer key, gpointer value, gpointer data) {
     gtk_list_store_append(list_store_results, &iter);
 
     gtk_list_store_set(list_store_results, &iter,
-                       COLUMN_NAME, key_char,
+                       COLUMN_NAME, key,
                        DATA_TYPE, datatype_string,
                        DETERMINING_LINE, field_analysis->last_line_change,
                        -1);
@@ -49,7 +54,7 @@ void display_single_result(gpointer key, gpointer value, gpointer data) {
 
     gchar **column_strings = (gchar **)g_hash_table_lookup(pointer_passer, &KEY_COLUMN_STRINGS);
 
-    char *intermediate = g_strconcat(key_char, " ", datatype_string, NULL);
+    char *intermediate = g_strconcat(key, " ", datatype_string, NULL);
     *(column_strings + *current_column_number) = g_strdup(intermediate);
 
     (*current_column_number)++;
@@ -76,7 +81,7 @@ void display_results(GHashTable *pointer_passer) {
 
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
 
-    guint number_of_columns = get_number_of_fields(field_analysis_hash);
+    guint number_of_columns = get_number_of_columns(field_analysis_hash);
     gchar *column_strings[number_of_columns + 1];
 
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, column_strings);
@@ -84,7 +89,10 @@ void display_results(GHashTable *pointer_passer) {
     guint current_column_number = 0;
     g_hash_table_insert(pointer_passer, &KEY_CURRENT_COLUMN_NUMBER, &current_column_number);
 
-    g_hash_table_foreach(field_analysis_hash, display_single_result, pointer_passer);
+    GSList *headings = (GSList *)g_hash_table_lookup(pointer_passer, &KEY_HEADINGS);
+    g_slist_foreach(headings, display_single_result, pointer_passer);
+
+    //  g_hash_table_foreach(field_analysis_hash, display_single_result, pointer_passer);
 
     column_strings[number_of_columns] = NULL;
 
