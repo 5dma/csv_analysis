@@ -17,7 +17,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     g_hash_table_insert(pointer_passer, &KEY_WINDOW, window);
 
-    // gtk_window_set_default_size(GTK_WINDOW(window), 400, 800);
+    gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, -1);
 
     GtkWidget *label_csv_file = gtk_label_new("CSV file:");
     GtkWidget *text_filename = gtk_entry_new();
@@ -86,7 +86,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(scrolled_window), tree);
-    gtk_widget_set_size_request(scrolled_window, -1, 250);
+    gtk_widget_set_size_request(scrolled_window, WINDOW_WIDTH, 250);
 
     GtkWidget *label_table_name = gtk_label_new("Table name:");
 
@@ -111,7 +111,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkWidget *scrolled_window_command = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window_command), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(scrolled_window_command), label_mysql_command);
-    gtk_widget_set_size_request(scrolled_window_command, -1, 150);
+    gtk_widget_set_size_request(scrolled_window_command, WINDOW_WIDTH, 150);
 
     GtkWidget *button_close = gtk_button_new_with_label("Close");
     gtk_widget_set_valign(button_close, GTK_ALIGN_START);
