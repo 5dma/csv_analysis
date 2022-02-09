@@ -4,7 +4,7 @@
 
 /**
  * @file main.c
- * @brief This small GTK 3.0 application prints deposit slips.
+ * @brief This small GTK 3.0 application reads a CSV file and generates the corresponding MySQL CREATE TABLE statement.
  *
  * To generate this 
  * code documentation, run `doxygen Doxyfile`. The output is in the `html/` 
@@ -20,10 +20,6 @@ int main(int argc, char *argv[]) {
     g_signal_connect(app, "activate", G_CALLBACK(on_app_activate), NULL);
 
     int status = g_application_run(G_APPLICATION(app), argc, argv);
-
-
-
-      //  gboolean crap = omg(TRUE);
 
     /* Decrease reference count because assigning it in on_app_activate */
     g_object_unref(app); 
