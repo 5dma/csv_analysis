@@ -24,7 +24,6 @@ gboolean free_field_analysis_hash(gpointer key, gpointer value, gpointer user_da
 void closeup(GtkWidget *button_close, gpointer data) {
     /* For some reason, this strategy emits two destroy signals. Need to resolve. */
     GHashTable *pointer_passer = (GHashTable *)data;
-    g_print("Got OMG\n");
     GtkWidget *window = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_WINDOW);
     gtk_widget_destroy(window);
 }
@@ -36,8 +35,6 @@ void closeup(GtkWidget *button_close, gpointer data) {
 */
 void cleanup(GtkWidget *window, gpointer data) {
     GHashTable *pointer_passer = (GHashTable *)data;
-    g_print("Got here\n");
-
     gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
     g_free(filename);
 

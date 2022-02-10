@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+
 #include "headers.h"
 /**
  * @file view.c
@@ -79,9 +80,11 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkTreeViewColumn *columnDeterminingLine;
 
     rendererDeterminingLine = gtk_cell_renderer_text_new();
+    gtk_cell_renderer_set_alignment(GTK_CELL_RENDERER(rendererDeterminingLine), 1.0, 0.0);
     columnDeterminingLine = gtk_tree_view_column_new_with_attributes("Determining line", rendererDeterminingLine,
                                                                      "text", DETERMINING_LINE,
                                                                      NULL);
+    gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(columnDeterminingLine), 1.0);
 
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnName);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnType);
@@ -101,7 +104,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_entry_set_text(GTK_ENTRY(entry_table_name), "mytable");
     g_hash_table_insert(pointer_passer, &KEY_BUFFER_TABLE, entry_table_name);
     gtk_widget_set_sensitive(entry_table_name, FALSE);
-    
+
     /* Two signals attached to this object. The first is key-press-event, which checks that the user types a valid character for MySQL tables. If so, the changed signal updates the displayed command with the new table name. */
     g_signal_connect(G_OBJECT(entry_table_name), "key-press-event", G_CALLBACK(table_name_formatter), pointer_passer);
     g_signal_connect(G_OBJECT(entry_table_name), "changed", G_CALLBACK(concat_command), pointer_passer);
@@ -116,7 +119,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_widget_set_halign(label_mysql_command, GTK_ALIGN_START);
     gtk_label_set_line_wrap(GTK_LABEL(label_mysql_command), TRUE);
     gtk_label_set_selectable(GTK_LABEL(label_mysql_command), TRUE);
-    gtk_label_set_yalign (GTK_LABEL(label_mysql_command), 0);
+    gtk_label_set_yalign(GTK_LABEL(label_mysql_command), 0);
 
     g_hash_table_insert(pointer_passer, &KEY_LABEL_MYSQL_COMMAND, label_mysql_command);
 
@@ -125,7 +128,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window_command), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(scrolled_window_command), label_mysql_command);
     gtk_widget_set_size_request(scrolled_window_command, WINDOW_WIDTH, 150);
-    
+
     /* Button that terminates the application. */
     GtkWidget *button_close = gtk_button_new_with_label("Close");
     gtk_widget_set_valign(button_close, GTK_ALIGN_START);
