@@ -18,7 +18,7 @@ gboolean free_field_analysis_hash(gpointer key, gpointer value, gpointer user_da
 
 /**
  * Callback that runs after clicking on the Close button. This function emits the "destroy" signal on the application window. The callback for that emitted signal is cleanup().
- * @param button Clicked button.
+ * @param button_close Clicked button.
  * @param data Pointer to the pointer-passer hash.
 */
 void closeup(GtkWidget *button_close, gpointer data) {
@@ -31,7 +31,7 @@ void closeup(GtkWidget *button_close, gpointer data) {
 
 /**
  * Callback that runs after the destory signal is emitted on the application window. This function frees all the memory allocated to objects in the pointer passer.
- * @param button Clicked button.
+ * @param window Main application window.
  * @param data Pointer to the pointer-passer hash.
 */
 void cleanup(GtkWidget *window, gpointer data) {
@@ -58,4 +58,5 @@ void cleanup(GtkWidget *window, gpointer data) {
     g_hash_table_foreach_remove(field_analysis_hash, (GHRFunc)free_field_analysis_hash, NULL);
 
     g_hash_table_destroy (pointer_passer);
+
 }

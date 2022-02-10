@@ -29,7 +29,7 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
     if (result == GTK_RESPONSE_OK) {
         filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
         g_hash_table_insert(pointer_passer, &KEY_CSV_FILE, strdup(filename));
-
+       
         GtkWidget *text_filename = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_TEXT_FILENAME);
 
         gtk_entry_set_text(GTK_ENTRY(text_filename), filename);
@@ -43,7 +43,7 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
  * -# The the length of the string currently in the entry field.
  * -# If the length is zero, disable the Go button; otherwise, enable the Go button.
  * -# Set the message in the status bar to Ready.
- * @param button GtkEntry holding the current filename.
+ * @param text_filename GtkEntry holding the current filename.
  * @param data Pointer to the pointer-passer hash.
 */
 void filename_changed(GtkEntry *text_filename, gpointer data) {

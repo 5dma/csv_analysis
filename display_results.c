@@ -1,8 +1,20 @@
 #include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
-
 #include "headers.h"
+/**
+ * @file display_results.c
+ * @brief Defines functions for displaying the results of the CSV scan.
+*/
 
+/**
+ * Concatenates the following strings into one long string:
+ * - String literal `CREATE TABLE `.
+ * - MySQL table name.
+ * - List of columns and their definitions.
+ * - String literal `);`.
+ * @param self A `GtkEditable` containing the MySQL table name.
+ * @param data Pointer to the pointer-passer hash.
+*/
 void concat_command(GtkEditable *self, gpointer data) {
     GHashTable *pointer_passer = (GHashTable *)data;
     GtkEntry *buffer_table = (GtkEntry *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
@@ -10,16 +22,26 @@ void concat_command(GtkEditable *self, gpointer data) {
 
     GtkWidget *label_mysql_command = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_LABEL_MYSQL_COMMAND);
 
+    /* Not sure if the following pointer needs to be freed, as it is set into the label widget. */
     gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_get_text(buffer_table), " ", field_clause, ");", NULL);
 
     gtk_label_set_text(GTK_LABEL(label_mysql_command), complete_command);
 }
 
+/**
+ * Returns the number of columns in a CSV file, by counting the number of keys in the field_analysis_hash. 
+ * @param field_analysis_hash Hash table desribing each column in the CSV file.
+*/
 guint get_number_of_columns(GHashTable *field_analysis_hash) {
     GList *keys = g_hash_table_get_keys(field_analysis_hash);
     return g_list_length(keys);
 }
 
+/**
+ * Displays the result for a single column in the CSV file. The result is added to the list store holding the results, and also added to an allocated array of character strings. This function is a callback from an iterator over the list of headings.
+ * @param heading Hash table desribing each column in the CSV file.
+ * @param data Pointer to the pointer-passer hash.
+*/
 void display_single_result(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
     GHashTable *pointer_passer = (GHashTable *)data;
@@ -27,12 +49,11 @@ void display_single_result(gpointer heading, gpointer data) {
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
 
     Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(field_analysis_hash, key);
-    //  Field_analysis *field_analysis = (Field_analysis *)value;
+
     enum data_types field_type = field_analysis->field_type;
     char **datatype_strings = (char **)g_hash_table_lookup(pointer_passer, &KEY_DATA_TYPE_STRINGS);
 
- //   GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
-
+    /* The following string holds a formatted string of the MySQL type, such as `TINYINT` or `CHAR(40)`. */
     gchar datatype_string[100];
     if (field_type == CHAR) {
         g_snprintf(datatype_string, 50, "%s(%d)", *(datatype_strings + field_type), field_analysis->char_width);
@@ -50,17 +71,30 @@ void display_single_result(gpointer heading, gpointer data) {
                        DETERMINING_LINE, field_analysis->last_line_change,
                        -1);
 
+    /* Retrieve the current column number, which is an index into the array of character
+       strings of the results. Copy the current formatted string into that index. */
     guint *current_column_number = (guint *)g_hash_table_lookup(pointer_passer, &KEY_CURRENT_COLUMN_NUMBER);
 
     gchar **column_strings = (gchar **)g_hash_table_lookup(pointer_passer, &KEY_COLUMN_STRINGS);
 
     char *intermediate = g_strconcat(key, " ", datatype_string, NULL);
     *(column_strings + *current_column_number) = g_strdup(intermediate);
+    g_free(intermediate);
 
     (*current_column_number)++;
 }
 
+/**
+ * Iterates over the accumulated results, displaying each one. The function does the following:
+ * -# Declare an array of strings, each a MySQL type. Insert the array into pointer-passer.
+ * -# Get the number of columns in the field analysis (which is the number of columns in the CSV file). Insert into the pointer-passer.
+ * -# Declare an array of empty character strings. The length of the array is the number of columns from the previous step.
+ * -# Retrieve the list of headings from pointer passer.
+ * -# Iterate over the list of headings, formatting the results. Doing so ensures the results appear in the same order as they are in the original CSV file. See display_single_result().
+ * @param pointer_passer Pointer to the pointer-passer hash.
+*/
 void display_results(GHashTable *pointer_passer) {
+
     gchar *datatype_strings[14] = {
         "TINYINT_UNSIGNED",
         "SMALLINT_UNSIGNED",
@@ -85,7 +119,6 @@ void display_results(GHashTable *pointer_passer) {
     g_hash_table_insert(pointer_passer, &KEY_NUMBER_OF_COLUMNS, &number_of_columns);
     
     gchar *column_strings[number_of_columns + 1]; /* Memory freed in cleanup() */
-
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, column_strings);
 
     guint current_column_number = 0;
@@ -105,15 +138,13 @@ void display_results(GHashTable *pointer_passer) {
 
     GtkWidget *entry_table_name = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
     gtk_widget_set_sensitive(entry_table_name, TRUE);
-
-
 }
 
 /**
 * Callback that prevents the user from entering anything in a `GtkCellEditable` other than digits and a decimal point. The actual allowed keys are [0-9], decimal point, backspace, delete, cursor right, and cursor left.
 * @param widget Widget where the edit is occurring.
 * @param event Key that was pressed.
-* @param user_data `NULL` in this case.
+* @param data `NULL` in this case.
 * @return  `FALSE` if an allowed key was pressed, `TRUE` otherwise.
 * \sa started_cell_editing()
 */

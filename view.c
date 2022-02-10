@@ -1,14 +1,13 @@
 #include <gtk/gtk.h>
-
 #include "headers.h"
 /**
- * @file app_activate.c
+ * @file view.c
  * @brief Builds the view.
 */
 
 /**
  * Function that creates the application's view.
- * @param app Pointer to the GTK application.
+ * @param pointer_passer Pointer to the pointer-passer hash.
 */
 GtkWidget *make_window(GHashTable *pointer_passer) {
     GApplication *app = (GApplication *)g_hash_table_lookup(pointer_passer, &KEY_APP);

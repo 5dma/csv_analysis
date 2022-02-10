@@ -1,6 +1,13 @@
 #include <gtk/gtk.h>
 #include <regex.h>
+/**
+ * @file compile_regexes.c
+ * @brief Compiles regular expressions.
+*/
 
+/**
+ * Compiles a regular expression for identifying a decimal number. The string must have a decimal point followed by 0-2 digits.
+*/ 
 regex_t make_decimal_regex() {
     regex_t decimal_regex;
     int value;
@@ -14,6 +21,9 @@ regex_t make_decimal_regex() {
     return decimal_regex;
 }
 
+/**
+ * Compiles a regular expression for identifying a timestamp.
+*/ 
 regex_t make_timestamp_regex() {
     regex_t timestamp_regex;
     int value;

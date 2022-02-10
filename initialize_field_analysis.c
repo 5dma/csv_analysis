@@ -1,7 +1,15 @@
 #include <gtk/gtk.h>
-
 #include "headers.h"
+/**
+ * @file initialize_field_analysis.c
+ * @brief Initializes a Field_analysis struct.
+*/
 
+/**
+ * Instantiates a `Field_analysis` struct and adds it to the field analysis hash. The key is the passed heading, and the value is the new struct.
+ * @param heading Column for which we are instantiating a struct.
+ * @param data Pointer to the pointer-passer hash.
+*/
 void initialize_field_analysis(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
     GHashTable *field_analysis_hash = (GHashTable *) data;

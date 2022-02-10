@@ -2,8 +2,11 @@
 #include <math.h>
 #include <regex.h>
 #include <stdio.h>
-
 #include "headers.h"
+/**
+ * @file open_close_file.c
+ * @brief Functions for processing the CSV file.
+*/
 
 void line_number_in_status_bar(gint line_number, gpointer data) {
     GHashTable *pointer_passer = (GHashTable *)data;
@@ -38,6 +41,18 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
     
 }*/
 
+/**
+ * Callback for processing the CSV file. Runs after clicking Go in the main window. The function does the following:
+ * -# Checks if the passed file exists.
+ * -# Compile regular expressions.
+ * -# Create headers, either from the first line of the file or artificially.
+ * -# Initilize a `Field_analysis` struct for each column.
+ * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
+ * -# Close the file.
+ * -# Print the results.
+ * @param button Clicked button.
+ * @param data Pointer to the pointer-passer hash.
+*/
 gboolean process_file(GtkButton *button, gpointer data) {
     /*     GThread *my_thread = g_thread_new("my_thread", (GThreadFunc)line_counter, data);
     if (!my_thread) {
@@ -60,7 +75,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     if (fp == NULL) {
         status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Could not open the file.");
-        g_print("Could not open the file\n");
         return FALSE;
     }
     char *csv_line;
@@ -665,8 +679,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
         line_number++;
     }
     fclose(fp);
-    /* Free memory in the list of headings */
-    //g_slist_free_full(headings, (GDestroyNotify)free_headings);
 
     display_results(pointer_passer);
 

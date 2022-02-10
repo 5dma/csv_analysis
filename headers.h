@@ -2,7 +2,6 @@
 #include <regex.h>
 #ifndef __HEADER
 #define __HEADER
-
 /**
  * @file headers.h
  * @brief C headers.

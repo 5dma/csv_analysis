@@ -1,7 +1,17 @@
 #include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
 #include <regex.h>
+/**
+ * @file field_tests.c
+ * @brief Defines functions for analyzing the columns in a CSV file.
+*/
 
+/**
+ * Checks if a passed value is an unsigned integer between a given min and max.
+ * @param token A character string.
+ * @param min Lower bound for the unsigned integer.
+ * @param max Upper bound for the unsigned integer.
+*/
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
     GError *error = NULL;
     guint64 num = 0;
@@ -12,6 +22,12 @@ gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
     return FALSE;
 }
 
+/**
+ * Checks if a passed value is a signed integer between a given min and max.
+ * @param token A character string.
+ * @param min Lower bound for the signed integer.
+ * @param max Upper bound for the signed integer.
+*/
 gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
     GError *error = NULL;
     guint64 num = 0;
@@ -22,6 +38,11 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
     return FALSE;
 }
 
+/**
+ * Checks if a passed value is a decimal.
+ * @param token A character string.
+ * @param decimal_regex Compiled regex for a number with 0-2 numbers after a decimal point.
+*/
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
     regmatch_t pmatch[2];
 
@@ -29,8 +50,11 @@ gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
     return (success == 0) ? TRUE : FALSE;
 }
 
+/**
+ * Checks if a passed value is a float.
+ * @param token A character string.
+*/
 gboolean is_float(const gchar *token) {
-
     gchar *end_ptr;
     size_t token_length = strlen(token);
     gdouble result = g_ascii_strtod(token, &end_ptr);
@@ -44,7 +68,11 @@ gboolean is_float(const gchar *token) {
     }
 }
 
-
+/**
+ * Checks if a passed value is a timestamp.
+ * @param token A character string.
+ * @param timestamp_regex Compiled regex for a timestamp, such as a pattern YYYY-MM-DDThh:mm:ss:xxx.
+*/
 gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex) {
     regmatch_t pmatch[2];
 
