@@ -100,6 +100,7 @@ static gint KEY_FIELD_CLAUSE = 15;
 static gint KEY_BUTTON_GO = 16;
 static gint KEY_BUTTON_COPY = 17;
 static gint KEY_HEADINGS = 18;
+static gint KEY_NUMBER_OF_COLUMNS = 19;
 
 static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
 static guint WINDOW_WIDTH = 400;

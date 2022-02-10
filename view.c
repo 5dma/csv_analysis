@@ -50,7 +50,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     g_signal_connect(G_OBJECT(button_go), "clicked", G_CALLBACK(process_file), pointer_passer);
 
     /* List store that contains the results of the analysis. The columns in the store are column heading, MySQL data type, and the line in the CSV file that determined the MySQL data type. */
-    GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
+    GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT); /* Reference count decremented below, after being assigned to the tree. */
     g_hash_table_insert(pointer_passer, &KEY_LIST_STORE, list_store_results);
 
     GtkTreeIter iter;

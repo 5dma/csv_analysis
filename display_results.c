@@ -82,7 +82,9 @@ void display_results(GHashTable *pointer_passer) {
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
 
     guint number_of_columns = get_number_of_columns(field_analysis_hash);
-    gchar *column_strings[number_of_columns + 1];
+    g_hash_table_insert(pointer_passer, &KEY_NUMBER_OF_COLUMNS, &number_of_columns);
+    
+    gchar *column_strings[number_of_columns + 1]; /* Memory freed in cleanup() */
 
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, column_strings);
 
@@ -91,8 +93,6 @@ void display_results(GHashTable *pointer_passer) {
 
     GSList *headings = (GSList *)g_hash_table_lookup(pointer_passer, &KEY_HEADINGS);
     g_slist_foreach(headings, display_single_result, pointer_passer);
-
-    //  g_hash_table_foreach(field_analysis_hash, display_single_result, pointer_passer);
 
     column_strings[number_of_columns] = NULL;
 
@@ -105,6 +105,8 @@ void display_results(GHashTable *pointer_passer) {
 
     GtkWidget *entry_table_name = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
     gtk_widget_set_sensitive(entry_table_name, TRUE);
+
+
 }
 
 /**
