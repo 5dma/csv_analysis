@@ -4,12 +4,12 @@
 /**
  * @file view.c
  * @brief Builds the view.
-*/
+ */
 
 /**
  * Function that creates the application's view.
  * @param pointer_passer Pointer to the pointer-passer hash.
-*/
+ */
 GtkWidget *make_window(GHashTable *pointer_passer) {
     GApplication *app = (GApplication *)g_hash_table_lookup(pointer_passer, &KEY_APP);
 
@@ -36,6 +36,42 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_box_pack_start(GTK_BOX(hbox_file_choose), label_csv_file, FALSE, FALSE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_file_choose), text_filename, FALSE, FALSE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_file_choose), button_choose, FALSE, FALSE, 10);
+
+    /* Control for field delimiter */
+    GtkWidget *label_field_delimiter = gtk_label_new("Field delimiter:");
+    GtkWidget *combo_field_delimeter = gtk_combo_box_text_new();
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "0", "Tabs");
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "1", "Commas");
+    gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_field_delimeter), "0");
+
+    /* Hbox for field delimiter and label. */
+    GtkWidget *hbox_field_delimiter = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_field_delimiter), label_field_delimiter, FALSE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_field_delimiter), combo_field_delimeter, FALSE, FALSE, 5);
+
+    /* Control for fields enclosed by */
+    GtkWidget *label_fields_enclosed = gtk_label_new("Fields enclosed by:");
+    GtkWidget *combo_fields_enclosed = gtk_combo_box_text_new();
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "0", "(none)");
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "1", "Double quotes");
+    gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_fields_enclosed), "0");
+
+    /* Hbox for fields enclosed by and label. */
+    GtkWidget *hbox_fields_enclosed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_fields_enclosed), label_fields_enclosed, FALSE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_fields_enclosed), combo_fields_enclosed, FALSE, FALSE, 5);
+
+    /* Control for line terminator */
+    GtkWidget *label_line_terminator = gtk_label_new("Line terminator:");
+    GtkWidget *combo_line_terminator = gtk_combo_box_text_new();
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_line_terminator), "0", "LF (Linux)");
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_line_terminator), "1", "LF/CR (Windows)");
+    gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_line_terminator), "0");
+
+    /* Hbox for field line terminator and label. */
+    GtkWidget *hbox_line_terminator = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_line_terminator), label_line_terminator, FALSE, FALSE, 5);
+    gtk_box_pack_start(GTK_BOX(hbox_line_terminator), combo_line_terminator, FALSE, FALSE, 5);
 
     /* Checkbox for indicating if the input CSV file has column headers. */
     GtkWidget *checkbox_has_headers = gtk_check_button_new_with_label("File contains column headers");
@@ -154,14 +190,17 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkWidget *grid = gtk_grid_new();
     gtk_widget_set_margin_top(grid, 20);
     gtk_grid_attach(GTK_GRID(grid), hbox_file_choose, 0, 0, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), checkbox_has_headers, 0, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_go, 1, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), scrolled_window, 0, 2, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), hbox_table_name, 0, 3, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), scrolled_window_command, 0, 4, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_close, 0, 5, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_copy, 1, 5, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), status_bar, 0, 6, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), hbox_field_delimiter, 0, 1, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), hbox_fields_enclosed, 0, 2, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), hbox_line_terminator, 0, 3, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), checkbox_has_headers, 0, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), button_go, 1, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), scrolled_window, 0, 5, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), hbox_table_name, 0, 6, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), scrolled_window_command, 0, 7, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), button_close, 0, 8, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), button_copy, 1, 8, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), status_bar, 0, 9, 2, 1);
 
     gtk_grid_set_row_spacing(GTK_GRID(grid), 20);
     gtk_grid_set_column_spacing(GTK_GRID(grid), 20);
