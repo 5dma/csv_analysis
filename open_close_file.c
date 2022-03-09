@@ -2,11 +2,12 @@
 #include <math.h>
 #include <regex.h>
 #include <stdio.h>
+
 #include "headers.h"
 /**
  * @file open_close_file.c
  * @brief Functions for processing the CSV file.
-*/
+ */
 
 void line_number_in_status_bar(gint line_number, gpointer data) {
     GHashTable *pointer_passer = (GHashTable *)data;
@@ -37,8 +38,8 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
         g_main_context_iteration (g_main_context_default(),TRUE);
 
     }
-    } 
-    
+    }
+
 }*/
 
 /**
@@ -52,7 +53,7 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
  * -# Print the results.
  * @param button Clicked button.
  * @param data Pointer to the pointer-passer hash.
-*/
+ */
 gboolean process_file(GtkButton *button, gpointer data) {
     /*     GThread *my_thread = g_thread_new("my_thread", (GThreadFunc)line_counter, data);
     if (!my_thread) {
@@ -94,7 +95,10 @@ gboolean process_file(GtkButton *button, gpointer data) {
     gboolean on_first_line = TRUE;
 
     char *token;
-    char *delimiter = "\t";
+
+    /* Retrieve the field delimiter */
+    GtkComboBox *combo_field_delimeter = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_DELIMITER);
+    char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id(combo_field_delimeter), "0") == 0) ? "\t" : ",";
 
     GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
     g_hash_table_insert(pointer_passer, &KEY_FIELD_ANALYSIS_HASH, field_analysis_hash);
@@ -105,6 +109,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox_has_headers));
+
+    /* Determine if fields are surrounded by double quotes. */
+    GtkComboBox *combo_fields_enclosed = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ENCLOSED_BY);
+    gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id(combo_fields_enclosed), "0") != 0;
+
+
 
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
@@ -124,9 +134,9 @@ gboolean process_file(GtkButton *button, gpointer data) {
  */
         if (on_first_line) {
             if (has_header_line) {
-                headings = make_headings(csv_line);
+                headings = make_headings(csv_line, delimiter, fields_surrounded_by_quotes);
             } else {
-                headings = make_forced_headings(csv_line);
+                headings = make_forced_headings(csv_line, delimiter);
             }
             on_first_line = FALSE;
             g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
@@ -147,8 +157,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
             enum data_types field_type = field_analysis->field_type;
 
+            /* Strip whitespace from the current token. */
             gchar *csv_value = g_strstrip(token);
 
+            if (fields_surrounded_by_quotes) {
+                strip_quotes(&csv_value);
+            }
             gboolean passes_test;
             switch (field_type) {
                 case TINYINT_UNSIGNED:

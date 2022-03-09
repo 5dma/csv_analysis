@@ -57,8 +57,9 @@ GtkWidget *make_window(GHashTable *pointer_passer);
 void button_choose_clicked (GtkButton *button, gpointer data);
 
 gboolean process_file(GtkButton *button, gpointer data);
-GSList *make_headings(char *csv_line);
-GSList *make_forced_headings(char *csv_line);
+GSList *make_headings(char *csv_line, char *delimiter, gboolean fields_surrounded_by_quotes);
+GSList *make_forced_headings(char *csv_line, char *delimiter);
+void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
 GDestroyNotify free_headings(gpointer data);
 void display_results(GHashTable *field_analysis_hash);
@@ -100,6 +101,8 @@ static gint KEY_BUTTON_GO = 16;
 static gint KEY_BUTTON_COPY = 17;
 static gint KEY_HEADINGS = 18;
 static gint KEY_NUMBER_OF_COLUMNS = 19;
+static gint KEY_FIELD_DELIMITER = 20;
+static gint KEY_FIELD_ENCLOSED_BY = 21;
 
 static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
 static guint WINDOW_WIDTH = 400;

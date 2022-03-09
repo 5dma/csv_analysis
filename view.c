@@ -43,6 +43,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "0", "Tabs");
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "1", "Commas");
     gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_field_delimeter), "0");
+    g_hash_table_insert(pointer_passer, &KEY_FIELD_DELIMITER, combo_field_delimeter);
 
     /* Hbox for field delimiter and label. */
     GtkWidget *hbox_field_delimiter = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -55,6 +56,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "0", "(none)");
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "1", "Double quotes");
     gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_fields_enclosed), "0");
+    g_hash_table_insert(pointer_passer, &KEY_FIELD_ENCLOSED_BY, combo_fields_enclosed);
 
     /* Hbox for fields enclosed by and label. */
     GtkWidget *hbox_fields_enclosed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
