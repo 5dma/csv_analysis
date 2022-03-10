@@ -47,21 +47,18 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
  * @param fields_surrounded_by_quotes Indicates if fields are surrounded by double quotes.
  */
 GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surrounded_by_quotes) {
-     char *token = NULL;
+    char *token = NULL;
     GSList *local_list = NULL;
     gchar *heading = NULL;
     while ((token = strsep(csv_line, delimiter)) != NULL) {
-    /*    heading = strdup(token); // Why is the heading variable necessary? */
-         if (fields_surrounded_by_quotes) {
-                strip_quotes(&token);
-            }
+        if (fields_surrounded_by_quotes) {
+            strip_quotes(&token);
+        }
         local_list = g_slist_append(local_list, token);
-       // g_free(heading); 
     }
 
     g_slist_foreach(local_list, clean_column_headings, NULL);
-    return local_list; 
-
+    return local_list;
 }
 
 /**
