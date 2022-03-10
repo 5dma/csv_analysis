@@ -78,7 +78,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
         status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Could not open the file.");
         return FALSE;
     }
-    char *csv_line;
+    gchar *csv_line;
     size_t max_number_characters = 1000;
     size_t len = 0;
 
@@ -134,9 +134,9 @@ gboolean process_file(GtkButton *button, gpointer data) {
  */
         if (on_first_line) {
             if (has_header_line) {
-                headings = make_headings(csv_line, delimiter, fields_surrounded_by_quotes);
+                headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
             } else {
-                headings = make_forced_headings(csv_line, delimiter);
+                headings = make_forced_headings(&csv_line, delimiter);
             }
             on_first_line = FALSE;
             g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);

@@ -43,33 +43,37 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 /**
  * Makes individual headings from the first line in a CSV file, placing all of them in a `GSList`. This function relies on `strsep` to tokenize between tab characters.
  * @param csv_line First line from a CSV file.
+ * @param delimiter Delimiter separating fields in the CSV file
+ * @param fields_surrounded_by_quotes Indicates if fields are surrounded by double quotes.
  */
-GSList *make_headings(char *csv_line, char *delimiter, gboolean fields_surrounded_by_quotes) {
-    char *token = NULL;
+GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surrounded_by_quotes) {
+     char *token = NULL;
     GSList *local_list = NULL;
     gchar *heading = NULL;
-    while ((token = strsep(&csv_line, delimiter)) != NULL) {
-  //      heading = strdup(token); /* Why is the heading variable necessary? */
+    while ((token = strsep(csv_line, delimiter)) != NULL) {
+    /*    heading = strdup(token); // Why is the heading variable necessary? */
          if (fields_surrounded_by_quotes) {
                 strip_quotes(&token);
             }
         local_list = g_slist_append(local_list, token);
+       // g_free(heading); 
     }
 
     g_slist_foreach(local_list, clean_column_headings, NULL);
-    return local_list;
+    return local_list; 
+
 }
 
 /**
  * Makes artifical column headings `column_00`, `column_01`, etc., placing all of them in a `GSList`.
  * @param csv_line First line from a CSV file.
  */
-GSList *make_forced_headings(char *csv_line, char *delimiter) {
+GSList *make_forced_headings(char **csv_line, char *delimiter) {
     char *token;
     GSList *local_list = NULL;
 
     int number_columns = 0;
-    while (strsep(&csv_line, delimiter) != NULL) {
+    while (strsep(csv_line, delimiter) != NULL) {
         number_columns++;
     }
 
