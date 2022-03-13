@@ -58,7 +58,7 @@ void button_choose_clicked (GtkButton *button, gpointer data);
 
 gboolean process_file(GtkButton *button, gpointer data);
 GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surrounded_by_quotes);
-GSList *make_forced_headings(char **csv_line, char *delimiter);
+GSList *make_forced_headings(char **csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
 GDestroyNotify free_headings(gpointer data);
@@ -75,6 +75,10 @@ void copy_statement(GtkWidget *button_copy, gpointer data);
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 void concat_command(GtkEditable* self,  gpointer data);
 void filename_changed(GtkEntry *text_filename, gpointer data);
+
+void change_quoted_strings_to_tab_delimiter(gchar **csv_line_ptr, gchar *delimiter);
+void change_commas_to_tabs_unquoted(gchar **csv_line_ptr);
+
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();

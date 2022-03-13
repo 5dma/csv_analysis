@@ -2,6 +2,8 @@
 #include <math.h>
 #include <regex.h>
 #include <stdio.h>
+#define G_LOG_USE_STRUCTURED
+#include <glib-2.0/glib.h>
 
 #include "headers.h"
 /**
@@ -114,8 +116,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
     GtkComboBox *combo_fields_enclosed = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ENCLOSED_BY);
     gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id(combo_fields_enclosed), "0") != 0;
 
-
-
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
     guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
@@ -124,6 +124,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     // gchar progress_message[100];
 
     while (getline(&csv_line, &len, fp) != -1) {
+    //    g_print("This is waht we read: %s\n", csv_line);
         //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
         //   line_number_in_status_bar(line_number, data);
@@ -132,22 +133,53 @@ gboolean process_file(GtkButton *button, gpointer data) {
         /* gtk_statusbar_remove(GTK_STATUSBAR(status_bar), status_bar_context_info, status_bar_context_info_message_id);
         status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, progress_message);
  */
+
+        /* If fields are not double quoted, and if the delimiter is a comma, then replace
+           commas with tabs. */
+        if ((g_strcmp0(delimiter, ",") == 0) && !fields_surrounded_by_quotes) {
+        //    g_print("Passing to procedure: %s\n", csv_line);
+            change_commas_to_tabs_unquoted(&csv_line);
+        }
+
+        g_print("This is after change_commas_to_tabs_unquoted: %s\n", csv_line);
+
+        if (fields_surrounded_by_quotes) {
+      //      g_print("We are changing surround quotes\n");
+            change_quoted_strings_to_tab_delimiter(&csv_line, delimiter);
+        }
+
         if (on_first_line) {
             if (has_header_line) {
                 headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
             } else {
-                headings = make_forced_headings(&csv_line, delimiter);
+                /*  g_log_structured (G_LOG_DOMAIN,
+                G_LOG_LEVEL_MESSAGE,
+                "CODE_FILE", "mysource.c",
+                "CODE_LINE", 312,
+                "MESSSAGE_ID", "06d4df59e6c24647bfe69d2c27ef0b4e",
+                "MESSAGE", "You have %d eggs", 12 + 2); */
+
+                headings = make_forced_headings(&csv_line);
             }
             on_first_line = FALSE;
             g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
             continue;
         }
         g_hash_table_insert(pointer_passer, &KEY_HEADINGS, headings);
-        int i = 0;
+        int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
-        while ((token = strsep(&csv_line, delimiter)) != NULL) {
-            key = strdup((gchar *)g_slist_nth_data(headings, i));
+
+        while ((token = strsep(&csv_line, "\t")) != NULL) {
+            /* Skip a value that is empty. */
+            if (g_utf8_strlen(token, -1) == 0) {
+                column_number++;
+                continue;
+            }
+            /*  if (line_number == 37040) {
+                  g_print("%d\t%d\t%s\n",line_number,column_number,token);
+              } */
+            key = strdup((gchar *)g_slist_nth_data(headings, column_number));
             value = g_hash_table_lookup(field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
@@ -687,7 +719,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
                         field_analysis->last_line_change = line_number;
                     }
             }
-            i++;
+            column_number++;
         }
 
         line_number++;

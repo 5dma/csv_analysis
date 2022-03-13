@@ -65,12 +65,14 @@ GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surround
  * Makes artifical column headings `column_00`, `column_01`, etc., placing all of them in a `GSList`.
  * @param csv_line First line from a CSV file.
  */
-GSList *make_forced_headings(char **csv_line, char *delimiter) {
+GSList *make_forced_headings(char **csv_line) {
+        g_print("here we are\n");
+    g_print("%s\n",*csv_line);
     char *token;
     GSList *local_list = NULL;
 
     int number_columns = 0;
-    while (strsep(csv_line, delimiter) != NULL) {
+    while (strsep(csv_line, "\t") != NULL) {
         number_columns++;
     }
 
