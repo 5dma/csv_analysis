@@ -151,6 +151,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
         if (on_first_line) {
             if (has_header_line) {
                 headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
+                continue;
             } else {
                 /*  g_log_structured (G_LOG_DOMAIN,
                 G_LOG_LEVEL_MESSAGE,

@@ -58,7 +58,7 @@ void button_choose_clicked (GtkButton *button, gpointer data);
 
 gboolean process_file(GtkButton *button, gpointer data);
 GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surrounded_by_quotes);
-GSList *make_forced_headings(char **csv_line);
+GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
 GDestroyNotify free_headings(gpointer data);

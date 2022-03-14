@@ -22,6 +22,7 @@ gboolean free_field_analysis_hash(gpointer key, gpointer value, gpointer user_da
  * @param data Pointer to the pointer-passer hash.
 */
 void closeup(GtkWidget *button_close, gpointer data) {
+    g_print("Closing\n");
     /* For some reason, this strategy emits two destroy signals. Need to resolve. */
     GHashTable *pointer_passer = (GHashTable *)data;
     GtkWidget *window = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_WINDOW);
@@ -34,26 +35,37 @@ void closeup(GtkWidget *button_close, gpointer data) {
  * @param data Pointer to the pointer-passer hash.
 */
 void cleanup(GtkWidget *window, gpointer data) {
+        g_print("Cleaning\n");
     GHashTable *pointer_passer = (GHashTable *)data;
+        g_print("Cleaning A\n");
     gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
+        g_print("Cleaning B\n");
     g_free(filename);
+        g_print("Cleaning C\n");
 
     guint *number_of_columns = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
+        g_print("Cleaning D number of columns %u\n",*number_of_columns);
 
     gchar **column_strings = (gchar **)g_hash_table_lookup(pointer_passer, &KEY_COLUMN_STRINGS);
+        g_print("Cleaning E\n");
     for (gint i = 0; i < *number_of_columns; i++) {
-        g_free(column_strings + i);
+        g_print("Freeing %d\n",i);
+  //      g_free(column_strings + i);
+  
     }
 
     gchar *field_clause = g_hash_table_lookup(pointer_passer, &KEY_FIELD_CLAUSE);
     g_free(field_clause);
+        g_print("Cleaning F\n");
 
     GSList *headings = (GSList *)g_hash_table_lookup(pointer_passer, &KEY_HEADINGS);
     g_slist_free_full(headings, g_free);
+        g_print("Cleaning G\n");
 
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
     g_hash_table_foreach_remove(field_analysis_hash, (GHRFunc)free_field_analysis_hash, NULL);
 
     g_hash_table_destroy (pointer_passer);
+        g_print("Cleaning Z\n");
 
 }

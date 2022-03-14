@@ -21,7 +21,7 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
     field_analysis_struct->char_width = 0;
     field_analysis_struct->precision = 0;
     field_analysis_struct->scale = 0;
-    field_analysis_struct->last_line_change = 0;
+    field_analysis_struct->last_line_change = 1;
 
     gboolean success = g_hash_table_insert(field_analysis_hash, key, field_analysis_struct);
     if (success == FALSE) {
