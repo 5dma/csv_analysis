@@ -63,18 +63,6 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_box_pack_start(GTK_BOX(hbox_fields_enclosed), label_fields_enclosed, FALSE, FALSE, 5);
     gtk_box_pack_start(GTK_BOX(hbox_fields_enclosed), combo_fields_enclosed, FALSE, FALSE, 5);
 
-    /* Control for line terminator */
-    GtkWidget *label_line_terminator = gtk_label_new("Line terminator:");
-    GtkWidget *combo_line_terminator = gtk_combo_box_text_new();
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_line_terminator), "0", "LF (Linux)");
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_line_terminator), "1", "LF/CR (Windows)");
-    gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_line_terminator), "0");
-
-    /* Hbox for field line terminator and label. */
-    GtkWidget *hbox_line_terminator = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_box_pack_start(GTK_BOX(hbox_line_terminator), label_line_terminator, FALSE, FALSE, 5);
-    gtk_box_pack_start(GTK_BOX(hbox_line_terminator), combo_line_terminator, FALSE, FALSE, 5);
-
     /* Checkbox for indicating if the input CSV file has column headers. */
     GtkWidget *checkbox_has_headers = gtk_check_button_new_with_label("File contains column headers");
     g_hash_table_insert(pointer_passer, &KEY_CHECKBOX_HEADER, checkbox_has_headers);
@@ -194,15 +182,14 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_grid_attach(GTK_GRID(grid), hbox_file_choose, 0, 0, 2, 1);
     gtk_grid_attach(GTK_GRID(grid), hbox_field_delimiter, 0, 1, 2, 1);
     gtk_grid_attach(GTK_GRID(grid), hbox_fields_enclosed, 0, 2, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), hbox_line_terminator, 0, 3, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), checkbox_has_headers, 0, 4, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_go, 1, 4, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), scrolled_window, 0, 5, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), hbox_table_name, 0, 6, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), scrolled_window_command, 0, 7, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_close, 0, 8, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), button_copy, 1, 8, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid), status_bar, 0, 9, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), checkbox_has_headers, 0, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), button_go, 1, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), scrolled_window, 0, 4, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), hbox_table_name, 0, 5, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), scrolled_window_command, 0, 6, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), button_close, 0, 7, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), button_copy, 1, 7, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid), status_bar, 0, 8, 2, 1);
 
     gtk_grid_set_row_spacing(GTK_GRID(grid), 20);
     gtk_grid_set_column_spacing(GTK_GRID(grid), 20);

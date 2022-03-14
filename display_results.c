@@ -177,7 +177,7 @@ void display_results(GHashTable *pointer_passer) {
  */
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer data) {
     GHashTable *pointer_passer = (GHashTable *)data;
-    g_print("I got to the update\n");
+ 
     if (
         (event->keyval >= GDK_KEY_0) && (event->keyval <= GDK_KEY_9) ||
         (event->keyval >= GDK_KEY_KP_0) && (event->keyval <= GDK_KEY_KP_9) ||
@@ -191,8 +191,7 @@ gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer da
         (event->keyval == GDK_KEY_KP_Left) ||
         (event->keyval == GDK_KEY_KP_Right) ||
         (event->keyval == GDK_KEY_Delete)) {
-        g_print("I pressed OK character\n");
-
+ 
         return FALSE;
     }
     return TRUE;
