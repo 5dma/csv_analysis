@@ -129,10 +129,16 @@ void display_results(GHashTable *pointer_passer) {
     guint *number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
     g_print("The number of columns POST is %u\n", *number_of_columnsb);
 
-    gchar *column_strings[number_of_columns]; /* Memory freed in cleanup() */
-                                              /*  for (int i = 0; i < number_of_columns; i++) {
-                                                   column_strings[i] = NULL;
-                                               } */
+
+    /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns,
+        so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib
+        function g_strjoinv() that joints an array of string pointers, and the last pointer in that array
+        must be NULL.  */
+
+    gchar *column_strings[number_of_columns + 1]; 
+    for (int i = 0; i <= number_of_columns; i++) {
+        column_strings[i] = NULL;
+    }
 
     g_print("The number of columns BARF is %u\n", number_of_columns);
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, &column_strings);
@@ -148,16 +154,7 @@ void display_results(GHashTable *pointer_passer) {
         g_print("For element %d the address is %p and t5he value is %s\n", i, column_strings[i], column_strings[i]);
     }
 
-    // gchar *field_clause = g_strjoinv(", ", column_strings);
-
-    char *array[] = {"The quick",
-                     "brown fox",
-                     "jumps over",
-                     "the lazy dog."};
-
-    char **p = array;
-
-    gchar *field_clause = g_strjoinv(", ",p);
+    gchar *field_clause = g_strjoinv(", ", column_strings);
 
     g_print("STEP 6\n");
     g_hash_table_insert(pointer_passer, &KEY_FIELD_CLAUSE, field_clause);
