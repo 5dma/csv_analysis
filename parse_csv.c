@@ -16,7 +16,6 @@ void change_commas_to_tabs_unquoted(gchar **csv_line_ptr) {
     gchar *iterator = csv_line;
 
     while (*iterator != '\0') {
-          g_print("Here is iterator: %p %s\n", iterator, iterator);
         if (*iterator == ',') {
             *iterator = '\t';
         }

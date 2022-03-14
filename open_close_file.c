@@ -124,7 +124,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     // gchar progress_message[100];
 
     while (getline(&csv_line, &len, fp) != -1) {
-    //    g_print("This is waht we read: %s\n", csv_line);
+        g_print("This is waht we read: %s\n", csv_line);
         //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
         //   line_number_in_status_bar(line_number, data);
@@ -137,14 +137,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
         /* If fields are not double quoted, and if the delimiter is a comma, then replace
            commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0) && !fields_surrounded_by_quotes) {
-        //    g_print("Passing to procedure: %s\n", csv_line);
+            //         g_print("Passing to procedure: %s\n", csv_line);
             change_commas_to_tabs_unquoted(&csv_line);
         }
 
-        g_print("This is after change_commas_to_tabs_unquoted: %s\n", csv_line);
-
         if (fields_surrounded_by_quotes) {
-      //      g_print("We are changing surround quotes\n");
+            g_print("We are changing surround quotes\n");
             change_quoted_strings_to_tab_delimiter(&csv_line, delimiter);
         }
 
@@ -160,26 +158,27 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 "MESSSAGE_ID", "06d4df59e6c24647bfe69d2c27ef0b4e",
                 "MESSAGE", "You have %d eggs", 12 + 2); */
 
-                headings = make_forced_headings(&csv_line);
+                headings = make_forced_headings(csv_line);
+                g_print("After forced heading we have %s\n", csv_line);
             }
             on_first_line = FALSE;
             g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
-            continue;
         }
         g_hash_table_insert(pointer_passer, &KEY_HEADINGS, headings);
         int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
 
+        g_print("Before the loop  we have %s\n", csv_line);
         while ((token = strsep(&csv_line, "\t")) != NULL) {
             /* Skip a value that is empty. */
             if (g_utf8_strlen(token, -1) == 0) {
                 column_number++;
                 continue;
             }
-            /*  if (line_number == 37040) {
-                  g_print("%d\t%d\t%s\n",line_number,column_number,token);
-              } */
+         
+            g_print("Check this: %d\t%d\t%s\n",line_number,column_number,token);
+         
             key = strdup((gchar *)g_slist_nth_data(headings, column_number));
             value = g_hash_table_lookup(field_analysis_hash, key);
             if (value == NULL) {
