@@ -109,32 +109,6 @@ void change_commas_to_tabs_unquoted(gchar **csv_line_ptr);
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
 
-
-
-/** Hash key for the pointer to the application window. */
-static gint KEY_WINDOW = 0;
-static gint KEY_CSV_FILE = 1;
-static gint KEY_APP = 2;
-static gint KEY_TEXT_FILENAME = 3;
-static gint KEY_CHECKBOX_HEADER = 4;
-static gint KEY_FIELD_ANALYSIS_HASH = 5;
-static gint KEY_DATA_TYPE_STRINGS = 6;
-static gint KEY_LIST_STORE = 7;
-static gint KEY_BUFFER_TABLE = 8;
-static gint KEY_COLUMN_STRINGS = 9;
-static gint KEY_CURRENT_COLUMN_NUMBER = 10;
-static gint KEY_LABEL_MYSQL_COMMAND = 11;
-static gint KEY_STATUS_BAR = 12;
-static gint STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID = 13;
-static gint KEY_CURRENT_LINE_NUMBER = 14;
-static gint KEY_FIELD_CLAUSE = 15;
-static gint KEY_BUTTON_GO = 16;
-static gint KEY_BUTTON_COPY = 17;
-static gint KEY_HEADINGS = 18;
-static gint KEY_NUMBER_OF_COLUMNS = 19;
-static gint KEY_FIELD_DELIMITER = 20;
-static gint KEY_FIELD_ENCLOSED_BY = 21;
-
 static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
 static guint WINDOW_WIDTH = 400;
 

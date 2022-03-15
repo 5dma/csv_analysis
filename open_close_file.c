@@ -134,7 +134,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 data_passer -> headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
                 continue;
             } else {
-                g_print("Makding forced headings\n");
                 data_passer -> headings = make_forced_headings(csv_line);
             }
             on_first_line = FALSE;

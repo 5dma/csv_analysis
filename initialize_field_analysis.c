@@ -11,11 +11,10 @@
  * @param data Pointer to the data-passer structure.
 */
 void initialize_field_analysis(gpointer heading, gpointer data) {
-    g_print("Initializing\n");
     gchar *key = (gchar *)heading;
     GHashTable *field_analysis_hash = (GHashTable *) data;
 
-    Field_analysis *field_analysis_struct = (Field_analysis *)malloc(sizeof(Field_analysis));
+    Field_analysis *field_analysis_struct = g_new(Field_analysis, 1);
 
     field_analysis_struct->field_type = TINYINT_UNSIGNED;
     field_analysis_struct->sql_signed = FALSE;

@@ -22,11 +22,8 @@ gboolean free_field_analysis_hash(gpointer key, gpointer value, gpointer user_da
  * @param data Pointer to the data-passer structure.
  */
 void closeup(GtkWidget *button_close, gpointer data) {
-    g_print("Closing\n");
-    /* For some reason, this strategy emits two destroy signals. Need to resolve. */
     Data_passer *data_passer = (Data_passer *)data;
-
-    gtk_widget_destroy(data_passer -> window );
+    gtk_widget_destroy(data_passer->window);
 }
 
 /**
@@ -35,40 +32,29 @@ void closeup(GtkWidget *button_close, gpointer data) {
  * @param data Pointer to the data-passer structure.
  */
 void cleanup(GtkWidget *window, gpointer data) {
-
-    g_print("Cleaning\n");
     Data_passer *data_passer = (Data_passer *)data;
-g_print("Cleaning 1\n");
-g_print("Cleaning 2\n");
+    if (data_passer->filename != NULL) {
+        g_free(data_passer->filename);
+    }
 
-    g_print("Cleaning A\n");
-    g_free(data_passer -> filename);
-    g_print("Cleaning C\n");
+    if (data_passer->number_of_columns != 0) {
 
-   
-    if (data_passer -> number_of_columns != 0) {
-        
-        g_print("Cleaning E\n");
-        for (gint i = 0; i < data_passer -> number_of_columns; i++) {
-            g_print("Freeing %d\n", i);
-            g_free((data_passer -> column_strings) + i);
+        for (gint i = 0; i < data_passer->number_of_columns; i++) {
+            g_free(data_passer->column_strings[i]);
+
         }
     }
 
-    g_print("Cleaning F\n");
-    if (data_passer -> field_clause != NULL) {
-        g_free(data_passer -> field_clause);
+    if (data_passer->field_clause != NULL) {
+        g_free(data_passer->field_clause);
     }
 
-    g_print("Cleaning G\n");
-    if (data_passer -> headings != NULL) {
-        g_slist_free_full(data_passer -> headings, g_free);
+    if (data_passer->headings != NULL) {
+        g_slist_free_full(data_passer->headings, g_free);
     }
 
-    g_print("Cleaning H\n");
-    if (data_passer -> field_analysis_hash != NULL) {
-        g_hash_table_foreach_remove(data_passer -> field_analysis_hash, (GHRFunc)free_field_analysis_hash, NULL);
+    if (data_passer->field_analysis_hash != NULL) {
+        g_hash_table_foreach_remove(data_passer->field_analysis_hash, (GHRFunc)free_field_analysis_hash, NULL);
     }
-    g_hash_table_destroy(data_passer -> field_analysis_hash);
-    g_print("Cleaning Z\n");
+    g_hash_table_destroy(data_passer->field_analysis_hash);
 }

@@ -42,8 +42,6 @@ guint get_number_of_columns(GHashTable *field_analysis_hash) {
 void display_single_result(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
 
-    g_print("Processing the heading %s\n",key);
-
     Data_passer *data_passer = (Data_passer *)data;
 
     Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
@@ -70,7 +68,6 @@ void display_single_result(gpointer heading, gpointer data) {
     /* Retrieve the current column number, which is an index into the array of character
        strings of the results. Copy the current formatted string into that index. */
     gchar *intermediate = g_strconcat(key, " ", datatype_string, NULL);
-    g_print("STEP 2 intermediate %s\n", intermediate);
     *(data_passer->column_strings + data_passer->current_column_number) = g_strdup(intermediate);
     g_free(intermediate);
 
@@ -88,41 +85,27 @@ void display_single_result(gpointer heading, gpointer data) {
  */
 void display_results(Data_passer *data_passer) {
 
-   
-
     data_passer->number_of_columns = get_number_of_columns(data_passer->field_analysis_hash);
-
-    g_print("Number of columns is %u\n", data_passer->number_of_columns);
 
     /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns,
         so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib
         function g_strjoinv() that joints an array of string pointers, and the last pointer in that array
         must be NULL.  */
-
-
-
     gchar *trash;
-    data_passer -> column_strings = (gchar **)malloc( (data_passer->number_of_columns + 1)* sizeof(trash));
+    data_passer -> column_strings = g_malloc( sizeof(trash) * (data_passer->number_of_columns + 1));
     for (int i = 0; i <= data_passer->number_of_columns; i++) {
         data_passer -> column_strings[i] = NULL;
     }
 
- g_print("Here we are B\n");
-
     data_passer->current_column_number = 0;
-    g_print("Current column number %u\n", data_passer->current_column_number);
-
    
     g_slist_foreach(data_passer->headings, display_single_result, data_passer);
   
     data_passer->field_clause = g_strjoinv(", ", data_passer -> column_strings);
 
     concat_command(NULL, (gpointer)data_passer);
-
-    gtk_widget_set_sensitive(data_passer->button_copy, TRUE);
-
-    gtk_widget_set_sensitive(data_passer->entry_table_name, TRUE);
-
+    gtk_widget_set_sensitive(data_passer -> button_copy, TRUE);
+    gtk_widget_set_sensitive(data_passer -> entry_table_name, TRUE);
 }
 
 /**

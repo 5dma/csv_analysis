@@ -73,7 +73,6 @@ GSList *make_forced_headings(char *csv_line) {
     int number_columns = 0;
     while (strsep(&local_csv_line, "\t") != NULL) {
         number_columns++;
-        g_print("Current number of columns %d\n", number_columns);
     }
 
     gchar *prefix = strdup("column_");

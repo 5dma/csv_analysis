@@ -13,13 +13,13 @@
 void on_app_activate(GApplication *app, gpointer data) {
 
     /* Structure for passing data to functions and callbacks */
-    Data_passer *data_passer = (Data_passer *)malloc(sizeof(Data_passer));
+    Data_passer *data_passer = g_new(Data_passer, 1);
     data_passer -> app = app;
-    data_passer -> number_of_columns = 0;
-    data_passer -> field_clause = NULL;
-    data_passer -> headings = NULL;
-    data_passer -> field_analysis_hash = NULL;
     data_passer -> field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
+    data_passer -> field_clause = NULL;
+    data_passer -> filename = NULL;
+    data_passer -> headings = NULL;
+    data_passer -> number_of_columns = 0;
 
     data_passer -> datatype_strings[0] = strdup("TINYINT_UNSIGNED");
     data_passer -> datatype_strings[1] = strdup("SMALLINT_UNSIGNED");
