@@ -12,11 +12,7 @@
  */
 
 void line_number_in_status_bar(gint line_number, gpointer data) {
-  //  GHashTable *pointer_passer = (GHashTable *)data;
     Data_passer *data_passer = (Data_passer *)data;
-  //  GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
-
-  //  guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
 
@@ -65,17 +61,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
     g_thread_join(my_thread);
     g_print("Finished the thread"); */
 
-    //GHashTable *pointer_passer = (GHashTable *)data;
     Data_passer *data_passer = (Data_passer *)data;
-
-  //  GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
- //   guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
 
     gtk_statusbar_remove(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, data_passer -> status_bar_context_info_message_id);
 
-  //  gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
     FILE *fp = fopen(data_passer -> filename, "r");
 
     if (fp == NULL) {
@@ -100,29 +91,14 @@ gboolean process_file(GtkButton *button, gpointer data) {
     char *token;
 
     /* Retrieve the field delimiter */
- //   GtkComboBox *combo_field_delimeter = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_DELIMITER);
-
-
- //GtkComboBox * trash =  (GtkComboBox *)(data_passer -> combo_field_delimeter);
     char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id( (GtkComboBox *)(data_passer -> combo_field_delimeter)), "0") == 0) ? "\t" : ",";
-
-
- //   GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
-  //  g_hash_table_insert(pointer_passer, &KEY_FIELD_ANALYSIS_HASH, field_analysis_hash);
-
-
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
     gint line_number = 1;
 
-   // GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer -> checkbox_has_headers));
 
-    /* Determine if fields are surrounded by double quotes. */
-  //  GtkComboBox *combo_fields_enclosed = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ENCLOSED_BY);
-
- // GtkComboBox *trash = (GtkComboBox *)(data_passer -> combo_fields_enclosed);
     gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer -> combo_fields_enclosed)), "0") != 0;
 
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);

@@ -29,8 +29,6 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
     if (result == GTK_RESPONSE_OK) {
         filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
         data_passer -> filename = strdup(filename);
-       
-       // GtkWidget *text_filename = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_TEXT_FILENAME);
 
         gtk_entry_set_text(GTK_ENTRY(data_passer -> text_filename), filename);
     }
@@ -48,16 +46,11 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
 */
 void filename_changed(GtkEntry *text_filename, gpointer data) {
    Data_passer *data_passer = (Data_passer *)data;
- //   GtkWidget *button_go = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUTTON_GO);
     if (gtk_entry_get_text_length(text_filename) == 0) {
         gtk_widget_set_sensitive(data_passer -> button_go , FALSE);
     } else {
         gtk_widget_set_sensitive(data_passer -> button_go, TRUE);
     }
-
-  //  GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
-
-   // guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
 

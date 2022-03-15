@@ -14,8 +14,6 @@
 void copy_statement(GtkWidget *button_copy, gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
-//    GtkWidget *label_mysql_command = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_LABEL_MYSQL_COMMAND);
-
     /* The returned value is owned by the instance, which is clipboard. So no need to free. Is this really the case? */
     const gchar *mysql_statement = gtk_label_get_text(GTK_LABEL(data_passer -> label_mysql_command));
 
