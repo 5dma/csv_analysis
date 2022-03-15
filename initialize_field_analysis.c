@@ -11,6 +11,7 @@
  * @param data Pointer to the data-passer structure.
 */
 void initialize_field_analysis(gpointer heading, gpointer data) {
+    g_print("Initializing\n");
     gchar *key = (gchar *)heading;
     GHashTable *field_analysis_hash = (GHashTable *) data;
 

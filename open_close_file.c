@@ -95,7 +95,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, "Reading file...");
 
-    GSList *headings = NULL;
     gboolean on_first_line = TRUE;
 
     char *token;
@@ -156,22 +155,17 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
         if (on_first_line) {
             if (has_header_line) {
-                headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
+                data_passer -> headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
                 continue;
             } else {
-                /*  g_log_structured (G_LOG_DOMAIN,
-                G_LOG_LEVEL_MESSAGE,
-                "CODE_FILE", "mysource.c",
-                "CODE_LINE", 312,
-                "MESSSAGE_ID", "06d4df59e6c24647bfe69d2c27ef0b4e",
-                "MESSAGE", "You have %d eggs", 12 + 2); */
-
-                headings = make_forced_headings(csv_line);
+                g_print("Makding forced headings\n");
+                data_passer -> headings = make_forced_headings(csv_line);
             }
             on_first_line = FALSE;
-            g_slist_foreach(headings, initialize_field_analysis, data_passer -> field_analysis_hash);
+            g_slist_foreach(data_passer -> headings, initialize_field_analysis, data_passer -> field_analysis_hash);
         }
-     //   g_hash_table_insert(pointer_passer, &KEY_HEADINGS, headings);
+
+ 
         int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
@@ -183,7 +177,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 continue;
             }
          
-            key = strdup((gchar *)g_slist_nth_data(headings, column_number));
+            key = strdup((gchar *)g_slist_nth_data(data_passer -> headings, column_number));
             value = g_hash_table_lookup(data_passer -> field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
@@ -731,6 +725,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
     fclose(fp);
 
     display_results(data_passer);
-
+       
     return TRUE;
 }
