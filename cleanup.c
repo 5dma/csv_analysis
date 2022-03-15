@@ -25,6 +25,10 @@ void closeup(GtkWidget *button_close, gpointer data) {
     g_print("Closing\n");
     /* For some reason, this strategy emits two destroy signals. Need to resolve. */
     GHashTable *pointer_passer = (GHashTable *)data;
+
+    //guint *number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
+    //   g_print("CLOSEUP Number: %u, pointed address: %p, variable address: %p\n  Key address: %p, key value: %d\n", *number_of_columnsb, number_of_columnsb, &number_of_columnsb, &KEY_NUMBER_OF_COLUMNS, KEY_NUMBER_OF_COLUMNS);
+
     GtkWidget *window = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_WINDOW);
     gtk_widget_destroy(window);
 }
@@ -35,13 +39,23 @@ void closeup(GtkWidget *button_close, gpointer data) {
  * @param data Pointer to the pointer-passer hash.
  */
 void cleanup(GtkWidget *window, gpointer data) {
+
     g_print("Cleaning\n");
     GHashTable *pointer_passer = (GHashTable *)data;
+g_print("Cleaning 1\n");
+ guint *number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
+g_print("Cleaning 2\n");
+       //g_print("CLEANUP Number: %u, pointed address: %p, variable address: %p\n  Key address: %p, key value: %d\n", //*number_of_columnsb, number_of_columnsb, &number_of_columnsb, &KEY_NUMBER_OF_COLUMNS, KEY_NUMBER_OF_COLUMNS);
+
+
     g_print("Cleaning A\n");
     gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
     g_print("Cleaning B\n");
     g_free(filename);
     g_print("Cleaning C\n");
+
+//number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
+ //   g_print("The number of columns after C is %u\n", *number_of_columnsb);
 
     gpointer null_hash_tester = g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
     if (null_hash_tester != NULL) {

@@ -46,7 +46,6 @@ guint get_number_of_columns(GHashTable *field_analysis_hash) {
 void display_single_result(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
 
-    g_print("Processing heading %s\n", key);
     GHashTable *pointer_passer = (GHashTable *)data;
 
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
@@ -78,16 +77,16 @@ void display_single_result(gpointer heading, gpointer data) {
        strings of the results. Copy the current formatted string into that index. */
     guint *current_column_number = (guint *)g_hash_table_lookup(pointer_passer, &KEY_CURRENT_COLUMN_NUMBER);
 
-    g_print("The current column number is %u\n", *current_column_number);
+ //   g_print("The current column number is %u\n", *current_column_number);
 
     gchar **column_strings = (gchar **)g_hash_table_lookup(pointer_passer, &KEY_COLUMN_STRINGS);
-    g_print("STEP 1\n");
+ //   g_print("STEP 1\n");
     gchar *intermediate = g_strconcat(key, " ", datatype_string, NULL);
-    g_print("STEP 2 intermediate %s\n", intermediate);
+ //   g_print("STEP 2 intermediate %s\n", intermediate);
     *(column_strings + *current_column_number) = g_strdup(intermediate);
-    g_print("STEP 3 inside column strings %s\n", *(column_strings + *current_column_number));
+ //   g_print("STEP 3 inside column strings %s\n", *(column_strings + *current_column_number));
     g_free(intermediate);
-    g_print("STEP 4\n");
+  //  g_print("STEP 4\n");
 
     (*current_column_number)++;
 }
@@ -123,11 +122,12 @@ void display_results(GHashTable *pointer_passer) {
     GHashTable *field_analysis_hash = (GHashTable *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ANALYSIS_HASH);
 
     guint number_of_columns = get_number_of_columns(field_analysis_hash);
-    g_print("The number of columns PRELIM is %u\n", number_of_columns);
+        g_print("PRELIM Number: %u, variable address: %p\n", number_of_columns, &number_of_columns);
 
     g_hash_table_insert(pointer_passer, &KEY_NUMBER_OF_COLUMNS, &number_of_columns);
     guint *number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
-    g_print("The number of columns POST is %u\n", *number_of_columnsb);
+    g_print("POST Number: %u, pointed address: %p, variable address: %p\n  Key address: %p, key value: %d\n", *number_of_columnsb, number_of_columnsb, &number_of_columnsb, &KEY_NUMBER_OF_COLUMNS, KEY_NUMBER_OF_COLUMNS);
+    
 
 
     /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns,
@@ -140,7 +140,8 @@ void display_results(GHashTable *pointer_passer) {
         column_strings[i] = NULL;
     }
 
-    g_print("The number of columns BARF is %u\n", number_of_columns);
+   number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
+    g_print("BARF Number: %u, pointed address: %p, variable address: %p\n  Key address: %p, key value: %d\n", *number_of_columnsb, number_of_columnsb, &number_of_columnsb, &KEY_NUMBER_OF_COLUMNS, KEY_NUMBER_OF_COLUMNS);
     g_hash_table_insert(pointer_passer, &KEY_COLUMN_STRINGS, &column_strings);
 
     guint current_column_number = 0;
@@ -148,15 +149,15 @@ void display_results(GHashTable *pointer_passer) {
 
     GSList *headings = (GSList *)g_hash_table_lookup(pointer_passer, &KEY_HEADINGS);
     g_slist_foreach(headings, display_single_result, pointer_passer);
-    g_print("STEP 5\n");
+ //   g_print("STEP 5\n");
 
-    for (int i = 0; i < number_of_columns; i++) {
+/*     for (int i = 0; i < number_of_columns; i++) {
         g_print("For element %d the address is %p and t5he value is %s\n", i, column_strings[i], column_strings[i]);
     }
-
+ */
     gchar *field_clause = g_strjoinv(", ", column_strings);
 
-    g_print("STEP 6\n");
+ //   g_print("STEP 6\n");
     g_hash_table_insert(pointer_passer, &KEY_FIELD_CLAUSE, field_clause);
     concat_command(NULL, (gpointer)pointer_passer);
 
@@ -165,6 +166,9 @@ void display_results(GHashTable *pointer_passer) {
 
     GtkWidget *entry_table_name = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_BUFFER_TABLE);
     gtk_widget_set_sensitive(entry_table_name, TRUE);
+
+    number_of_columnsb = (guint *)g_hash_table_lookup(pointer_passer, &KEY_NUMBER_OF_COLUMNS);
+   g_print("BARF TWO Number: %u, pointed address: %p, variable address: %p\n  Key address: %p, key value: %d\n", *number_of_columnsb, number_of_columnsb, &number_of_columnsb, &KEY_NUMBER_OF_COLUMNS, KEY_NUMBER_OF_COLUMNS);
 }
 
 /**

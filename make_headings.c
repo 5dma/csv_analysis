@@ -67,7 +67,6 @@ GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surround
  */
 GSList *make_forced_headings(char *csv_line) {
     gchar *local_csv_line = strdup(csv_line);
-    g_print("We copies %s\n",local_csv_line);
     char *token;
     GSList *local_list = NULL;
 

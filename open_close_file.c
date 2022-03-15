@@ -124,7 +124,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
     // gchar progress_message[100];
 
     while (getline(&csv_line, &len, fp) != -1) {
-        g_print("This is waht we read: %s\n", csv_line);
         //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
         //   line_number_in_status_bar(line_number, data);
@@ -142,7 +141,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
         }
 
         if (fields_surrounded_by_quotes) {
-            g_print("We are changing surround quotes\n");
             change_quoted_strings_to_tab_delimiter(&csv_line, delimiter);
         }
 
@@ -159,7 +157,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 "MESSAGE", "You have %d eggs", 12 + 2); */
 
                 headings = make_forced_headings(csv_line);
-                g_print("After forced heading we have %s\n", csv_line);
             }
             on_first_line = FALSE;
             g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
@@ -169,15 +166,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
         gchar *key = NULL;
         gpointer value = NULL;
 
-        g_print("Before the loop  we have %s\n", csv_line);
         while ((token = strsep(&csv_line, "\t")) != NULL) {
             /* Skip a value that is empty. */
             if (g_utf8_strlen(token, -1) == 0) {
                 column_number++;
                 continue;
             }
-         
-            g_print("Check this: %d\t%d\t%s\n",line_number,column_number,token);
          
             key = strdup((gchar *)g_slist_nth_data(headings, column_number));
             value = g_hash_table_lookup(field_analysis_hash, key);

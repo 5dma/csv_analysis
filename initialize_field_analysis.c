@@ -12,7 +12,6 @@
 */
 void initialize_field_analysis(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
-    g_print("Key: %s\n",key);
     GHashTable *field_analysis_hash = (GHashTable *) data;
 
     Field_analysis *field_analysis_struct = (Field_analysis *)malloc(sizeof(Field_analysis));
@@ -28,5 +27,4 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
     if (success == FALSE) {
         g_print("Warning! A key was replaced in the hash table!\n");
     }
-    g_print("Made this insert\n");
 }
