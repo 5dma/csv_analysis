@@ -8,13 +8,13 @@
 
 /**
  * Function that creates the application's view.
- * @param pointer_passer Pointer to the pointer-passer hash.
+ * @param data_passer Pointer to the data-passer structure.
  */
-GtkWidget *make_window(GHashTable *pointer_passer) {
-    GApplication *app = (GApplication *)g_hash_table_lookup(pointer_passer, &KEY_APP);
+GtkWidget *make_window(Data_passer *data_passer) {
+    GApplication *app = data_passer -> app;
 
     GtkWidget *window = gtk_application_window_new(GTK_APPLICATION(app));
-    g_hash_table_insert(pointer_passer, &KEY_WINDOW, window);
+    data_passer -> window = window;
 
     /* Set maximal width, prevent users from resizing. */
     gtk_window_set_default_size(GTK_WINDOW(window), WINDOW_WIDTH, -1);
@@ -23,13 +23,13 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     /* Controls in first row of grid: label, entry field for file name, button for choosing a file. */
     GtkWidget *label_csv_file = gtk_label_new("CSV file:");
     GtkWidget *text_filename = gtk_entry_new();
-    g_signal_connect(G_OBJECT(text_filename), "changed", G_CALLBACK(filename_changed), pointer_passer);
-    g_hash_table_insert(pointer_passer, &KEY_TEXT_FILENAME, text_filename);
+    g_signal_connect(G_OBJECT(text_filename), "changed", G_CALLBACK(filename_changed), data_passer);
+    data_passer -> text_filename = text_filename;
 
     GtkWidget *button_choose = gtk_button_new_with_label("Choose...");
     gtk_widget_set_valign(button_choose, GTK_ALIGN_START);
     gtk_widget_set_halign(button_choose, GTK_ALIGN_CENTER);
-    g_signal_connect(G_OBJECT(button_choose), "clicked", G_CALLBACK(button_choose_clicked), pointer_passer);
+    g_signal_connect(G_OBJECT(button_choose), "clicked", G_CALLBACK(button_choose_clicked), data_passer);
 
     /* Pack the first row into an hbox. */
     GtkWidget *hbox_file_choose = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -43,7 +43,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "0", "Tabs");
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "1", "Commas");
     gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_field_delimeter), "0");
-    g_hash_table_insert(pointer_passer, &KEY_FIELD_DELIMITER, combo_field_delimeter);
+    data_passer -> combo_field_delimeter = combo_field_delimeter;
 
     /* Hbox for field delimiter and label. */
     GtkWidget *hbox_field_delimiter = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -56,7 +56,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "0", "(none)");
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "1", "Double quotes");
     gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_fields_enclosed), "0");
-    g_hash_table_insert(pointer_passer, &KEY_FIELD_ENCLOSED_BY, combo_fields_enclosed);
+    data_passer -> combo_fields_enclosed = combo_fields_enclosed;
 
     /* Hbox for fields enclosed by and label. */
     GtkWidget *hbox_fields_enclosed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -65,19 +65,19 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     /* Checkbox for indicating if the input CSV file has column headers. */
     GtkWidget *checkbox_has_headers = gtk_check_button_new_with_label("File contains column headers");
-    g_hash_table_insert(pointer_passer, &KEY_CHECKBOX_HEADER, checkbox_has_headers);
+    data_passer -> checkbox_has_headers = checkbox_has_headers;
 
     /* Button for starting the processing. */
     GtkWidget *button_go = gtk_button_new_with_label("Go");
     gtk_widget_set_valign(button_go, GTK_ALIGN_START);
     gtk_widget_set_halign(button_go, GTK_ALIGN_START);
     gtk_widget_set_sensitive(button_go, FALSE);
-    g_hash_table_insert(pointer_passer, &KEY_BUTTON_GO, button_go);
-    g_signal_connect(G_OBJECT(button_go), "clicked", G_CALLBACK(process_file), pointer_passer);
+    data_passer -> button_go = button_go;
+    g_signal_connect(G_OBJECT(button_go), "clicked", G_CALLBACK(process_file), data_passer);
 
     /* List store that contains the results of the analysis. The columns in the store are column heading, MySQL data type, and the line in the CSV file that determined the MySQL data type. */
     GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT); /* Reference count decremented below, after being assigned to the tree. */
-    g_hash_table_insert(pointer_passer, &KEY_LIST_STORE, list_store_results);
+    data_passer -> list_store_results = list_store_results;
 
     GtkTreeIter iter;
     GtkWidget *tree;
@@ -128,12 +128,12 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     /* Entry field where user types the new table's name. */
     GtkWidget *entry_table_name = gtk_entry_new();
     gtk_entry_set_text(GTK_ENTRY(entry_table_name), "mytable");
-    g_hash_table_insert(pointer_passer, &KEY_BUFFER_TABLE, entry_table_name);
+    data_passer -> entry_table_name = entry_table_name;
     gtk_widget_set_sensitive(entry_table_name, FALSE);
 
     /* Two signals attached to this object. The first is key-press-event, which checks that the user types a valid character for MySQL tables. If so, the changed signal updates the displayed command with the new table name. */
-    g_signal_connect(G_OBJECT(entry_table_name), "key-press-event", G_CALLBACK(table_name_formatter), pointer_passer);
-    g_signal_connect(G_OBJECT(entry_table_name), "changed", G_CALLBACK(concat_command), pointer_passer);
+    g_signal_connect(G_OBJECT(entry_table_name), "key-press-event", G_CALLBACK(table_name_formatter), data_passer);
+    g_signal_connect(G_OBJECT(entry_table_name), "changed", G_CALLBACK(concat_command), data_passer);
 
     /* Place the label and entry field into an hbox. */
     GtkWidget *hbox_table_name = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
@@ -147,7 +147,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     gtk_label_set_selectable(GTK_LABEL(label_mysql_command), TRUE);
     gtk_label_set_yalign(GTK_LABEL(label_mysql_command), 0);
 
-    g_hash_table_insert(pointer_passer, &KEY_LABEL_MYSQL_COMMAND, label_mysql_command);
+    data_passer -> label_mysql_command = label_mysql_command;
 
     /* Scrolled window that contains the generated MySQL command. */
     GtkWidget *scrolled_window_command = gtk_scrolled_window_new(NULL, NULL);
@@ -159,22 +159,22 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
     GtkWidget *button_close = gtk_button_new_with_label("Close");
     gtk_widget_set_valign(button_close, GTK_ALIGN_START);
     gtk_widget_set_halign(button_close, GTK_ALIGN_END);
-    g_signal_connect(G_OBJECT(button_close), "clicked", G_CALLBACK(closeup), pointer_passer);
+    g_signal_connect(G_OBJECT(button_close), "clicked", G_CALLBACK(closeup), data_passer);
 
     /* Button that copies the generated MySQL command into the clipboard. */
     GtkWidget *button_copy = gtk_button_new_with_label("Copy");
     gtk_widget_set_valign(button_copy, GTK_ALIGN_START);
     gtk_widget_set_halign(button_copy, GTK_ALIGN_CENTER);
-    g_signal_connect(G_OBJECT(button_copy), "clicked", G_CALLBACK(copy_statement), pointer_passer);
+    g_signal_connect(G_OBJECT(button_copy), "clicked", G_CALLBACK(copy_statement), data_passer);
     gtk_widget_set_sensitive(button_copy, FALSE);
-    g_hash_table_insert(pointer_passer, &KEY_BUTTON_COPY, button_copy);
+    data_passer -> button_copy = button_copy;
 
     /* Status bar showing various messages. */
     GtkWidget *status_bar = gtk_statusbar_new();
-    g_hash_table_insert(pointer_passer, &KEY_STATUS_BAR, status_bar);
+    data_passer -> status_bar = status_bar;
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO);
     guint status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Ready");
-    g_hash_table_insert(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID, &status_bar_context_info_message_id);
+    data_passer -> status_bar_context_info_message_id = status_bar_context_info_message_id;
 
     /* Grid for displaying all of the controls. */
     GtkWidget *grid = gtk_grid_new();
@@ -196,7 +196,7 @@ GtkWidget *make_window(GHashTable *pointer_passer) {
 
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    /* Upon destroying the application, free memory in data structures in pointer_passer. */
-    g_signal_connect(window, "destroy", G_CALLBACK(cleanup), pointer_passer);
+    /* Upon destroying the application, free memory in data passer. */
+    g_signal_connect(window, "destroy", G_CALLBACK(cleanup), data_passer);
     return window;
 }

@@ -12,12 +12,32 @@
 */
 void on_app_activate(GApplication *app, gpointer data) {
 
-    /* A hash table for passing pointers to callbacks */
-    GHashTable *pointer_passer = g_hash_table_new(g_int_hash, g_int_equal);
+    /* Structure for passing data to functions and callbacks */
+    Data_passer *data_passer = (Data_passer *)malloc(sizeof(Data_passer));
+    data_passer -> app = app;
+    data_passer -> number_of_columns = 0;
+    data_passer -> field_clause = NULL;
+    data_passer -> headings = NULL;
+    data_passer -> field_analysis_hash = NULL;
+    data_passer -> field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
 
-    g_hash_table_insert(pointer_passer, &KEY_APP, app);
-
-    GtkWidget *window = make_window(pointer_passer);
+    data_passer -> datatype_strings[0] = strdup("TINYINT_UNSIGNED");
+    data_passer -> datatype_strings[1] = strdup("SMALLINT_UNSIGNED");
+    data_passer -> datatype_strings[2] = strdup("MEDIUMINT_UNSIGNED");
+    data_passer -> datatype_strings[3] = strdup("INT_UNSIGNED");
+    data_passer -> datatype_strings[4] = strdup("BIGINT_UNSIGNED");
+    data_passer -> datatype_strings[5] = strdup("TINYINT_SIGNED");
+    data_passer -> datatype_strings[6] = strdup("SMALLINT_SIGNED");
+    data_passer -> datatype_strings[7] = strdup("MEDIUMINT_SIGNED");
+    data_passer -> datatype_strings[8] = strdup("INT_SIGNED");
+    data_passer -> datatype_strings[9] = strdup("BIGINT_SIGNED");
+    data_passer -> datatype_strings[10] = strdup("DECIMAL");
+    data_passer -> datatype_strings[11] = strdup("FLOAT");
+    data_passer -> datatype_strings[12] = strdup("TIMESTAMP");
+    data_passer -> datatype_strings[13] = strdup("CHAR");
+    data_passer -> datatype_strings[14] = strdup("TINYINT_UNSIGNED");
+       
+    GtkWidget *window = make_window(data_passer);
 
     gtk_widget_show_all(GTK_WIDGET(window));
     

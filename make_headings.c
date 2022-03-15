@@ -13,7 +13,7 @@
  * -# Transforms all alpha to lower case.
  * -# Replaces any character not in set [a-z-_] with underscore
  * @param original_heading_ptr Raw string.
- * @param data Pointer to the pointer-passer hash.
+ * @param data Pointer to the data-passer structure.
  */
 void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
     char *heading = (gchar *)original_heading_ptr;

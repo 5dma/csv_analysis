@@ -12,18 +12,19 @@
  */
 
 void line_number_in_status_bar(gint line_number, gpointer data) {
-    GHashTable *pointer_passer = (GHashTable *)data;
-    GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
+  //  GHashTable *pointer_passer = (GHashTable *)data;
+    Data_passer *data_passer = (Data_passer *)data;
+  //  GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
-    guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
+  //  guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
 
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO);
+    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
 
-    gtk_statusbar_remove(GTK_STATUSBAR(status_bar), status_bar_context_info, status_bar_context_info_message_id);
+    gtk_statusbar_remove(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, data_passer ->  status_bar_context_info_message_id);
 
     gchar progress_message[100];
     g_snprintf(progress_message, 100, "Reading line %d...", line_number);
-    status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, progress_message);
+    data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, progress_message);
     while (g_main_context_pending(g_main_context_default())) {
         g_main_context_iteration(g_main_context_default(), FALSE);
     }
@@ -54,7 +55,7 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
  * -# Close the file.
  * -# Print the results.
  * @param button Clicked button.
- * @param data Pointer to the pointer-passer hash.
+ * @param data Pointer to the data-passer structure.
  */
 gboolean process_file(GtkButton *button, gpointer data) {
     /*     GThread *my_thread = g_thread_new("my_thread", (GThreadFunc)line_counter, data);
@@ -64,20 +65,21 @@ gboolean process_file(GtkButton *button, gpointer data) {
     g_thread_join(my_thread);
     g_print("Finished the thread"); */
 
-    GHashTable *pointer_passer = (GHashTable *)data;
+    //GHashTable *pointer_passer = (GHashTable *)data;
+    Data_passer *data_passer = (Data_passer *)data;
 
-    GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
-    guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
+  //  GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
+ //   guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
 
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO);
+    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
 
-    gtk_statusbar_remove(GTK_STATUSBAR(status_bar), status_bar_context_info, status_bar_context_info_message_id);
+    gtk_statusbar_remove(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, data_passer -> status_bar_context_info_message_id);
 
-    gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
-    FILE *fp = fopen(filename, "r");
+  //  gchar *filename = (gchar *)g_hash_table_lookup(pointer_passer, &KEY_CSV_FILE);
+    FILE *fp = fopen(data_passer -> filename, "r");
 
     if (fp == NULL) {
-        status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Could not open the file.");
+        data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, "Could not open the file.");
         return FALSE;
     }
     gchar *csv_line;
@@ -91,7 +93,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
         exit(-1);
     }
 
-    status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, "Reading file...");
+    data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, "Reading file...");
 
     GSList *headings = NULL;
     gboolean on_first_line = TRUE;
@@ -99,22 +101,30 @@ gboolean process_file(GtkButton *button, gpointer data) {
     char *token;
 
     /* Retrieve the field delimiter */
-    GtkComboBox *combo_field_delimeter = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_DELIMITER);
-    char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id(combo_field_delimeter), "0") == 0) ? "\t" : ",";
+ //   GtkComboBox *combo_field_delimeter = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_DELIMITER);
 
-    GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
-    g_hash_table_insert(pointer_passer, &KEY_FIELD_ANALYSIS_HASH, field_analysis_hash);
+
+ //GtkComboBox * trash =  (GtkComboBox *)(data_passer -> combo_field_delimeter);
+    char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id( (GtkComboBox *)(data_passer -> combo_field_delimeter)), "0") == 0) ? "\t" : ",";
+
+
+ //   GHashTable *field_analysis_hash = g_hash_table_new(g_int_hash, g_str_equal);
+  //  g_hash_table_insert(pointer_passer, &KEY_FIELD_ANALYSIS_HASH, field_analysis_hash);
+
+
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
     gint line_number = 1;
 
-    GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
-    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbox_has_headers));
+   // GtkWidget *checkbox_has_headers = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_CHECKBOX_HEADER);
+    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer -> checkbox_has_headers));
 
     /* Determine if fields are surrounded by double quotes. */
-    GtkComboBox *combo_fields_enclosed = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ENCLOSED_BY);
-    gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id(combo_fields_enclosed), "0") != 0;
+  //  GtkComboBox *combo_fields_enclosed = (GtkComboBox *)g_hash_table_lookup(pointer_passer, &KEY_FIELD_ENCLOSED_BY);
+
+ // GtkComboBox *trash = (GtkComboBox *)(data_passer -> combo_fields_enclosed);
+    gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer -> combo_fields_enclosed)), "0") != 0;
 
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
@@ -159,9 +169,9 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 headings = make_forced_headings(csv_line);
             }
             on_first_line = FALSE;
-            g_slist_foreach(headings, initialize_field_analysis, field_analysis_hash);
+            g_slist_foreach(headings, initialize_field_analysis, data_passer -> field_analysis_hash);
         }
-        g_hash_table_insert(pointer_passer, &KEY_HEADINGS, headings);
+     //   g_hash_table_insert(pointer_passer, &KEY_HEADINGS, headings);
         int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
@@ -174,7 +184,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
             }
          
             key = strdup((gchar *)g_slist_nth_data(headings, column_number));
-            value = g_hash_table_lookup(field_analysis_hash, key);
+            value = g_hash_table_lookup(data_passer -> field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
                 exit(-1);
@@ -720,7 +730,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     }
     fclose(fp);
 
-    display_results(pointer_passer);
+    display_results(data_passer);
 
     return TRUE;
 }
