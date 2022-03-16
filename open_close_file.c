@@ -14,13 +14,13 @@
 void line_number_in_status_bar(gint line_number, gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
+    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
-    gtk_statusbar_remove(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, data_passer ->  status_bar_context_info_message_id);
+    gtk_statusbar_remove(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, data_passer->status_bar_context_info_message_id);
 
     gchar progress_message[100];
     g_snprintf(progress_message, 100, "Reading line %d...", line_number);
-    data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, progress_message);
+    data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, progress_message);
     while (g_main_context_pending(g_main_context_default())) {
         g_main_context_iteration(g_main_context_default(), FALSE);
     }
@@ -63,14 +63,14 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     Data_passer *data_passer = (Data_passer *)data;
 
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer -> status_bar), STATUS_BAR_CONTEXT_INFO);
+    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
-    gtk_statusbar_remove(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, data_passer -> status_bar_context_info_message_id);
+    gtk_statusbar_remove(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, data_passer->status_bar_context_info_message_id);
 
-    FILE *fp = fopen(data_passer -> filename, "r");
+    FILE *fp = fopen(data_passer->filename, "r");
 
     if (fp == NULL) {
-        data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, "Could not open the file.");
+        data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, "Could not open the file.");
         return FALSE;
     }
     gchar *csv_line;
@@ -84,22 +84,22 @@ gboolean process_file(GtkButton *button, gpointer data) {
         exit(-1);
     }
 
-    data_passer -> status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer -> status_bar), status_bar_context_info, "Reading file...");
+    data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, "Reading file...");
 
     gboolean on_first_line = TRUE;
 
     char *token;
 
     /* Retrieve the field delimiter */
-    char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id( (GtkComboBox *)(data_passer -> combo_field_delimeter)), "0") == 0) ? "\t" : ",";
+    char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\t" : ",";
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
     gint line_number = 1;
 
-    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer -> checkbox_has_headers));
+    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
-    gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer -> combo_fields_enclosed)), "0") != 0;
+    gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_fields_enclosed)), "0") != 0;
 
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
@@ -121,7 +121,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
         /* If fields are not double quoted, and if the delimiter is a comma, then replace
            commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0) && !fields_surrounded_by_quotes) {
-            //         g_print("Passing to procedure: %s\n", csv_line);
             change_commas_to_tabs_unquoted(&csv_line);
         }
 
@@ -130,17 +129,19 @@ gboolean process_file(GtkButton *button, gpointer data) {
         }
 
         if (on_first_line) {
-            if (has_header_line) {
-                data_passer -> headings = make_headings(&csv_line, delimiter, fields_surrounded_by_quotes);
-                continue;
-            } else {
-                data_passer -> headings = make_forced_headings(csv_line);
-            }
             on_first_line = FALSE;
-            g_slist_foreach(data_passer -> headings, initialize_field_analysis, data_passer -> field_analysis_hash);
+            if (has_header_line) {
+                data_passer->headings = make_headings(csv_line, fields_surrounded_by_quotes);
+            } else {
+                data_passer->headings = make_forced_headings(csv_line);
+            }
+            g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer->field_analysis_hash);
+            if (has_header_line) {
+                continue;
+            }
+
         }
 
- 
         int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
@@ -151,9 +152,9 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 column_number++;
                 continue;
             }
-         
-            key = strdup((gchar *)g_slist_nth_data(data_passer -> headings, column_number));
-            value = g_hash_table_lookup(data_passer -> field_analysis_hash, key);
+
+            key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
+            value = g_hash_table_lookup(data_passer->field_analysis_hash, key);
             if (value == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
                 exit(-1);
@@ -700,6 +701,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
     fclose(fp);
 
     display_results(data_passer);
-       
+
     return TRUE;
 }

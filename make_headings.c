@@ -16,10 +16,10 @@
  * @param data Pointer to the data-passer structure.
  */
 void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
-    char *heading = (gchar *)original_heading_ptr;
-    char *clean_string;
+    gchar *heading = (gchar *)original_heading_ptr;
+    gchar *clean_string = NULL;
 
-    clean_string = strdup(heading); /* Memory freed below */
+    clean_string = g_strdup(heading); /* Memory freed below */
     clean_string = g_strchomp(clean_string);
     clean_string = g_ascii_strdown(clean_string, -1);
 
@@ -27,10 +27,14 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
     char *ptr = clean_string;
 
     while (*ptr) {
-        if (!isalnum(*ptr) &&
-            (*ptr != '_') &&
-            (*ptr != '-')) {
-            *ptr = '_';
+        /* Ignore non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
+        We may need to also check g_unichar_iszerowidth */
+        if (g_unichar_isprint(*ptr)) { 
+            if (!g_unichar_isalnum(*ptr)  &&
+                 (*ptr != '_') &&
+                 (*ptr != '-')) {
+                *ptr = '_';
+            }
         }
         ptr++;
     }
@@ -46,11 +50,11 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
  * @param delimiter Delimiter separating fields in the CSV file
  * @param fields_surrounded_by_quotes Indicates if fields are surrounded by double quotes.
  */
-GSList *make_headings(char **csv_line, char *delimiter, gboolean fields_surrounded_by_quotes) {
+GSList *make_headings(gchar *csv_line, gboolean fields_surrounded_by_quotes) {
+    gchar *local_csv_line = g_strdup(csv_line);
     char *token = NULL;
     GSList *local_list = NULL;
-    gchar *heading = NULL;
-    while ((token = strsep(csv_line, delimiter)) != NULL) {
+    while ((token = strsep(&local_csv_line, "\t")) != NULL) {
         if (fields_surrounded_by_quotes) {
             strip_quotes(&token);
         }
