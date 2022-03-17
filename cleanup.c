@@ -7,19 +7,10 @@
  * @brief Defines callback functions for closing down the application.
  */
 
-
-void showme(gpointer heading, gpointer data) {      
-        gchar *key = (gchar *)heading;   
-        g_print("In SHOWME we have %s\n",key);
-}
-
 void trashme(gpointer heading, gpointer data) {
         
         gchar *key = (gchar *)heading;
-   
-        g_print("Before cealing we have %s\n",key);
         g_free(heading);
-        g_print("After\n");   
 }
 
 
@@ -48,13 +39,13 @@ void closeup(GtkWidget *button_close, gpointer data) {
  * @param data Pointer to the data-passer structure.
  */
 void cleanup(GtkWidget *window, gpointer data) {
+    
     Data_passer *data_passer = (Data_passer *)data;
     if (data_passer->filename != NULL) {
         g_free(data_passer->filename);
     }
 
     if (data_passer->number_of_columns != 0) {
-
         for (gint i = 0; i < data_passer->number_of_columns; i++) {
             g_free(data_passer->column_strings[i]);
 
@@ -65,11 +56,8 @@ void cleanup(GtkWidget *window, gpointer data) {
         g_free(data_passer->field_clause);
     }
 
- g_slist_foreach(data_passer -> headings, (GFunc) showme, NULL);
-
     if (data_passer->headings != NULL) {   
-        g_slist_foreach(data_passer -> headings, (GFunc) trashme, NULL);
-        //g_slist_free_full(data_passer->headings, (GDestroyNotify)trashme);
+        g_slist_free_full(data_passer->headings, g_free);
     }
 
     if (data_passer->field_analysis_hash != NULL) {
