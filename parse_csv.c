@@ -26,6 +26,28 @@ void change_commas_to_tabs(gchar **csv_line_ptr) {
     guint replacements = g_string_replace(newstring, ",", "\t", 0); */
 }
 
+/**
+ * Inspects each character in the passed line, and replaces commas with tabs.
+ * @param csv_line_ptr Double-pointer to a line from a CSV file.
+ */
+void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr) {
+
+    gchar *csv_line = *csv_line_ptr;
+    gchar *iterator = csv_line;
+
+    while (*iterator != '\0') {
+        if ((*iterator == ',') && (*(iterator - 1) == '"') && (*(iterator + 1) == '"'))   {
+            *iterator = '\t';
+        }
+        iterator++;
+    }
+
+    /* Use the following when get GLIB 2.68
+    guint replacements = g_string_replace(newstring, ",", "\t", 0); */
+}
+
+
+
 void change_quoted_strings_to_tab_delimiter(gchar **csv_line_ptr, gchar *delimiter) {
     gchar delimiter_phrase[4] = {'"', '\t', '"', '\0'};
     ;

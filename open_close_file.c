@@ -118,21 +118,24 @@ gboolean process_file(GtkButton *button, gpointer data) {
         status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, progress_message);
  */
 
-        /* If fields are not double quoted, and if the delimiter is a comma, then replace
-           commas with tabs. */
+        /* If the delimiter is a comma, then replace commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0)) {
-            change_commas_to_tabs(&csv_line);
+            if (fields_surrounded_by_quotes) {
+                change_commas_to_tabs_with_quotes(&csv_line);
+            } else {
+                change_commas_to_tabs(&csv_line);
+            }
         }
 
         if (on_first_line) {
             on_first_line = FALSE;
             if (has_header_line) {
-                data_passer -> headings = make_headings(csv_line, fields_surrounded_by_quotes);
+                data_passer->headings = make_headings(csv_line, fields_surrounded_by_quotes);
             } else {
-                data_passer -> headings = make_forced_headings(csv_line);
+                data_passer->headings = make_forced_headings(csv_line);
             }
 
-            g_slist_foreach(data_passer -> headings, initialize_field_analysis, data_passer);
+            g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer);
 
             if (has_header_line) {
                 continue;
