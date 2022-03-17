@@ -135,11 +135,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
             } else {
                 data_passer->headings = make_forced_headings(csv_line);
             }
-            g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer->field_analysis_hash);
+
+            g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer);
+
             if (has_header_line) {
                 continue;
             }
-
         }
 
         int column_number = 0;
@@ -154,12 +155,13 @@ gboolean process_file(GtkButton *button, gpointer data) {
             }
 
             key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
-            value = g_hash_table_lookup(data_passer->field_analysis_hash, key);
-            if (value == NULL) {
+
+            Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
+
+            if (field_analysis == NULL) {
                 g_print("There was a critical failure in looking up the key.\n");
                 exit(-1);
             }
-            Field_analysis *field_analysis = (Field_analysis *)value;
 
             enum data_types field_type = field_analysis->field_type;
 

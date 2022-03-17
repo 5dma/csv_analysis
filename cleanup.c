@@ -7,6 +7,22 @@
  * @brief Defines callback functions for closing down the application.
  */
 
+
+void showme(gpointer heading, gpointer data) {      
+        gchar *key = (gchar *)heading;   
+        g_print("In SHOWME we have %s\n",key);
+}
+
+void trashme(gpointer heading, gpointer data) {
+        
+        gchar *key = (gchar *)heading;
+   
+        g_print("Before cealing we have %s\n",key);
+        g_free(heading);
+        g_print("After\n");   
+}
+
+
 /**
  * Callback that runs on each element of the field analysis hash. The function frees the memory associated with the passed value, which is a `Field_analysis`.
  */
@@ -49,8 +65,11 @@ void cleanup(GtkWidget *window, gpointer data) {
         g_free(data_passer->field_clause);
     }
 
-    if (data_passer->headings != NULL) {
-        g_slist_free_full(data_passer->headings, g_free);
+ g_slist_foreach(data_passer -> headings, (GFunc) showme, NULL);
+
+    if (data_passer->headings != NULL) {   
+        g_slist_foreach(data_passer -> headings, (GFunc) trashme, NULL);
+        //g_slist_free_full(data_passer->headings, (GDestroyNotify)trashme);
     }
 
     if (data_passer->field_analysis_hash != NULL) {
@@ -58,3 +77,4 @@ void cleanup(GtkWidget *window, gpointer data) {
     }
     g_hash_table_destroy(data_passer->field_analysis_hash);
 }
+
