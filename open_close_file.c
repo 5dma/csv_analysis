@@ -120,12 +120,8 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
         /* If fields are not double quoted, and if the delimiter is a comma, then replace
            commas with tabs. */
-        if ((g_strcmp0(delimiter, ",") == 0) && !fields_surrounded_by_quotes) {
-            change_commas_to_tabs_unquoted(&csv_line);
-        }
-
-        if (fields_surrounded_by_quotes) {
-            change_quoted_strings_to_tab_delimiter(&csv_line, delimiter);
+        if ((g_strcmp0(delimiter, ",") == 0)) {
+            change_commas_to_tabs(&csv_line);
         }
 
         if (on_first_line) {

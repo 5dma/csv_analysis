@@ -10,7 +10,7 @@
  * Inspects each character in the passed line, and replaces commas with tabs.
  * @param csv_line_ptr Double-pointer to a line from a CSV file.
  */
-void change_commas_to_tabs_unquoted(gchar **csv_line_ptr) {
+void change_commas_to_tabs(gchar **csv_line_ptr) {
 
     gchar *csv_line = *csv_line_ptr;
     gchar *iterator = csv_line;
