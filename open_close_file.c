@@ -131,12 +131,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
         if (on_first_line) {
             on_first_line = FALSE;
             if (has_header_line) {
-                data_passer->headings = make_headings(csv_line, fields_surrounded_by_quotes);
+                data_passer -> headings = make_headings(csv_line, fields_surrounded_by_quotes);
             } else {
-                data_passer->headings = make_forced_headings(csv_line);
+                data_passer -> headings = make_forced_headings(csv_line);
             }
 
-            g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer);
+            g_slist_foreach(data_passer -> headings, initialize_field_analysis, data_passer);
 
             if (has_header_line) {
                 continue;

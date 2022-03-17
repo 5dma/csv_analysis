@@ -7,8 +7,7 @@
  * @brief Defines callback functions for closing down the application.
  */
 
-void trashme(gpointer heading, gpointer data) {
-        
+void delete_heading(gpointer heading, gpointer data) {
         gchar *key = (gchar *)heading;
         g_free(heading);
 }
@@ -41,28 +40,28 @@ void closeup(GtkWidget *button_close, gpointer data) {
 void cleanup(GtkWidget *window, gpointer data) {
     
     Data_passer *data_passer = (Data_passer *)data;
-    if (data_passer->filename != NULL) {
-        g_free(data_passer->filename);
+    if (data_passer -> filename != NULL) {
+        g_free(data_passer -> filename);
     }
 
     if (data_passer->number_of_columns != 0) {
-        for (gint i = 0; i < data_passer->number_of_columns; i++) {
-            g_free(data_passer->column_strings[i]);
+        for (gint i = 0; i < data_passer -> number_of_columns; i++) {
+            g_free(data_passer -> column_strings[i]);
 
         }
     }
 
-    if (data_passer->field_clause != NULL) {
-        g_free(data_passer->field_clause);
+    if (data_passer -> field_clause != NULL) {
+        g_free(data_passer -> field_clause);
     }
 
     if (data_passer->headings != NULL) {   
-        g_slist_free_full(data_passer->headings, g_free);
+        g_slist_free_full(data_passer -> headings, (GDestroyNotify) delete_heading);
     }
 
     if (data_passer->field_analysis_hash != NULL) {
-        g_hash_table_foreach_remove(data_passer->field_analysis_hash, (GHRFunc)free_field_analysis_hash, NULL);
+        g_hash_table_foreach_remove(data_passer -> field_analysis_hash, (GHRFunc)free_field_analysis_hash, NULL);
     }
-    g_hash_table_destroy(data_passer->field_analysis_hash);
+    g_hash_table_destroy(data_passer -> field_analysis_hash);
 }
 

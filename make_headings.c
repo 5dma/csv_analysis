@@ -47,7 +47,6 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 /**
  * Makes individual headings from the first line in a CSV file, placing all of them in a `GSList`. This function relies on `strsep` to tokenize between tab characters.
  * @param csv_line First line from a CSV file.
- * @param delimiter Delimiter separating fields in the CSV file
  * @param fields_surrounded_by_quotes Indicates if fields are surrounded by double quotes.
  */
 GSList *make_headings(gchar *csv_line, gboolean fields_surrounded_by_quotes) {
@@ -58,7 +57,8 @@ GSList *make_headings(gchar *csv_line, gboolean fields_surrounded_by_quotes) {
         if (fields_surrounded_by_quotes) {
             strip_quotes(&token);
         }
-        local_list = g_slist_append(local_list, token);
+        gchar *buffer = g_strdup(token);
+        local_list = g_slist_append(local_list, buffer);
     }
 
     g_slist_foreach(local_list, clean_column_headings, NULL);
