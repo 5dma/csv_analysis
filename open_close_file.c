@@ -121,7 +121,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
         /* If the delimiter is a comma, then replace commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0)) {
             if (fields_surrounded_by_quotes) {
-                change_commas_to_tabs_with_quotes(&csv_line);
+                change_commas_to_tabs_with_quotes(&csv_line, delimiter);
             } else {
                 change_commas_to_tabs(&csv_line);
             }
@@ -152,7 +152,9 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 column_number++;
                 continue;
             }
-
+            if (column_number == 2) {
+                g_print("First name is %s\n",token);
+            }
             key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
 
             Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);

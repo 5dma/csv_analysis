@@ -103,9 +103,8 @@ gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer us
 void concat_command(GtkEditable *self, gpointer data);
 void filename_changed(GtkEntry *text_filename, gpointer data);
 
-void change_quoted_strings_to_tab_delimiter(gchar **csv_line_ptr, gchar *delimiter);
 void change_commas_to_tabs(gchar **csv_line_ptr);
-void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr);
+void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr, gchar *delimiter);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
