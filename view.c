@@ -77,7 +77,7 @@ GtkWidget *make_window(Data_passer *data_passer) {
     g_signal_connect(G_OBJECT(button_go), "clicked", G_CALLBACK(process_file), data_passer);
 
     /* List store that contains the results of the analysis. The columns in the store are column heading, MySQL data type, and the line in the CSV file that determined the MySQL data type. */
-    GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT); /* Reference count decremented below, after being assigned to the tree. */
+    GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING); /* Reference count decremented below, after being assigned to the tree. */
     data_passer -> list_store_results = list_store_results;
 
     GtkTreeIter iter;
@@ -113,10 +113,20 @@ GtkWidget *make_window(Data_passer *data_passer) {
                                                                      NULL);
     gtk_tree_view_column_set_alignment(GTK_TREE_VIEW_COLUMN(columnDeterminingLine), 1.0);
 
+    GtkCellRenderer *rendererDeterminingValue;
+    GtkTreeViewColumn *columnDeterminingValue;
+
+    rendererDeterminingValue = gtk_cell_renderer_text_new();
+    columnDeterminingValue = gtk_tree_view_column_new_with_attributes("Determining value", rendererDeterminingValue,
+                                                                     "text", DETERMINING_VALUE,
+                                                                     NULL);
+
+
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnName);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnType);
     gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnDeterminingLine);
-
+   gtk_tree_view_append_column(GTK_TREE_VIEW(tree), columnDeterminingValue);
+   
     /* A scrolled window that contains the tree view. */
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);

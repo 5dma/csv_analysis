@@ -63,6 +63,7 @@ void display_single_result(gpointer heading, gpointer data) {
                        COLUMN_NAME, key,
                        DATA_TYPE, datatype_string,
                        DETERMINING_LINE, field_analysis->last_line_change,
+                        DETERMINING_VALUE, field_analysis->determining_value,
                        -1);
 
     /* Retrieve the current column number, which is an index into the array of character

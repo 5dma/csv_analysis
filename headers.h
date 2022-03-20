@@ -45,6 +45,7 @@ typedef struct {
     int precision;
     int scale;
     int last_line_change;
+    gchar determining_value[4096];
 } Field_analysis;
 
 typedef struct decimal_sizes {
@@ -59,7 +60,8 @@ enum {
     COLUMN_NAME,      /**< 0 */
     DATA_TYPE,        /**< 1 */
     DETERMINING_LINE, /**< 2 */
-    N_COLUMNS         /**< 5 */
+    DETERMINING_VALUE, /**< 3 */
+    N_COLUMNS         /**< 4 */
 };
 
 /**
