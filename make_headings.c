@@ -108,15 +108,15 @@ void strip_quotes(gchar **quoted_string_ptr) {
         gchar left_three_chars[4];
         gchar right_three_chars[4];
 
-        g_strlcpy(left_three_chars, quoted_string, 4);
-        g_strlcpy(right_three_chars, quoted_string + quoted_string_length - 3, 4);
+        g_utf8_strncpy(left_three_chars, quoted_string, 3);
+        g_utf8_strncpy(right_three_chars, quoted_string + quoted_string_length - 3, 3);
 
         if ((g_strcmp0(left_three_chars, "\"\"\"") == 0) && (g_strcmp0(right_three_chars, "\"\"\"") == 0)) {
             unquoted = g_strdup(quoted_string + 2); /* Memory freed below */
-            g_strlcpy(quoted_string, unquoted, quoted_string_length - 3);
+            g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 3);
         } else {
             unquoted = g_strdup(quoted_string + 1);  /* Memory freed below */
-            g_strlcpy(quoted_string, unquoted, quoted_string_length - 2);
+            g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 2);
         }
         g_free(unquoted);
     }
