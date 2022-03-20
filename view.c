@@ -54,7 +54,8 @@ GtkWidget *make_window(Data_passer *data_passer) {
     GtkWidget *label_fields_enclosed = gtk_label_new("Fields enclosed by:");
     GtkWidget *combo_fields_enclosed = gtk_combo_box_text_new();
     gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "0", "(none)");
-    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "1", "Double quotes");
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "1", "Double quotes (always)");
+    gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_fields_enclosed), "2", "Double quotes (optional)");
     gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_fields_enclosed), "0");
     data_passer -> combo_fields_enclosed = combo_fields_enclosed;
 

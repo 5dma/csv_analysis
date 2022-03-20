@@ -27,6 +27,17 @@ enum data_types {
     CHAR
 };
 
+
+/**
+ * Enum for describing fields surrounded by double quotes.
+ */
+enum field_quoting_options {
+    NEVER,
+    ALWAYS,
+    OPTIONAL
+};
+
+
 typedef struct {
     enum data_types field_type;
     gboolean sql_signed;
@@ -84,7 +95,7 @@ GtkWidget *make_window(Data_passer *data_passer);
 void button_choose_clicked(GtkButton *button, gpointer data);
 
 gboolean process_file(GtkButton *button, gpointer data);
-GSList *make_headings(gchar *csv_line, gboolean fields_surrounded_by_quotes);
+GSList *make_headings(gchar *csv_line, enum field_quoting_options fields_quoting);
 GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
@@ -104,7 +115,8 @@ void concat_command(GtkEditable *self, gpointer data);
 void filename_changed(GtkEntry *text_filename, gpointer data);
 
 void change_commas_to_tabs(gchar **csv_line_ptr);
-void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr, gchar *delimiter);
+void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr);
+void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();

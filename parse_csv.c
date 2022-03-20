@@ -9,7 +9,7 @@
  * Inspects each character in the passed line, and replaces commas with tabs.
  * @param csv_line_ptr Double-pointer to a line from a CSV file.
  */
-void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr, gchar *delimiter) {
+void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr) {
     gchar *csv_line = *csv_line_ptr;
     gchar *iterator = csv_line;
     gboolean inside_value = FALSE;
@@ -22,7 +22,7 @@ void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr, gchar *delimiter) {
                 continue;
             }
             if (inside_value) {
-                if (*(iterator + 1) == *delimiter) {
+                if (*(iterator + 1) == ',') {
                     inside_value = FALSE;
                     iterator++;
                     continue;
@@ -53,6 +53,42 @@ void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr, gchar *delimiter) {
         iterator++;
     } while (*iterator != '\0');
 }
+
+/**
+ * Inspects each character in the passed line, and replaces commas with tabs.
+ * @param csv_line_ptr Double-pointer to a line from a CSV file.
+ */
+void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr) {
+    gchar *csv_line = *csv_line_ptr;
+    gchar *iterator = csv_line;
+    gboolean inside_quoted_value = TRUE;
+    /* Do not change the order of the following tests. */
+    do {
+        if (iterator == csv_line) {
+            inside_quoted_value = (*iterator == '"') ? TRUE : FALSE;
+            iterator++;
+            continue;
+        }
+        if ((*iterator == ',') && !inside_quoted_value) {
+             *iterator = '\t';
+            iterator++;
+            continue;
+        }
+         if ((*iterator == '"') && (*(iterator-1) == '\t' )) {
+             inside_quoted_value = TRUE;
+            iterator++;
+            continue;
+        }
+          if ((*iterator == '"') && (*(iterator+1) == ',' )) {
+             inside_quoted_value = FALSE;
+            iterator++;
+            continue;
+        }
+
+        iterator++;
+    } while (*iterator != '\0');
+}
+
 /**
  * Inspects each character in the passed line, and replaces commas with tabs.
  * @param csv_line_ptr Double-pointer to a line from a CSV file.
@@ -71,5 +107,3 @@ void change_commas_to_tabs(gchar **csv_line_ptr) {
     /* Use the following when get GLIB 2.68
     guint replacements = g_string_replace(newstring, ",", "\t", 0); */
 }
-
-

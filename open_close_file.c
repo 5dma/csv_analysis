@@ -99,7 +99,22 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
-    gboolean fields_surrounded_by_quotes = g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_fields_enclosed)), "0") != 0;
+    enum field_quoting_options field_quoting;
+
+    /* If the delimiter is a comma, then replace commas with tabs. */
+    const gchar *active_quoted_fields = gtk_combo_box_get_active_id((GtkComboBox *)data_passer->combo_fields_enclosed);
+
+    switch (*active_quoted_fields) {
+        case '0':
+            field_quoting = NEVER;
+            break;
+        case '1':
+            field_quoting = ALWAYS;
+            break;
+        case '2':
+            field_quoting = OPTIONAL;
+            break;
+    }
 
     /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
 
@@ -120,17 +135,24 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
         /* If the delimiter is a comma, then replace commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0)) {
-            if (fields_surrounded_by_quotes) {
-                change_commas_to_tabs_with_quotes(&csv_line, delimiter);
-            } else {
-                change_commas_to_tabs(&csv_line);
+            
+            switch (field_quoting) {
+                case NEVER:
+                    change_commas_to_tabs(&csv_line);
+                    break;
+                case OPTIONAL:
+                    change_commas_to_tabs_with_optional_quotes(&csv_line);
+                    break;
+                case ALWAYS:
+                    change_commas_to_tabs_with_quotes(&csv_line);
+ 
             }
         }
 
         if (on_first_line) {
             on_first_line = FALSE;
             if (has_header_line) {
-                data_passer->headings = make_headings(csv_line, fields_surrounded_by_quotes);
+                data_passer->headings = make_headings(csv_line, field_quoting);
             } else {
                 data_passer->headings = make_forced_headings(csv_line);
             }
@@ -152,9 +174,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 column_number++;
                 continue;
             }
-            if (column_number == 2) {
-                g_print("First name is %s\n",token);
-            }
+
             key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
 
             Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
@@ -169,9 +189,10 @@ gboolean process_file(GtkButton *button, gpointer data) {
             /* Strip whitespace from the current token. */
             gchar *csv_value = g_strstrip(token);
 
-            if (fields_surrounded_by_quotes) {
+            if (field_quoting !=  NEVER) {
                 strip_quotes(&csv_value);
             }
+
             gboolean passes_test;
             switch (field_type) {
                 case TINYINT_UNSIGNED:
@@ -706,4 +727,4 @@ gboolean process_file(GtkButton *button, gpointer data) {
     display_results(data_passer);
 
     return TRUE;
-}
+    }

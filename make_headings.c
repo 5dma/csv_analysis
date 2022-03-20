@@ -29,16 +29,16 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
     while (*ptr) {
         /* Ignore non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
         We may need to also check g_unichar_iszerowidth */
-        if (g_unichar_isprint(*ptr)) { 
-            if (!g_unichar_isalnum(*ptr)  &&
-                 (*ptr != '_') &&
-                 (*ptr != '-')) {
+        if (g_unichar_isprint(*ptr)) {
+            if (!g_unichar_isalnum(*ptr) &&
+                (*ptr != '_') &&
+                (*ptr != '-')) {
                 *ptr = '_';
             }
         }
+
         ptr++;
     }
-
     /* Copy the normalized string into the memory holding the original string. */
     strcpy(heading, clean_string);
     g_free(clean_string);
@@ -49,12 +49,13 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
  * @param csv_line First line from a CSV file.
  * @param fields_surrounded_by_quotes Indicates if fields are surrounded by double quotes.
  */
-GSList *make_headings(gchar *csv_line, gboolean fields_surrounded_by_quotes) {
+GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
     gchar *local_csv_line = g_strdup(csv_line);
     char *token = NULL;
     GSList *local_list = NULL;
     while ((token = strsep(&local_csv_line, "\t")) != NULL) {
-        if (fields_surrounded_by_quotes) {
+
+        if (field_quoting != NEVER) {
             strip_quotes(&token);
         }
         gchar *buffer = g_strdup(token);
@@ -102,7 +103,10 @@ void strip_quotes(gchar **quoted_string_ptr) {
 
     gchar *quoted_string = *quoted_string_ptr;
     glong quoted_string_length = g_utf8_strlen(quoted_string, -1);
-    gchar *unquoted = g_strdup(quoted_string + 1);
-    g_strlcpy(quoted_string, unquoted, quoted_string_length - 1);
-    g_free(unquoted);
+
+    if ((*quoted_string == '"') && (*(quoted_string + quoted_string_length - 1) == '"')) {
+        gchar *unquoted = g_strdup(quoted_string + 1);
+        g_strlcpy(quoted_string, unquoted, quoted_string_length - 2);
+        g_free(unquoted);
+    }
 }
