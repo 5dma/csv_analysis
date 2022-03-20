@@ -95,7 +95,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
-    gint line_number = 1;
+    gint line_number = 0;
 
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
@@ -124,6 +124,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     // gchar progress_message[100];
 
     while (getline(&csv_line, &len, fp) != -1) {
+        line_number++;
         //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
         //   line_number_in_status_bar(line_number, data);
@@ -196,6 +197,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
                 case TINYINT_UNSIGNED:
                     passes_test = is_unsigned_int(csv_value, 0, 255);
                     if (passes_test) {
+                        field_analysis->last_line_change = line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -801,7 +803,6 @@ gboolean process_file(GtkButton *button, gpointer data) {
             column_number++;
         }
 
-        line_number++;
     }
     fclose(fp);
 
