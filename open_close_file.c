@@ -11,15 +11,16 @@
  * @brief Functions for processing the CSV file.
  */
 
-void line_number_in_status_bar(gint line_number, gpointer data) {
+void line_number_in_status_bar(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
+    guint current_line_number = data_passer -> current_line_number;
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
     gtk_statusbar_remove(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, data_passer->status_bar_context_info_message_id);
 
     gchar progress_message[100];
-    g_snprintf(progress_message, 100, "Reading line %d...", line_number);
+    g_snprintf(progress_message, 100, "Reading line %d...", data_passer -> current_line_number);
     data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, progress_message);
     while (g_main_context_pending(g_main_context_default())) {
         g_main_context_iteration(g_main_context_default(), FALSE);
@@ -28,7 +29,7 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
 
 /* void line_counter(gpointer data) {
     gint i;
-    g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data);
+
     g_hash_table_insert(data, &KEY_CURRENT_LINE_NUMBER, &i);
     for (i = 0; i < 5; i++) {
         g_print("Up to %d\n", i);
@@ -54,12 +55,7 @@ void line_number_in_status_bar(gint line_number, gpointer data) {
  * @param data Pointer to the data-passer structure.
  */
 gboolean process_file(GtkButton *button, gpointer data) {
-    /*     GThread *my_thread = g_thread_new("my_thread", (GThreadFunc)line_counter, data);
-    if (!my_thread) {
-        g_print("Could not create thread for (de)compression.");
-    }
-    g_thread_join(my_thread);
-    g_print("Finished the thread"); */
+
 
     Data_passer *data_passer = (Data_passer *)data;
 
@@ -96,6 +92,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
     gint line_number = 0;
+    data_passer -> current_line_number = line_number;
 
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
@@ -122,6 +119,9 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO); */
     // gchar progress_message[100];
+
+    g_thread_new("line_number_in_status_bar", (GThreadFunc)line_number_in_status_bar, data);
+   // g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data );
 
     while (getline(&csv_line, &len, fp) != -1) {
         line_number++;
@@ -804,6 +804,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
         }
 
     }
+    data_passer -> finished_processing_file = TRUE;
     fclose(fp);
 
     display_results(data_passer);
