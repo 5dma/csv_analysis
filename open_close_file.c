@@ -11,20 +11,33 @@
  * @brief Functions for processing the CSV file.
  */
 
-void line_number_in_status_bar(gpointer data) {
+gboolean line_number_in_status_bar(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
-    guint current_line_number = data_passer -> current_line_number;
+    guint current_line_number = data_passer->current_line_number;
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
     gtk_statusbar_remove(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, data_passer->status_bar_context_info_message_id);
 
     gchar progress_message[100];
-    g_snprintf(progress_message, 100, "Reading line %d...", data_passer -> current_line_number);
+    g_snprintf(progress_message, 100, "Reading line %d...", data_passer->current_line_number);
     data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, progress_message);
-    while (g_main_context_pending(g_main_context_default())) {
-        g_main_context_iteration(g_main_context_default(), FALSE);
+    if (data_passer->finished_processing_file) {
+        return FALSE;
+    } else {
+        return TRUE;
     }
+}
+
+void increment(gpointer data) {
+    Data_passer *data_passer = (Data_passer *)data;
+    g_print("Started increment\n");
+    while (!(data_passer->finished_processing_file)) {
+        g_print("incrementing to %d on valud %d\n", data_passer->current_line_number, data_passer->finished_processing_file);
+        //    usleep(100000);
+        g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data);
+    }
+    g_print("incrementing to %d on valud %d\n", data_passer->current_line_number, data_passer->finished_processing_file);
 }
 
 /* void line_counter(gpointer data) {
@@ -55,8 +68,6 @@ void line_number_in_status_bar(gpointer data) {
  * @param data Pointer to the data-passer structure.
  */
 gboolean process_file(GtkButton *button, gpointer data) {
-
-
     Data_passer *data_passer = (Data_passer *)data;
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
@@ -92,7 +103,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
     gint line_number = 0;
-    data_passer -> current_line_number = line_number;
+    data_passer->current_line_number = line_number;
 
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
@@ -120,11 +131,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO); */
     // gchar progress_message[100];
 
-    g_thread_new("line_number_in_status_bar", (GThreadFunc)line_number_in_status_bar, data);
-   // g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data );
+    g_thread_new("line_number_in_status_bar", (GThreadFunc)increment, data);
+    // g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data );
 
     while (getline(&csv_line, &len, fp) != -1) {
         line_number++;
+        data_passer->current_line_number = line_number;
         //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
         //   line_number_in_status_bar(line_number, data);
@@ -207,7 +219,7 @@ gboolean process_file(GtkButton *button, gpointer data) {
                         field_analysis->last_line_change = line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
-                    } 
+                    }
 
                     passes_test = is_unsigned_int(csv_value, 0, 16777215);
                     if (passes_test) {
@@ -797,14 +809,13 @@ gboolean process_file(GtkButton *button, gpointer data) {
                     if (field_analysis->char_width < csv_value_length) {
                         field_analysis->char_width = csv_value_length;
                         field_analysis->last_line_change = line_number;
-                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                     }
-           }
+            }
             column_number++;
         }
-
     }
-    data_passer -> finished_processing_file = TRUE;
+    data_passer->finished_processing_file = TRUE;
     fclose(fp);
 
     display_results(data_passer);
