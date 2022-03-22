@@ -86,14 +86,9 @@ void display_single_result(gpointer heading, gpointer data) {
  */
 void display_results(Data_passer *data_passer) {
 
-    g_print("I am inside display_results\n");
-
     data_passer->number_of_columns = get_number_of_columns(data_passer->field_analysis_hash);
 
-    /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns,
-        so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib
-        function g_strjoinv() that joints an array of string pointers, and the last pointer in that array
-        must be NULL.  */
+    /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns, so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib function g_strjoinv() that joints an array of string pointers, and the last pointer in that array must be NULL.  */
     gchar *trash;
     data_passer -> column_strings = g_malloc( sizeof(trash) * (data_passer->number_of_columns + 1));
     for (int i = 0; i <= data_passer->number_of_columns; i++) {
