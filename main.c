@@ -12,7 +12,6 @@
  */
 int main(int argc, char *argv[]) {
 
-
     GtkApplication *app = gtk_application_new(
         "net.lautman.csvanalysis",
         G_APPLICATION_FLAGS_NONE);

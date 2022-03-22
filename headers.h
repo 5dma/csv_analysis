@@ -93,6 +93,7 @@ typedef struct {
     guint current_line_number;
     gboolean finished_processing_file;
     FILE *fp;
+    GMainLoop *gloop;
 } Data_passer;
 
 void on_app_activate(GApplication *app, gpointer data);

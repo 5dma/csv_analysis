@@ -21,6 +21,10 @@ void on_app_activate(GApplication *app, gpointer data) {
     data_passer -> headings = NULL;
     data_passer -> number_of_columns = 0;
     data_passer -> current_line_number = 0;
+    data_passer -> finished_processing_file = FALSE;
+    data_passer -> fp = NULL;
+    data_passer -> gloop = NULL;
+
 
     data_passer -> datatype_strings[0] = strdup("TINYINT_UNSIGNED");
     data_passer -> datatype_strings[1] = strdup("SMALLINT_UNSIGNED");
@@ -37,8 +41,7 @@ void on_app_activate(GApplication *app, gpointer data) {
     data_passer -> datatype_strings[12] = strdup("TIMESTAMP");
     data_passer -> datatype_strings[13] = strdup("CHAR");
     data_passer -> datatype_strings[14] = strdup("TINYINT_UNSIGNED");
-    data_passer -> finished_processing_file = FALSE;
-    data_passer -> fp = NULL;
+
        
     GtkWidget *window = make_window(data_passer);
 

@@ -14,7 +14,7 @@
 gboolean line_number_in_status_bar(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
     data_passer->current_line_number;
-    g_print("Here I am in line number %d\n", data_passer->current_line_number);
+    // g_print("Here I am in line number %d\n", data_passer->current_line_number);
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
@@ -753,6 +753,10 @@ gboolean process_thread(gpointer data) {
         }
     }
     data_passer->finished_processing_file = TRUE;
+    g_print("Finished the thread\n");
+        g_main_loop_quit (data_passer -> gloop);
+    g_print("Quit the main loop\n");
+
 }
 
 /**
@@ -778,13 +782,15 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     data_passer->fp = fp;
 
-    static GMainLoop *gloop;
-    gloop = g_main_loop_new(NULL, FALSE);
+
+    data_passer -> gloop = g_main_loop_new(NULL, FALSE);
 
     GThread *process_g_thread = g_thread_new("process_thread", (GThreadFunc)process_thread, data);
-    g_main_loop_run(gloop);
+    g_main_loop_run(data_passer -> gloop);
 
     g_thread_join(process_g_thread);
+    g_main_loop_unref(data_passer -> gloop);
+    g_print("After JOIN\n");
     fclose(fp);
 
     display_results(data_passer);

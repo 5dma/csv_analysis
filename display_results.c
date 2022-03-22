@@ -86,6 +86,8 @@ void display_single_result(gpointer heading, gpointer data) {
  */
 void display_results(Data_passer *data_passer) {
 
+    g_print("I am inside display_results\n");
+
     data_passer->number_of_columns = get_number_of_columns(data_passer->field_analysis_hash);
 
     /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns,
