@@ -7,6 +7,7 @@
  * @brief C headers.
  */
 
+
 /**
  * Enum for declaring a list store of accounts.
  */
@@ -69,13 +70,13 @@ enum {
 */ 
 typedef struct {
     GtkWidget *window;
-    gchar *csv_file;
+  //  gchar *csv_file;
     gchar *filename;
     GApplication *app;
     GtkWidget *text_filename;
     GtkWidget *checkbox_has_headers;
     GHashTable *field_analysis_hash;
-    const gchar *datatype_strings[14];
+    gchar *datatype_strings[15];
     GtkListStore *list_store_results;
     GtkWidget *entry_table_name;
     gchar **column_strings;
@@ -126,6 +127,7 @@ void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
+
 
 static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
 static guint WINDOW_WIDTH = 400;

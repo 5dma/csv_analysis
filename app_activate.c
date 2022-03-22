@@ -6,7 +6,7 @@
 */
 
 /**
- * Function that starts the GTK loop.
+ * Function that starts the GTK loop, and initializes varies fields in the data_passer structure. 
  * @param app Pointer to the GTK application
  * @param data Pointer to passed data, `NULL` in this case.
 */
@@ -25,7 +25,7 @@ void on_app_activate(GApplication *app, gpointer data) {
     data_passer -> fp = NULL;
     data_passer -> gloop = NULL;
 
-
+    /* Memory for all these strings is freed in cleanup(). */
     data_passer -> datatype_strings[0] = strdup("TINYINT_UNSIGNED");
     data_passer -> datatype_strings[1] = strdup("SMALLINT_UNSIGNED");
     data_passer -> datatype_strings[2] = strdup("MEDIUMINT_UNSIGNED");
@@ -42,7 +42,6 @@ void on_app_activate(GApplication *app, gpointer data) {
     data_passer -> datatype_strings[13] = strdup("CHAR");
     data_passer -> datatype_strings[14] = strdup("TINYINT_UNSIGNED");
 
-       
     GtkWidget *window = make_window(data_passer);
 
     gtk_widget_show_all(GTK_WIDGET(window));
