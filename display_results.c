@@ -11,9 +11,11 @@
  * Concatenates the following strings into one long string:
  * - String literal `CREATE TABLE `.
  * - MySQL table name.
+ * - String literal `(`.
  * - List of columns and their definitions.
  * - String literal `);`.
- * @param self A `GtkEditable` containing the MySQL table name.
+ *
+ * @param self A [GtkEditable](https://docs.gtk.org/gtk3/iface.Editable.html) containing the MySQL table name.
  * @param data Pointer to the data-passer hash.
  */
 void concat_command(GtkEditable *self, gpointer data) {
@@ -28,6 +30,7 @@ void concat_command(GtkEditable *self, gpointer data) {
 /**
  * Returns the number of columns in a CSV file, by counting the number of keys in the field_analysis_hash.
  * @param field_analysis_hash Hash table desribing each column in the CSV file.
+ * @returns Number of columns in the CSV file.
  */
 guint get_number_of_columns(GHashTable *field_analysis_hash) {
     GList *keys = g_hash_table_get_keys(field_analysis_hash);
@@ -82,6 +85,7 @@ void display_single_result(gpointer heading, gpointer data) {
  * -# Declare an array of empty character strings. The length of the array is the number of columns from the previous step.
  * -# Retrieve the list of headings from pointer passer.
  * -# Iterate over the list of headings, formatting the results. Doing so ensures the results appear in the same order as they are in the original CSV file. See display_single_result().
+ *
  * @param data_passer Pointer to the data-passer structure.
  */
 void display_results(Data_passer *data_passer) {
@@ -99,6 +103,7 @@ void display_results(Data_passer *data_passer) {
    
     g_slist_foreach(data_passer->headings, display_single_result, data_passer);
   
+    /* Following memory is freed in cleanup(). */
     data_passer->field_clause = g_strjoinv(", ", data_passer -> column_strings);
 
     concat_command(NULL, (gpointer)data_passer);
@@ -107,12 +112,11 @@ void display_results(Data_passer *data_passer) {
 }
 
 /**
- * Callback that prevents the user from entering anything in a `GtkCellEditable` other than digits and a decimal point. The actual allowed keys are [0-9], decimal point, backspace, delete, cursor right, and cursor left.
+ * Callback that prevents the user from entering anything in a [GtkCellEditable](https://docs.gtk.org/gtk3/iface.Editable.html) other characters that can be used to name a MySQL table. The actual allowed keys are [0-9], decimal point, backspace, delete, cursor right, and cursor left.
  * @param widget Widget where the edit is occurring.
  * @param event Key that was pressed.
  * @param data `NULL` in this case.
  * @return  `FALSE` if an allowed key was pressed, `TRUE` otherwise.
- * \sa started_cell_editing()
  */
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;

@@ -9,7 +9,8 @@
 /**
  * Function that creates the application's view.
  * @param data_passer Pointer to the data-passer structure.
- */
+ * @return Pointer to the application window.
+*/
 GtkWidget *make_window(Data_passer *data_passer) {
     GApplication *app = data_passer->app;
 

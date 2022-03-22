@@ -9,7 +9,7 @@
 
 
 /**
- * Enum for declaring a list store of accounts.
+ * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html)). This enumeration is used in Field_analysis.
  */
 enum data_types {
     TINYINT_UNSIGNED,
@@ -30,29 +30,26 @@ enum data_types {
 
 
 /**
- * Enum for describing fields surrounded by double quotes.
+ * Enum for describing how fields are surrounded by double quotes.
  */
 enum field_quoting_options {
-    NEVER,
-    ALWAYS,
-    OPTIONAL
+    NEVER, /**< Fields never surrounded by double quotes. */
+    ALWAYS, /**< Fields always surrounded by double quotes. */
+    OPTIONAL /**< Fields may be surrounded by double quotes. */
 };
 
-
+/**
+ * Structure containing the results of a column.
+ */
 typedef struct {
-    enum data_types field_type;
-    gboolean sql_signed;
-    int char_width;
-    int precision;
-    int scale;
-    int last_line_change;
-    gchar determining_value[4096];
+    enum data_types field_type;  /**< One of the possible MySQL field types enumerated in . */
+    gboolean sql_signed; /**< Indicates if the data type is signed. */
+    int char_width; /**< Width of a `CHAR` field. */
+    int precision;  /**< Precision (number of digits) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
+    int scale;  /**< Scale (number of digits after decimal point) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
+    int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
+    gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
 } Field_analysis;
-
-typedef struct decimal_sizes {
-    int precision;
-    int scale;
-} decimal_size;
 
 /**
  * Enum for declaring a list store of results.
@@ -69,32 +66,30 @@ enum {
  * Structure for passing data between functions.
 */ 
 typedef struct {
-    GtkWidget *window;
-  //  gchar *csv_file;
-    gchar *filename;
-    GApplication *app;
-    GtkWidget *text_filename;
-    GtkWidget *checkbox_has_headers;
-    GHashTable *field_analysis_hash;
-    gchar *datatype_strings[15];
-    GtkListStore *list_store_results;
-    GtkWidget *entry_table_name;
-    gchar **column_strings;
-    guint current_column_number;
-    GtkWidget *label_mysql_command;
-    GtkWidget *status_bar;
-    guint status_bar_context_info_message_id;
-    gchar *field_clause;
-    GtkWidget *button_go;
-    GtkWidget *button_copy;
-    GSList *headings;
-    guint number_of_columns;
-    GtkWidget *combo_field_delimeter;
-    GtkWidget *combo_fields_enclosed;
-    guint current_line_number;
-    gboolean finished_processing_file;
-    FILE *fp;
-    GMainLoop *gloop;
+    GtkWidget *window; /**< Application's window */
+    gchar *filename; /**< Path and filename of the CSV file. */
+    GApplication *app;  /**< Application */
+    GtkWidget *text_filename;  /**< Path and filename of the CSV file (in the UI) */
+    GtkWidget *checkbox_has_headers; /**< Path and filename of the CSV file (in the UI) */
+    GHashTable *field_analysis_hash;  /**< Hash keyed by column name; values are the analysis of the values in the column. See Field_analysis. */
+    gchar *datatype_strings[15]; /**< List of MySQL data types. See [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
+    GtkListStore *list_store_results; /**< List store containing the analysis results. There is one element in the store for each column in the CSV file. */
+    GtkWidget *entry_table_name; /**< MySQL table name in the UI. */
+    gchar **column_strings; /**< List of strings used for column names in a MySQL table. */
+    guint current_column_number; /**< Current column number as we iterate over all columns in a single CSV row. */
+    GtkWidget *label_mysql_command; /**< Final MySQL command displayed in the UI. */
+    GtkWidget *status_bar; /**< Status bar in the I. */
+    guint status_bar_context_info_message_id;  /**< Status bar's context ID.  */
+    gchar *field_clause;  /**< Clause in a MySQL field definition, such as `CHAR(30)`.  */
+    GtkWidget *button_go; /**< \b Go button in the UI. */
+    GtkWidget *button_copy;  /**< \b Copy button in the UI. */
+    GSList *headings; /**< GSList containing column headings. */
+    guint number_of_columns; /**< Number of columns in the CSV file. */
+    GtkWidget *combo_field_delimeter; /**< UI control specifying the field delimiter. */
+    GtkWidget *combo_fields_enclosed; /**< UI control specifying if fields are always, never, or optionally surrounded by double quotes. */
+    guint current_line_number; /**< Current line number we are reading from the CSV file. */
+    FILE *fp; /**< Handle for the CSV file. */
+    GMainLoop *gloop; /**< The main loop, required to set up the threading. */
 } Data_passer;
 
 void on_app_activate(GApplication *app, gpointer data);
@@ -129,7 +124,7 @@ regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
 
 
-static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO";
-static guint WINDOW_WIDTH = 400;
+static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO"; /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
+static guint WINDOW_WIDTH = 400; /**< Width of the application window. */
 
 #endif

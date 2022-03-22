@@ -11,6 +11,7 @@
  * @param token A character string.
  * @param min Lower bound for the unsigned integer.
  * @param max Upper bound for the unsigned integer.
+ * @return `TRUE` if the passed character string represents an unsigned integer, `FALSE` otherwise.
 */
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
     GError *error = NULL;
@@ -27,6 +28,7 @@ gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
  * @param token A character string.
  * @param min Lower bound for the signed integer.
  * @param max Upper bound for the signed integer.
+ * @return `TRUE` if the passed character string represents a signed integer, `FALSE` otherwise.
 */
 gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
     GError *error = NULL;
@@ -42,6 +44,7 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
  * Checks if a passed value is a decimal.
  * @param token A character string.
  * @param decimal_regex Compiled regex for a number with 0-2 numbers after a decimal point.
+ * @return `TRUE` if the passed character string matches the pattern for a decimal, `FALSE` otherwise.
 */
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
     regmatch_t pmatch[2];
@@ -53,6 +56,7 @@ gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
 /**
  * Checks if a passed value is a float.
  * @param token A character string.
+ * @return `TRUE` if the passed character string can be converted to a float, `FALSE` otherwise.
 */
 gboolean is_float(const gchar *token) {
     gchar *end_ptr;
@@ -72,6 +76,7 @@ gboolean is_float(const gchar *token) {
  * Checks if a passed value is a timestamp.
  * @param token A character string.
  * @param timestamp_regex Compiled regex for a timestamp, such as a pattern YYYY-MM-DDThh:mm:ss:xxx.
+ * @return `TRUE` if the passed character string matches the pattern for a timestamp, `FALSE` otherwise.
 */
 gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex) {
     regmatch_t pmatch[2];

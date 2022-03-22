@@ -6,9 +6,10 @@
 */
 
 /**
- * Callback that runs after clicking the Choose button. This function performs the following:
+ * Callback that runs after clicking the \b Choose button. This function performs the following:
  * - Opens a file chooser dialog.
  * - Populates the entry field in the window with the selected file's path and name.
+ *
  * @param button Clicked button.
  * @param data Pointer to the data-passer structure.
 */
@@ -38,9 +39,10 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
 
 /**
  * Callback that runs when the entry for the CSV filename is changed. This function performs the following:
- * -# The the length of the string currently in the entry field.
- * -# If the length is zero, disable the Go button; otherwise, enable the Go button.
- * -# Set the message in the status bar to Ready.
+ * -# Determines the length of the string currently in the entry field.
+ * -# If the length is zero, disables the \b Go button; otherwise, enable the \b Go button.
+ * -# Sets the message in the status bar to \c Ready.
+ *
  * @param text_filename GtkEntry holding the current filename.
  * @param data Pointer to the data-passer structure.
 */

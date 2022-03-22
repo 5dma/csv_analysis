@@ -22,11 +22,6 @@ gboolean line_number_in_status_bar(gpointer data) {
     gchar progress_message[100];
     g_snprintf(progress_message, 100, "Reading line %d...", data_passer->current_line_number);
     data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, progress_message);
-    /* if (data_passer->finished_processing_file) {
-        return FALSE;
-    } else {
-        return TRUE;
-    } */
     return FALSE;
 }
 
@@ -748,7 +743,6 @@ gboolean process_thread(gpointer data) {
             column_number++;
         }
     }
-    data_passer->finished_processing_file = TRUE;
     g_main_loop_quit(data_passer->gloop);
 }
 
@@ -761,6 +755,7 @@ gboolean process_thread(gpointer data) {
  * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
  * -# Close the file.
  * -# Print the results.
+ * 
  * @param button Clicked button.
  * @param data Pointer to the data-passer structure.
  */

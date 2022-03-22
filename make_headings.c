@@ -47,7 +47,8 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 /**
  * Makes individual headings from the first line in a CSV file, placing all of them in a `GSList`. This function relies on `strsep` to tokenize between tab characters.
  * @param csv_line First line from a CSV file.
- * @param fields_surrounded_by_quotes Indicates if fields are surrounded by double quotes.
+ * @param field_quoting Type of quoting around the fields (never, always, optional).
+ * @return A GSList of headings derived from the headings in the CSV file.
  */
 GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
     gchar *local_csv_line = g_strdup(csv_line);

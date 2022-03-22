@@ -31,7 +31,7 @@ gboolean free_field_analysis_hash(gpointer key, gpointer value, gpointer data) {
 }
 
 /**
- * Callback that runs after clicking on the Close button. This function emits the "destroy" signal on the application window. The callback for that emitted signal is cleanup().
+ * Callback that runs after clicking on the Close button. This function emits the \c destroy signal on the application window. The callback for that emitted signal is cleanup().
  * @param button_close Clicked button.
  * @param data Pointer to the data-passer structure.
  */

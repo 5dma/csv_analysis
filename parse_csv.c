@@ -6,7 +6,7 @@
  */
 
 /**
- * Inspects each character in the passed line, and replaces commas with tabs.
+ * Inspects each character in the passed line, and replaces commas with tabs. This function is called when the user indicated that the fields are delimited with commas and the fields are always surrounded by double quotes.
  * @param csv_line_ptr Double-pointer to a line from a CSV file.
  */
 void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr) {
@@ -55,7 +55,7 @@ void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr) {
 }
 
 /**
- * Inspects each character in the passed line, and replaces commas with tabs.
+ * Inspects each character in the passed line, and replaces commas with tabs. This function is called when the user indicated that the fields are delimited with commas and the fields are optionally surrounded by double quotes.
  * @param csv_line_ptr Double-pointer to a line from a CSV file.
  */
 void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr) {
@@ -90,7 +90,7 @@ void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr) {
 }
 
 /**
- * Inspects each character in the passed line, and replaces commas with tabs.
+ * Inspects each character in the passed line, and replaces commas with tabs. This function is called when the user indicated that the fields are delimited with commas and the fields are never surrounded by double quotes.
  * @param csv_line_ptr Double-pointer to a line from a CSV file.
  */
 void change_commas_to_tabs(gchar **csv_line_ptr) {
