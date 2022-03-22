@@ -38,6 +38,7 @@ void on_app_activate(GApplication *app, gpointer data) {
     data_passer -> datatype_strings[13] = strdup("CHAR");
     data_passer -> datatype_strings[14] = strdup("TINYINT_UNSIGNED");
     data_passer -> finished_processing_file = FALSE;
+    data_passer -> fp = NULL;
        
     GtkWidget *window = make_window(data_passer);
 

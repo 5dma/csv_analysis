@@ -92,6 +92,7 @@ typedef struct {
     GtkWidget *combo_fields_enclosed;
     guint current_line_number;
     gboolean finished_processing_file;
+    FILE *fp;
 } Data_passer;
 
 void on_app_activate(GApplication *app, gpointer data);

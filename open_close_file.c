@@ -13,7 +13,8 @@
 
 gboolean line_number_in_status_bar(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
-    guint current_line_number = data_passer->current_line_number;
+    data_passer->current_line_number;
+    g_print("Here I am in line number %d\n", data_passer->current_line_number);
 
     guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
@@ -22,64 +23,17 @@ gboolean line_number_in_status_bar(gpointer data) {
     gchar progress_message[100];
     g_snprintf(progress_message, 100, "Reading line %d...", data_passer->current_line_number);
     data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, progress_message);
-    if (data_passer->finished_processing_file) {
+    /* if (data_passer->finished_processing_file) {
         return FALSE;
     } else {
         return TRUE;
-    }
+    } */
+    return FALSE;
 }
 
-void increment(gpointer data) {
-    Data_passer *data_passer = (Data_passer *)data;
-    g_print("Started increment\n");
-    while (!(data_passer->finished_processing_file)) {
-        g_print("incrementing to %d on valud %d\n", data_passer->current_line_number, data_passer->finished_processing_file);
-        //    usleep(100000);
-        g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data);
-    }
-    g_print("incrementing to %d on valud %d\n", data_passer->current_line_number, data_passer->finished_processing_file);
-}
-
-/* void line_counter(gpointer data) {
-    gint i;
-
-    g_hash_table_insert(data, &KEY_CURRENT_LINE_NUMBER, &i);
-    for (i = 0; i < 5; i++) {
-        g_print("Up to %d\n", i);
-        g_usleep (1000000);
-    while(g_main_context_pending (g_main_context_default())) {
-        g_main_context_iteration (g_main_context_default(),TRUE);
-
-    }
-    }
-
-}*/
-
-/**
- * Callback for processing the CSV file. Runs after clicking Go in the main window. The function does the following:
- * -# Checks if the passed file exists.
- * -# Compile regular expressions.
- * -# Create headers, either from the first line of the file or artificially.
- * -# Initilize a `Field_analysis` struct for each column.
- * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
- * -# Close the file.
- * -# Print the results.
- * @param button Clicked button.
- * @param data Pointer to the data-passer structure.
- */
-gboolean process_file(GtkButton *button, gpointer data) {
+gboolean process_thread(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
-
-    gtk_statusbar_remove(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, data_passer->status_bar_context_info_message_id);
-
-    FILE *fp = fopen(data_passer->filename, "r");
-
-    if (fp == NULL) {
-        data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, "Could not open the file.");
-        return FALSE;
-    }
     gchar *csv_line;
     size_t max_number_characters = 1000;
     size_t len = 0;
@@ -91,14 +45,13 @@ gboolean process_file(GtkButton *button, gpointer data) {
         exit(-1);
     }
 
-    data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, "Reading file...");
-
     gboolean on_first_line = TRUE;
 
     char *token;
 
     /* Retrieve the field delimiter */
     char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\t" : ",";
+    g_print("Here B\n");
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
@@ -124,28 +77,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
             break;
     }
 
-    /*   GtkWidget *status_bar = (GtkWidget *)g_hash_table_lookup(pointer_passer, &KEY_STATUS_BAR);
-
-    guint status_bar_context_info_message_id = *(guint *)g_hash_table_lookup(pointer_passer, &STATUS_BAR_CONTEXT_INFO_CURRENT_MESSAGE_ID);
-
-    guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(status_bar), STATUS_BAR_CONTEXT_INFO); */
-    // gchar progress_message[100];
-
-    g_thread_new("line_number_in_status_bar", (GThreadFunc)increment, data);
-    // g_idle_add(G_SOURCE_FUNC(line_number_in_status_bar), data );
-
-    while (getline(&csv_line, &len, fp) != -1) {
+    while (getline(&csv_line, &len, data_passer->fp) != -1) {
         line_number++;
         data_passer->current_line_number = line_number;
-        //  g_snprintf(progress_message, 50, "Reading line %d...", line_number);
 
-        //   line_number_in_status_bar(line_number, data);
-
-        //   g_print("Processing line %s\n", progress_message);
-        /* gtk_statusbar_remove(GTK_STATUSBAR(status_bar), status_bar_context_info, status_bar_context_info_message_id);
-        status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(status_bar), status_bar_context_info, progress_message);
- */
-
+        gdk_threads_add_idle((GSourceFunc)line_number_in_status_bar, data);
+        //   g_idle_add((GSourceFunc)line_number_in_status_bar, data);
         /* If the delimiter is a comma, then replace commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0)) {
             switch (field_quoting) {
@@ -816,6 +753,38 @@ gboolean process_file(GtkButton *button, gpointer data) {
         }
     }
     data_passer->finished_processing_file = TRUE;
+}
+
+/**
+ * Callback for processing the CSV file. Runs after clicking Go in the main window. The function does the following:
+ * -# Checks if the passed file exists.
+ * -# Compile regular expressions.
+ * -# Create headers, either from the first line of the file or artificially.
+ * -# Initilize a `Field_analysis` struct for each column.
+ * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
+ * -# Close the file.
+ * -# Print the results.
+ * @param button Clicked button.
+ * @param data Pointer to the data-passer structure.
+ */
+gboolean process_file(GtkButton *button, gpointer data) {
+    Data_passer *data_passer = (Data_passer *)data;
+    FILE *fp = fopen(data_passer->filename, "r");
+
+    if (fp == NULL) {
+        //  data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, "Could not open the file.");
+        return FALSE;
+    }
+
+    data_passer->fp = fp;
+
+    static GMainLoop *gloop;
+    gloop = g_main_loop_new(NULL, FALSE);
+
+    GThread *process_g_thread = g_thread_new("process_thread", (GThreadFunc)process_thread, data);
+    g_main_loop_run(gloop);
+
+    g_thread_join(process_g_thread);
     fclose(fp);
 
     display_results(data_passer);
