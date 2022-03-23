@@ -73,7 +73,6 @@ gboolean process_thread(gpointer data) {
         data_passer -> current_line_number++;
 
         gdk_threads_add_idle((GSourceFunc)line_number_in_status_bar, data);
-        //   g_idle_add((GSourceFunc)line_number_in_status_bar, data);
         /* If the delimiter is a comma, then replace commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0)) {
             switch (field_quoting) {
