@@ -14,7 +14,7 @@
  */
 void delete_heading(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
-    g_free(heading);
+    g_free(key);
 }
 
 /**
