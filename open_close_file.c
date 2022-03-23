@@ -109,6 +109,11 @@ gboolean process_thread(gpointer data) {
         gpointer value = NULL;
 
         while ((token = strsep(&csv_line, "\t")) != NULL) {
+
+            /* Strip whitespace from the current token. */
+            gchar *csv_value = g_strstrip(token);
+
+
             /* Skip a value that is empty. */
             if (g_utf8_strlen(token, -1) == 0) {
                 column_number++;
@@ -126,8 +131,6 @@ gboolean process_thread(gpointer data) {
 
             enum data_types field_type = field_analysis->field_type;
 
-            /* Strip whitespace from the current token. */
-            gchar *csv_value = g_strstrip(token);
 
             if (field_quoting != NEVER) {
                 strip_quotes(&csv_value);
