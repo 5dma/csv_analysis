@@ -72,7 +72,9 @@ gboolean process_thread(gpointer data) {
     while (getline(&csv_line, &len, data_passer->fp) != -1) {
         data_passer -> current_line_number++;
 
+        /* Send line number to main loop. */
         gdk_threads_add_idle((GSourceFunc)line_number_in_status_bar, data);
+
         /* If the delimiter is a comma, then replace commas with tabs. */
         if ((g_strcmp0(delimiter, ",") == 0)) {
             switch (field_quoting) {
@@ -90,7 +92,7 @@ gboolean process_thread(gpointer data) {
         if (on_first_line) {
             on_first_line = FALSE;
             if (has_header_line) {
-                data_passer->headings = make_headings(csv_line, field_quoting);
+                make_headings(csv_line, field_quoting, data_passer);
             } else {
                 data_passer->headings = make_forced_headings(csv_line);
             }

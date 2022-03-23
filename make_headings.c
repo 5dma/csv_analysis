@@ -50,21 +50,26 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
  * @param field_quoting Type of quoting around the fields (never, always, optional).
  * @return A GSList of headings derived from the headings in the CSV file.
  */
-GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
+void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Data_passer *data_passer) {
     /* Need to understand why need a copy of csv_line; required by strsep? */
     gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
     char *token = NULL;
-    GSList *local_list = NULL;
+    /* Also need to understand why we need temporary_token. 
+    Currently we copy the token into temporary_token, and then add temporary_token to
+    the headings. Adding just the token to the list of headings generates a memory error,
+    maybe a dangling pointer?
+     */
+
+    gchar *temporary_token;
     while ((token = strsep(&local_csv_line, "\t")) != NULL) {
         if (field_quoting != NEVER) {
             strip_quotes(&token);
         }
-        local_list = g_slist_append(local_list, token);
+        temporary_token = g_strdup(token);
+        data_passer -> headings = g_slist_append(data_passer -> headings, temporary_token);
     }
-
-    g_slist_foreach(local_list, clean_column_headings, NULL);
+    g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
     g_free(local_csv_line);
-    return local_list;
 }
 
 /**

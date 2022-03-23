@@ -44,7 +44,6 @@ guint get_number_of_columns(GHashTable *field_analysis_hash) {
  */
 void display_single_result(gpointer heading, gpointer data) {
     gchar *key = (gchar *)heading;
-
     Data_passer *data_passer = (Data_passer *)data;
 
     Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
