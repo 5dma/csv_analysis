@@ -28,7 +28,7 @@ void concat_command(GtkEditable *self, gpointer data) {
 
     gchar *basename = g_path_get_basename(data_passer->filename);
 
-    gchar *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\t" : ",";
+    gchar *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\\t" : ",";
 
     gchar *field_enclosed_by = NULL;
 
@@ -51,7 +51,7 @@ void concat_command(GtkEditable *self, gpointer data) {
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
     if (has_header_line) {
-        header_line = g_strdup(" IGNORE 1 LINES");
+        header_line = g_strdup("IGNORE 1 LINES");
     } else {
         header_line = g_strdup("");
     }
