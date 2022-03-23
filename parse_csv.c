@@ -98,7 +98,7 @@ void change_commas_to_tabs(gchar **csv_line_ptr) {
     gchar *iterator = csv_line;
 
     while (*iterator != '\0') {
-        if ((*iterator == ',') && (*(iterator - 1) == '"') && (*(iterator + 1) == '"')) {
+        if (*iterator == ',') {
             *iterator = '\t';
         }
         iterator++;
