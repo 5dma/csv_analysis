@@ -21,10 +21,54 @@
 void concat_command(GtkEditable *self, gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
+    const gchar *tablename = gtk_entry_get_text((GtkEntry *)(data_passer->entry_table_name));
+
     /* Not sure if the following pointer needs to be freed, as it is set into the label widget. */
-    gchar *complete_command = g_strconcat("CREATE TABLE ", gtk_entry_get_text((GtkEntry *)(data_passer->entry_table_name)), " (", data_passer->field_clause, ");", NULL);
+    gchar *create_command = g_strconcat("CREATE TABLE ", tablename, " (", data_passer->field_clause, ");", NULL);
+
+    gchar *basename = g_path_get_basename(data_passer->filename);
+
+    gchar *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\t" : ",";
+
+    gchar *field_enclosed_by = NULL;
+
+    const gchar *active_quoted_fields = gtk_combo_box_get_active_id((GtkComboBox *)data_passer->combo_fields_enclosed);
+
+    switch (*active_quoted_fields) {
+        case '0':
+            field_enclosed_by = g_strdup("");
+            break;
+        case '1':
+            field_enclosed_by = g_strdup("ENCLOSED BY '\"'");
+            break;
+        case '2':
+            field_enclosed_by = g_strdup("OPTIONALLY ENCLOSED BY '\"'");
+            break;
+    }
+
+    gchar *header_line = NULL;
+
+    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
+
+    if (has_header_line) {
+        header_line = g_strdup(" IGNORE 1 LINES");
+    } else {
+        header_line = g_strdup("");
+    }
+
+    gchar *load_command = g_strconcat("LOAD DATA INFILE '/var/lib/mysql-files/", basename, "' INTO TABLE ", tablename, " FIELDS TERMINATED BY '", delimiter, "' ", field_enclosed_by, header_line, ";", NULL);
+
+    gchar *complete_command = g_strconcat(create_command, "\n\n", load_command, NULL);
 
     gtk_label_set_text(GTK_LABEL(data_passer->label_mysql_command), complete_command);
+    
+   /*  g_free(create_command);
+    g_free(basename);    
+    g_free(delimiter);
+    g_free(field_enclosed_by);
+    g_free(header_line);
+    g_free(load_command); */
+    
 }
 
 /**
@@ -65,7 +109,7 @@ void display_single_result(gpointer heading, gpointer data) {
                        COLUMN_NAME, key,
                        DATA_TYPE, datatype_string,
                        DETERMINING_LINE, field_analysis->last_line_change,
-                        DETERMINING_VALUE, field_analysis->determining_value,
+                       DETERMINING_VALUE, field_analysis->determining_value,
                        -1);
 
     /* Retrieve the current column number, which is an index into the array of character
@@ -88,26 +132,25 @@ void display_single_result(gpointer heading, gpointer data) {
  * @param data_passer Pointer to the data-passer structure.
  */
 void display_results(Data_passer *data_passer) {
-
     data_passer->number_of_columns = get_number_of_columns(data_passer->field_analysis_hash);
 
     /* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns, so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib function g_strjoinv() that joints an array of string pointers, and the last pointer in that array must be NULL.  */
     gchar *trash;
-    data_passer -> column_strings = g_malloc( sizeof(trash) * (data_passer->number_of_columns + 1));
+    data_passer->column_strings = g_malloc(sizeof(trash) * (data_passer->number_of_columns + 1));
     for (int i = 0; i <= data_passer->number_of_columns; i++) {
-        data_passer -> column_strings[i] = NULL;
+        data_passer->column_strings[i] = NULL;
     }
 
     data_passer->current_column_number = 0;
-   
+
     g_slist_foreach(data_passer->headings, display_single_result, data_passer);
-  
+
     /* Following memory is freed in cleanup(). */
-    data_passer->field_clause = g_strjoinv(", ", data_passer -> column_strings);
+    data_passer->field_clause = g_strjoinv(", ", data_passer->column_strings);
 
     concat_command(NULL, (gpointer)data_passer);
-    gtk_widget_set_sensitive(data_passer -> button_copy, TRUE);
-    gtk_widget_set_sensitive(data_passer -> entry_table_name, TRUE);
+    gtk_widget_set_sensitive(data_passer->button_copy, TRUE);
+    gtk_widget_set_sensitive(data_passer->entry_table_name, TRUE);
 }
 
 /**
