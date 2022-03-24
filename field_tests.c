@@ -4,6 +4,8 @@
 /**
  * @file field_tests.c
  * @brief Defines functions for analyzing the columns in a CSV file.
+ *
+ * The functions descrbed in this file are part of the analysis algorithm. For an overview of the algorithm, see \ref algorithm.
 */
 
 /**

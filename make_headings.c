@@ -4,7 +4,9 @@
 #include "headers.h"
 /**
  * @file make_headings.c
- * @brief Defines functions for creating the MySQL column headings.
+ * @brief Defines functions for creating the MySQL field names using column headings.
+ * 
+ * If possible, the application creates field names from column headings in the CSV file. If column headings are not in the CSV file, the application creates them using strings starting with `column_` followed by a number.
  */
 
 /**
@@ -48,7 +50,7 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
  * Makes individual headings from the first line in a CSV file, placing all of them in a `GSList`. This function relies on `strsep` to tokenize between tab characters.
  * @param csv_line First line from a CSV file.
  * @param field_quoting Type of quoting around the fields (never, always, optional).
- * @return A GSList of headings derived from the headings in the CSV file.
+ * @param data_passer Pointer to the data-passer structure.
  */
 void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Data_passer *data_passer) {
     /* Need to understand why need a copy of csv_line; required by strsep? */
@@ -98,6 +100,11 @@ GSList *make_forced_headings(char *csv_line) {
     return local_list;
 }
 
+
+/**
+ * Removes quotes surrounding a value. The strip accounts for the possibility of escaped quotes surrounding the value, such as `"""123 Main Street"""`, which in output appears as `"123 Main Street".`
+ * @param quoted_string_ptr Passed value from the CSV file.
+ */
 void strip_quotes(gchar **quoted_string_ptr) {
     /*
     If so, do the following:

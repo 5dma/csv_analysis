@@ -8,15 +8,12 @@
  */
 
 /**
- * Concatenates the following strings into one long string:
- * - String literal `CREATE TABLE `.
- * - MySQL table name.
- * - String literal `(`.
- * - List of columns and their definitions.
- * - String literal `);`.
+ * Creates two MySQL commands pertaining to the analyzed CSV file: a `CREATE TABLE` command and a `LOAD DATA` command. Both appear in the application window.
  *
  * @param self A [GtkEditable](https://docs.gtk.org/gtk3/iface.Editable.html) containing the MySQL table name.
  * @param data Pointer to the data-passer hash.
+ * @see [CREATE TABLE Statement](https://dev.mysql.com/doc/refman/5.7/en/create-table.html)
+ * @see [LOAD DATA Statement](https://dev.mysql.com/doc/refman/5.7/en/load-data.html)
  */
 void concat_command(GtkEditable *self, gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
@@ -62,17 +59,17 @@ void concat_command(GtkEditable *self, gpointer data) {
 
     gtk_label_set_text(GTK_LABEL(data_passer->label_mysql_command), complete_command);
     
-   /*  g_free(create_command);
-    g_free(basename);    
-    g_free(delimiter);
+   /* g_free(create_command);
+   g_free(basename);    
+    g_free(delimiter); 
     g_free(field_enclosed_by);
     g_free(header_line);
-    g_free(load_command); */
+   g_free(load_command); */
     
 }
 
 /**
- * Returns the number of columns in a CSV file, by counting the number of keys in the field_analysis_hash.
+ * Returns the number of columns in a CSV file by counting the number of keys in `field_analysis_hash`.
  * @param field_analysis_hash Hash table desribing each column in the CSV file.
  * @returns Number of columns in the CSV file.
  */
@@ -154,7 +151,7 @@ void display_results(Data_passer *data_passer) {
 }
 
 /**
- * Callback that prevents the user from entering anything in a [GtkCellEditable](https://docs.gtk.org/gtk3/iface.Editable.html) other characters that can be used to name a MySQL table. The actual allowed keys are [0-9], decimal point, backspace, delete, cursor right, and cursor left.
+ * Callback that prevents the user from entering characters in a [GtkCellEditable](https://docs.gtk.org/gtk3/iface.Editable.html)  that cannot be used to name a MySQL table. The allowed characters are [0-9], decimal point, backspace, delete, cursor right, and cursor left.
  * @param widget Widget where the edit is occurring.
  * @param event Key that was pressed.
  * @param data `NULL` in this case.

@@ -3,6 +3,8 @@
 /**
  * @file initialize_field_analysis.c
  * @brief Initializes a Field_analysis struct.
+ * 
+ * Each column (field) in a CSV file has its own analysis. When initialized, the algorithm assumes the column is the smallest possible MySQL data type, `TINYINT`, so the instantiation of each `Field_analysis` structure includes the `TINYINT` data type.
 */
 
 /**

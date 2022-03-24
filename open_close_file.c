@@ -11,6 +11,12 @@
  * @brief Functions for processing the CSV file.
  */
 
+
+/**
+ * Passes the current line number in the CSV file to the status bar in the application window. This gives the user an indication that the application is actively reading the file.
+ * @param data Pointer to the data-passer structure.
+ * @return `FALSE` as required for threads accessing the main loop.
+ */
 gboolean line_number_in_status_bar(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
     data_passer->current_line_number;
@@ -25,6 +31,17 @@ gboolean line_number_in_status_bar(gpointer data) {
     return FALSE;
 }
 
+/**
+ * Worker thread that analyzes the CSV file. The function does the following:
+ * -# Compile regular expressions.
+ * -# Create headers, either from the first line of the file or artificially.
+ * -# Initialize a `Field_analysis` struct for each column.
+ * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
+ * 
+ *  For an overview of the algorithm implemented in this function, see \ref algorithm.
+ * @param data Pointer to the data-passer structure.
+ * @return `FALSE` as required for threads accessing the main loop.
+ */
 gboolean process_thread(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
@@ -751,14 +768,11 @@ gboolean process_thread(gpointer data) {
 }
 
 /**
- * Callback for processing the CSV file. Runs after clicking Go in the main window. The function does the following:
- * -# Checks if the passed file exists.
- * -# Compile regular expressions.
- * -# Create headers, either from the first line of the file or artificially.
- * -# Initilize a `Field_analysis` struct for each column.
- * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
+ * Callback for processing the CSV file. Runs after clicking Go in the main window. This function does the following:
+ * -# Opens the CSV file.
+ * -# Launch the worker thread that processes the file. 
  * -# Close the file.
- * -# Print the results.
+ * -# Display the results.
  * 
  * @param button Clicked button.
  * @param data Pointer to the data-passer structure.

@@ -6,7 +6,7 @@
 */
 
 /**
- * Function that starts the GTK loop, and initializes varies fields in the data_passer structure. 
+ * Function that starts the GTK loop, and initializes various fields in the data_passer structure. 
  * @param app Pointer to the GTK application
  * @param data Pointer to passed data, `NULL` in this case.
 */

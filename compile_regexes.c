@@ -6,7 +6,7 @@
 */
 
 /**
- * Compiles a regular expression for identifying a decimal number. The string must have a decimal point followed by 0-2 digits.
+ * Compiles a regular expression for identifying a decimal number. The string must have a decimal point followed by 0&ndash;2 digits.
  * @returns A regular expression.
 */ 
 regex_t make_decimal_regex() {

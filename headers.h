@@ -12,20 +12,20 @@
  * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html)). This enumeration is used in Field_analysis.
  */
 enum data_types {
-    TINYINT_UNSIGNED,
-    SMALLINT_UNSIGNED,
-    MEDIUMINT_UNSIGNED,
-    INT_UNSIGNED,
-    BIGINT_UNSIGNED,
-    TINYINT_SIGNED,
-    SMALLINT_SIGNED,
-    MEDIUMINT_SIGNED,
-    INT_SIGNED,
-    BIGINT_SIGNED,
-    DECIMAL,
-    FLOAT,
-    TIMESTAMP,
-    CHAR
+    TINYINT_UNSIGNED, /**< 0 - 255 */
+    SMALLINT_UNSIGNED, /**< 0 - 65535 */
+    MEDIUMINT_UNSIGNED, /**< 0 - 16777215 */
+    INT_UNSIGNED, /**< 0 - 4294967295 */
+    BIGINT_UNSIGNED, /**< 0 - 2<sup>64</sup> &minus; 1 */
+    TINYINT_SIGNED, /**<  &minus;128 - 127 */
+    SMALLINT_SIGNED, /**<  &minus;32768 - 32767 */
+    MEDIUMINT_SIGNED, /**<  &minus;8388608 - 8388607 */
+    INT_SIGNED, /**<  &minus;2147483648 - 2147483647 */
+    BIGINT_SIGNED, /**< &minus;2<sup>63</sup> - 2<sup>63</sup> &minus; 1 */
+    DECIMAL, /**< Fixed number with an optional decimal point */
+    FLOAT, /**<  Floating number */
+    TIMESTAMP, /**< A timestamp */
+    CHAR /**< Any character string */
 };
 
 
@@ -42,7 +42,7 @@ enum field_quoting_options {
  * Structure containing the results of a column.
  */
 typedef struct {
-    enum data_types field_type;  /**< One of the possible MySQL field types enumerated in . */
+    enum data_types field_type;  /**< One of the possible MySQL field types enumerated in [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
     gboolean sql_signed; /**< Indicates if the data type is signed. */
     int char_width; /**< Width of a `CHAR` field. */
     int precision;  /**< Precision (number of digits) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
