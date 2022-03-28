@@ -11,7 +11,6 @@
  * @brief Functions for processing the CSV file.
  */
 
-
 /**
  * Passes the current line number in the CSV file to the status bar in the application window. This gives the user an indication that the application is actively reading the file.
  * @param data Pointer to the data-passer structure.
@@ -37,7 +36,7 @@ gboolean line_number_in_status_bar(gpointer data) {
  * -# Create headers, either from the first line of the file or artificially.
  * -# Initialize a `Field_analysis` struct for each column.
  * -# For each line, for each column in the line, determine the minimal MySQL data type. If the data type is larger than the current data type for that column, set it as the new minimum.
- * 
+ *
  *  For an overview of the algorithm implemented in this function, see \ref algorithm.
  * @param data Pointer to the data-passer structure.
  * @return `FALSE` as required for threads accessing the main loop.
@@ -65,7 +64,7 @@ gboolean process_thread(gpointer data) {
 
     regex_t decimal_regex = make_decimal_regex();
     regex_t timestamp_regex = make_timestamp_regex();
-    data_passer -> current_line_number = 0;
+    data_passer->current_line_number = 0;
 
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
@@ -87,7 +86,7 @@ gboolean process_thread(gpointer data) {
     }
 
     while (getline(&csv_line, &len, data_passer->fp) != -1) {
-        data_passer -> current_line_number++;
+        data_passer->current_line_number++;
 
         /* Send line number to main loop. */
         gdk_threads_add_idle((GSourceFunc)line_number_in_status_bar, data);
@@ -126,13 +125,14 @@ gboolean process_thread(gpointer data) {
         gpointer value = NULL;
 
         while ((token = strsep(&csv_line, "\t")) != NULL) {
-
             /* Strip whitespace from the current token. */
             gchar *csv_value = g_strstrip(token);
 
-
+            if (field_quoting != NEVER) {
+                strip_quotes(&csv_value);
+            }
             /* Skip a value that is empty. */
-            if (g_utf8_strlen(token, -1) == 0) {
+            if (g_utf8_strlen(csv_value, -1) == 0) {
                 column_number++;
                 continue;
             }
@@ -148,24 +148,19 @@ gboolean process_thread(gpointer data) {
 
             enum data_types field_type = field_analysis->field_type;
 
-
-            if (field_quoting != NEVER) {
-                strip_quotes(&csv_value);
-            }
-
             gboolean passes_test;
             switch (field_type) {
                 case TINYINT_UNSIGNED:
                     passes_test = is_unsigned_int(csv_value, 0, 255);
                     if (passes_test) {
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_unsigned_int(csv_value, 0, 65535);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -173,77 +168,77 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_unsigned_int(csv_value, 0, 16777215);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_unsigned_int(csv_value, 0, 4294967295);
                     if (passes_test) {
                         field_analysis->field_type = INT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -253,77 +248,77 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_unsigned_int(csv_value, 0, 16777215);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_unsigned_int(csv_value, 0, 4294967295);
                     if (passes_test) {
                         field_analysis->field_type = INT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -333,70 +328,70 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_unsigned_int(csv_value, 0, 4294967295);
                     if (passes_test) {
                         field_analysis->field_type = INT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -406,63 +401,63 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_UNSIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -472,56 +467,56 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -128, 127);
                     if (passes_test) {
                         field_analysis->field_type = TINYINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -531,21 +526,21 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -32768, 32767);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -553,7 +548,7 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -561,21 +556,21 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -585,42 +580,42 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -8388608, 8388607);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -631,7 +626,7 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
                     if (passes_test) {
                         field_analysis->field_type = INT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -639,28 +634,28 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -670,7 +665,7 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
                     if (passes_test) {
                         field_analysis->field_type = BIGINT_SIGNED;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -678,21 +673,21 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -703,21 +698,21 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_decimal(csv_value, &decimal_regex);
                     if (passes_test) {
                         field_analysis->field_type = DECIMAL;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -727,14 +722,14 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_float(csv_value);
                     if (passes_test) {
                         field_analysis->field_type = FLOAT;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -744,7 +739,7 @@ gboolean process_thread(gpointer data) {
                     passes_test = is_timestamp(csv_value, &timestamp_regex);
                     if (passes_test) {
                         field_analysis->field_type = TIMESTAMP;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
@@ -757,23 +752,29 @@ gboolean process_thread(gpointer data) {
                     guint csv_value_length = strlen(csv_value);
                     if (field_analysis->char_width < csv_value_length) {
                         field_analysis->char_width = csv_value_length;
-                        field_analysis->last_line_change = data_passer -> current_line_number;
+                        field_analysis->last_line_change = data_passer->current_line_number;
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                     }
             }
+            if (column_number == 5)
+                g_print("Line number %d, column number: %d, field type %d\n", data_passer->current_line_number, column_number, field_analysis->field_type );
             column_number++;
         }
+
     }
+    regfree(&decimal_regex);
+    regfree(&timestamp_regex);
+
     g_main_loop_quit(data_passer->gloop);
 }
 
 /**
  * Callback for processing the CSV file. Runs after clicking Go in the main window. This function does the following:
  * -# Opens the CSV file.
- * -# Launch the worker thread that processes the file. 
+ * -# Launch the worker thread that processes the file.
  * -# Close the file.
  * -# Display the results.
- * 
+ *
  * @param button Clicked button.
  * @param data Pointer to the data-passer structure.
  */
@@ -783,13 +784,12 @@ gboolean process_file(GtkButton *button, gpointer data) {
 
     if (data_passer->fp == NULL) {
         guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
-        
+
         data_passer->status_bar_context_info_message_id = gtk_statusbar_push(GTK_STATUSBAR(data_passer->status_bar), status_bar_context_info, "Could not open the file.");
         return FALSE;
     }
 
-   
-    /* The setup for the threading was taken from 
+    /* The setup for the threading was taken from
     https://github.com/libnice/libnice/blob/master/examples/threaded-example.c
     */
 
