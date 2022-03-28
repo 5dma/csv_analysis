@@ -6,7 +6,9 @@
 */
 
 /**
- * Compiles a regular expression for identifying a decimal number. The string must have a decimal point followed by 0&ndash;2 digits.
+ * Compiles a regular expression for identifying a decimal number.
+ * The string has an optional decimal point; if it has a decimal point, it is followed by an optional 0&ndash;2 digits. 
+ * It appears that the C library `regex.h` requires [POSIX character classes](https://riptutorial.com/regex/example/17891/posix-character-classes). 
  * @returns A regular expression.
  * @see is_decimal()
 */ 
@@ -14,8 +16,8 @@ regex_t make_decimal_regex() {
     regex_t decimal_regex;
     int value;
     
-    value = regcomp(&decimal_regex, "^[+-]?[\\d]+\\.?[\\d]{0,2}$", REG_EXTENDED);
-    
+    value = regcomp(&decimal_regex, "^[+-]?[[:digit:]]+\\.?[[:digit:]]{0,2}$", REG_EXTENDED);
+
     if (value != 0) {
         g_print("Compilation error of regex\n");
         exit(-2);

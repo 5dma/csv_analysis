@@ -48,7 +48,7 @@ void concat_command(GtkEditable *self, gpointer data) {
     gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
     if (has_header_line) {
-        header_line = g_strdup("IGNORE 1 LINES");
+        header_line = g_strdup(" IGNORE 1 LINES");
     } else {
         header_line = g_strdup("");
     }

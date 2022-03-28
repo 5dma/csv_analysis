@@ -44,16 +44,17 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
 
 /**
  * Checks if a passed value is a decimal.
+ * A number with more than two digits after the decimal point is considered a `FLOAT`.
+ * 
  * @param token A character string.
  * @param decimal_regex Compiled regex for a number with 0-2 numbers after a decimal point.
  * @return `TRUE` if the passed character string matches the pattern for a decimal, `FALSE` otherwise.
  * @see make_decimal_regex()
 */
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
-    regmatch_t pmatch[1];
+    regmatch_t pmatch[2];
 
     int success = regexec(decimal_regex, token, 1, pmatch, 0);
-    g_print("For the value %s, the regecex result is %d\n", token, success);
     return (success == 0);
 }
 
@@ -69,17 +70,18 @@ gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
 */
 gboolean is_float(const gchar *token) {
     gchar *end_ptr;
-    size_t token_length = strlen(token);
+ //   size_t token_length = strlen(token);
     gdouble result = g_ascii_strtod(token, &end_ptr);
 
-    if (((result == 0) && 
-    (g_ascii_strcasecmp(token, "0.00") != 0)) || 
-    ((token + token_length) != end_ptr)) {
+ if ((result == 0) && 
+    (g_ascii_strcasecmp(token, "0") != 0) && 
+    (g_ascii_strcasecmp(token, "0.0") != 0) &&
+    (g_ascii_strcasecmp(token, "0.00") != 0)) {
         return FALSE;
     } else {
         return TRUE;
     }
-    
+
 }
 
 /**

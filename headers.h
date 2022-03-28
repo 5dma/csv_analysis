@@ -101,6 +101,7 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
+void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis *field_analysis);
 GDestroyNotify free_headings(gpointer data);
 void display_results(Data_passer *data_passer);
 
