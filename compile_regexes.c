@@ -26,7 +26,11 @@ regex_t make_decimal_regex() {
 }
 
 /**
- * Compiles a regular expression for identifying a timestamp.
+ * Compiles a regular expression for identifying a timestamp. The pattern this regex is
+ * 
+ * * YYYY-MM-DDTHH:MM:SS:MMM
+ *
+ * It appears that the C library `regex.h` requires [POSIX character classes](https://riptutorial.com/regex/example/17891/posix-character-classes).
  * @returns A regular expression.
  * @see is_timestamp()
 */ 

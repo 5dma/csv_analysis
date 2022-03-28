@@ -152,11 +152,7 @@ gboolean process_thread(gpointer data) {
             switch (field_type) {
                 case TINYINT_UNSIGNED:
                     passes_test = is_unsigned_int(csv_value, 0, 255);
-                    if (passes_test) {
-                        field_analysis->last_line_change = data_passer->current_line_number;
-                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
-                        break;
-                    }
+                    if (passes_test) break;
                     passes_test = is_unsigned_int(csv_value, 0, 65535);
                     if (passes_test) {
                         field_analysis->field_type = SMALLINT_UNSIGNED;
