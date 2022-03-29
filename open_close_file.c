@@ -44,9 +44,6 @@ gboolean line_number_in_status_bar(gpointer data) {
 gboolean process_thread(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
-gchar *key_id = NULL;
-Field_analysis *field_analysis_id = NULL;
-
     gchar *csv_line;
     size_t max_number_characters = 1000;
     size_t len = 0;
@@ -123,9 +120,6 @@ Field_analysis *field_analysis_id = NULL;
             }
         }
 
-         key_id = strdup((gchar *)g_slist_nth_data(data_passer->headings, 1));
-         field_analysis_id = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key_id);
-
         int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
@@ -144,7 +138,6 @@ Field_analysis *field_analysis_id = NULL;
             }
 
             key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
-
 
             Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
