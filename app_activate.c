@@ -25,21 +25,21 @@ void on_app_activate(GApplication *app, gpointer data) {
     data_passer -> gloop = NULL;
 
     /* Memory for all these strings is freed in cleanup(). */
-    data_passer -> datatype_strings[0] = strdup("TINYINT_UNSIGNED");
-    data_passer -> datatype_strings[1] = strdup("SMALLINT_UNSIGNED");
-    data_passer -> datatype_strings[2] = strdup("MEDIUMINT_UNSIGNED");
-    data_passer -> datatype_strings[3] = strdup("INT_UNSIGNED");
-    data_passer -> datatype_strings[4] = strdup("BIGINT_UNSIGNED");
-    data_passer -> datatype_strings[5] = strdup("TINYINT_SIGNED");
-    data_passer -> datatype_strings[6] = strdup("SMALLINT_SIGNED");
-    data_passer -> datatype_strings[7] = strdup("MEDIUMINT_SIGNED");
-    data_passer -> datatype_strings[8] = strdup("INT_SIGNED");
-    data_passer -> datatype_strings[9] = strdup("BIGINT_SIGNED");
-    data_passer -> datatype_strings[10] = strdup("DECIMAL");
-    data_passer -> datatype_strings[11] = strdup("FLOAT");
-    data_passer -> datatype_strings[12] = strdup("TIMESTAMP");
-    data_passer -> datatype_strings[13] = strdup("CHAR");
-    data_passer -> datatype_strings[14] = strdup("TINYINT_UNSIGNED");
+    data_passer -> datatype_strings[0] = strdup("GARBAGE"); /* Corresponds to initialization value. */
+    data_passer -> datatype_strings[1] = strdup("TINYINT_UNSIGNED");
+    data_passer -> datatype_strings[2] = strdup("SMALLINT_UNSIGNED");
+    data_passer -> datatype_strings[3] = strdup("MEDIUMINT_UNSIGNED");
+    data_passer -> datatype_strings[4] = strdup("INT_UNSIGNED");
+    data_passer -> datatype_strings[5] = strdup("BIGINT_UNSIGNED");
+    data_passer -> datatype_strings[6] = strdup("TINYINT_SIGNED");
+    data_passer -> datatype_strings[7] = strdup("SMALLINT_SIGNED");
+    data_passer -> datatype_strings[8] = strdup("MEDIUMINT_SIGNED");
+    data_passer -> datatype_strings[9] = strdup("INT_SIGNED");
+    data_passer -> datatype_strings[10] = strdup("BIGINT_SIGNED");
+    data_passer -> datatype_strings[11] = strdup("DECIMAL");
+    data_passer -> datatype_strings[12] = strdup("FLOAT");
+    data_passer -> datatype_strings[13] = strdup("TIMESTAMP");
+    data_passer -> datatype_strings[14] = strdup("CHAR");
 
     GtkWidget *window = make_window(data_passer);
 

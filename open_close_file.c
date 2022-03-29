@@ -44,6 +44,9 @@ gboolean line_number_in_status_bar(gpointer data) {
 gboolean process_thread(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
+gchar *key_id = NULL;
+Field_analysis *field_analysis_id = NULL;
+
     gchar *csv_line;
     size_t max_number_characters = 1000;
     size_t len = 0;
@@ -120,6 +123,9 @@ gboolean process_thread(gpointer data) {
             }
         }
 
+         key_id = strdup((gchar *)g_slist_nth_data(data_passer->headings, 1));
+         field_analysis_id = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key_id);
+
         int column_number = 0;
         gchar *key = NULL;
         gpointer value = NULL;
@@ -139,6 +145,7 @@ gboolean process_thread(gpointer data) {
 
             key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
 
+
             Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
             if (field_analysis == NULL) {
@@ -150,6 +157,100 @@ gboolean process_thread(gpointer data) {
 
             gboolean passes_test;
             switch (field_type) {
+                case GARBAGE:
+                    passes_test = is_unsigned_int(csv_value, 0, 255);
+                    if (passes_test) {
+                        field_analysis->field_type = TINYINT_UNSIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_unsigned_int(csv_value, 0, 65535);
+                    if (passes_test) {
+                        field_analysis->field_type = SMALLINT_UNSIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_unsigned_int(csv_value, 0, 16777215);
+                    if (passes_test) {
+                        field_analysis->field_type = MEDIUMINT_UNSIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_unsigned_int(csv_value, 0, 4294967295);
+                    if (passes_test) {
+                        field_analysis->field_type = INT_UNSIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_UNSIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -128, 127);
+                    if (passes_test) {
+                        field_analysis->field_type = TINYINT_SIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -32768, 32767);
+                    if (passes_test) {
+                        field_analysis->field_type = SMALLINT_SIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -8388608, 8388607);
+                    if (passes_test) {
+                        field_analysis->field_type = MEDIUMINT_SIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
+                    if (passes_test) {
+                        field_analysis->field_type = INT_SIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
+                    if (passes_test) {
+                        field_analysis->field_type = BIGINT_SIGNED;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_decimal(csv_value, &decimal_regex);
+                    if (passes_test) {
+                        field_analysis->field_type = DECIMAL;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_float(csv_value);
+                    if (passes_test) {
+                        field_analysis->field_type = FLOAT;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    passes_test = is_timestamp(csv_value, &timestamp_regex);
+                    if (passes_test) {
+                        field_analysis->field_type = TIMESTAMP;
+                        field_analysis->last_line_change = data_passer->current_line_number;
+                        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+                        break;
+                    }
+                    assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
+                    break;
                 case TINYINT_UNSIGNED:
                     passes_test = is_unsigned_int(csv_value, 0, 255);
                     if (passes_test) break;
@@ -160,7 +261,6 @@ gboolean process_thread(gpointer data) {
                         g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
                         break;
                     }
-
                     passes_test = is_unsigned_int(csv_value, 0, 16777215);
                     if (passes_test) {
                         field_analysis->field_type = MEDIUMINT_UNSIGNED;

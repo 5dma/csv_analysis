@@ -79,7 +79,11 @@ guint get_number_of_columns(GHashTable *field_analysis_hash) {
 }
 
 /**
- * Displays the result for a single column in the CSV file. The result is added to the list store holding the results, and also added to an allocated array of character strings. This function is a callback from an iterator over the list of headings.
+ * Displays the result for a single column in the CSV file.
+ * 
+ * The result is added to the list store holding the results, and also added to an allocated array of character strings. This function is a callback from an iterator over the list of headings.
+ * 
+ * If a column was empty, it never received an update to its initialization, which means its data type is `GARBAGE`. In such cases, we declare the data type to be `CHAR` with width zero.
  * @param heading Hash table desribing each column in the CSV file.
  * @param data Pointer to the data-passer structure.
  */
@@ -89,7 +93,7 @@ void display_single_result(gpointer heading, gpointer data) {
 
     Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
-    enum data_types field_type = field_analysis->field_type;
+    enum data_types field_type = (field_analysis->field_type == GARBAGE) ? CHAR : field_analysis->field_type;
 
     /* The following string holds a formatted string of the MySQL type, such as `TINYINT` or `CHAR(40)`. */
     gchar datatype_string[100];

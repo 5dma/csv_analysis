@@ -12,6 +12,7 @@
  * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html)). This enumeration is used in Field_analysis.
  */
 enum data_types {
+    GARBAGE, /**< Artificial type for initialization */
     TINYINT_UNSIGNED, /**< 0 - 255 */
     SMALLINT_UNSIGNED, /**< 0 - 65535 */
     MEDIUMINT_UNSIGNED, /**< 0 - 16777215 */

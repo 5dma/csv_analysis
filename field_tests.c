@@ -60,28 +60,27 @@ gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
 
 /**
  * Checks if a passed value is a float.
- * This function relies on [g_ascii_strtod](https://docs.gtk.org/glib/func.ascii_strtod.html), which returns `0.0` if a the token we are checking does not convert to a float. Therefore if this function returns `0.0` we might assume that the passed token is not a float. However, if we are examining a value whose column has already evaluated to a float, and we receive a token whose value is `0` or `0.0` or `0.00`, then we need to ensure the column continues to be considered a float. As a result, we call `g_ascii_strtod`, and then make the following checks if that function returns `0`:
- * - If so, is the token we received not one of the following: `0` or `0.0` or `0.00`
- * - Is the address of `token` plus the token's length != the `end_ptr` returned from `g_ascii_strtod`. 
+ * This function relies on [g_ascii_strtod](https://docs.gtk.org/glib/func.ascii_strtod.html). This function scans the passed token, and returns the float (or double) corresponding to all the characters that can comprise a float as well as the pointer to the last such character. If the function cannot do any such conversation (such as if the first character is alphabetic), the function returns `0.0`. 
  * 
- * If either of the two functions are true, then the zero returned from `g_ascii_strtod` is indeed a failed conversion, and the passed token is not a float.
+ * As some tokens passed to this function may be alphanumeric (such as `6c4759f60000`), we have to ensure that the function does not return a false result. For example, if we pass `6c4759f60000`, the return value of `g_ascii_strtod` is `6` and the returned end pointer also points to `6`. We therefore need to ensure that the end pointer points to the actual last character in the token. If it doesn't we know that the conversion failed. To summarize:
+ * - If `g_ascii_strtod` returned a non-zero number and the end pointer matches the end of the token, return `TRUE`.
+ * - If `g_ascii_strtod` returned a non-zero number and the end pointer does not match the end of the token, return `FALSE`.
+ * - If `g_ascii_strtod` returned a zero and the end pointer does not match the end of the token, return `FALSE`.
+ *
  * @param token A character string.
  * @return `TRUE` if the passed character string can be converted to a float, `FALSE` otherwise.
 */
 gboolean is_float(const gchar *token) {
     gchar *end_ptr;
- //   size_t token_length = strlen(token);
+    size_t token_length = strlen(token);
     gdouble result = g_ascii_strtod(token, &end_ptr);
 
- if ((result == 0) && 
-    (g_ascii_strcasecmp(token, "0") != 0) && 
-    (g_ascii_strcasecmp(token, "0.0") != 0) &&
-    (g_ascii_strcasecmp(token, "0.00") != 0)) {
+ //if (((result == 0) && (token != end_ptr)) || (token + token_length - 1 != end_ptr)) {
+ if (token + token_length - 1 != end_ptr) {
         return FALSE;
     } else {
         return TRUE;
     }
-
 }
 
 /**

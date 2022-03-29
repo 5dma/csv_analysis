@@ -34,13 +34,12 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
 
     Field_analysis *field_analysis_struct = g_new(Field_analysis, 1);
 
-    field_analysis_struct->field_type = TINYINT_UNSIGNED;
+    field_analysis_struct->field_type = GARBAGE;
     field_analysis_struct->sql_signed = FALSE;
     field_analysis_struct->char_width = 0;
     field_analysis_struct->precision = 0;
     field_analysis_struct->scale = 0;
     field_analysis_struct->last_line_change = (has_header_line)  ? 2 : 1;
-    g_strlcpy( field_analysis_struct->determining_value,"0", 4096);
     /*field_analysis_struct->determining_value implicitly assigned NULL in all positions. */
 
     gboolean success = g_hash_table_insert(field_analysis_hash, key, field_analysis_struct);
