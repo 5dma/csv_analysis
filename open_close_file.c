@@ -45,7 +45,7 @@ gboolean process_thread(gpointer data) {
     Data_passer *data_passer = (Data_passer *)data;
 
     gchar *csv_line;
-    size_t max_number_characters = 1000;
+    size_t max_number_characters = 20000;
     size_t len = 0;
 
     csv_line = (gchar *)g_malloc(max_number_characters * sizeof(char));
@@ -87,6 +87,8 @@ gboolean process_thread(gpointer data) {
 
     while (getline(&csv_line, &len, data_passer->fp) != -1) {
         data_passer->current_line_number++;
+
+       // g_print("Current lin number %d\n",data_passer->current_line_number);
 
         /* Send line number to main loop. */
         gdk_threads_add_idle((GSourceFunc)line_number_in_status_bar, data);
