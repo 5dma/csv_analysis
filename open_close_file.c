@@ -869,7 +869,7 @@ gboolean process_thread(gpointer data) {
 
 /**
  * Callback for processing the CSV file. Runs after clicking Go in the main window. This function does the following:
- * -# Opens the CSV file.
+ * -# Open the CSV file.
  * -# Launch the worker thread that processes the file.
  * -# Close the file.
  * -# Display the results.

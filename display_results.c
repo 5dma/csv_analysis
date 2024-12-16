@@ -15,8 +15,7 @@
  * @see [CREATE TABLE Statement](https://dev.mysql.com/doc/refman/5.7/en/create-table.html)
  * @see [LOAD DATA Statement](https://dev.mysql.com/doc/refman/5.7/en/load-data.html)
  */
-void concat_command(GtkEditable *self, gpointer data) {
-	Data_passer *data_passer = (Data_passer *)data;
+void concat_command(GtkEditable *self, Data_passer *data_passer) {
 
 	const gchar *tablename = gtk_entry_get_text((GtkEntry *)(data_passer->entry_table_name));
 
@@ -25,7 +24,16 @@ void concat_command(GtkEditable *self, gpointer data) {
 
 	gchar *basename = g_path_get_basename(data_passer->filename);
 
-	gchar *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\\t" : ",";
+	const gchar *active_id = gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter));
+	gint comparison = g_strcmp0(active_id, "0");
+
+
+	gchar delimiter[3];
+	if (comparison == 0) {
+		g_strlcpy (delimiter, "\\t", 3);
+	} else {
+		g_strlcpy (delimiter, ",", 3);
+	}
 
 	gchar *field_enclosed_by = NULL;
 
@@ -58,14 +66,12 @@ void concat_command(GtkEditable *self, gpointer data) {
 	gchar *complete_command = g_strconcat(create_command, "\n\n", load_command, NULL);
 
 	gtk_label_set_text(GTK_LABEL(data_passer->label_mysql_command), complete_command);
-	
-   /* g_free(create_command);
-   g_free(basename);    
-	g_free(delimiter); 
+
+	g_free(create_command);
+	g_free(basename);    
 	g_free(field_enclosed_by);
 	g_free(header_line);
-   g_free(load_command); */
-	
+	g_free(load_command);
 }
 
 /**
@@ -135,7 +141,7 @@ void display_single_result(gpointer heading, gpointer data) {
 void display_results(Data_passer *data_passer) {
 	data_passer->number_of_columns = get_number_of_columns(data_passer->field_analysis_hash);
 
-	/* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns, so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib function g_strjoinv() that joints an array of string pointers, and the last pointer in that array must be NULL.  */
+	/* column_strings holds the phrases for each column, such as id_number TINYINT. There are n columns, so we need to allocate n+1 pointers for these phrases. That's because further down we have a GLib function g_strjoinv() that joins an array of string pointers, and the last pointer in that array must be NULL.  */
 	gchar *trash;
 	data_passer->column_strings = g_malloc(sizeof(trash) * (data_passer->number_of_columns + 1));
 	for (int i = 0; i <= data_passer->number_of_columns; i++) {
@@ -149,7 +155,7 @@ void display_results(Data_passer *data_passer) {
 	/* Following memory is freed in cleanup(). */
 	data_passer->field_clause = g_strjoinv(", ", data_passer->column_strings);
 
-	concat_command(NULL, (gpointer)data_passer);
+	concat_command(NULL, data_passer);
 	gtk_widget_set_sensitive(data_passer->button_copy, TRUE);
 	gtk_widget_set_sensitive(data_passer->entry_table_name, TRUE);
 }

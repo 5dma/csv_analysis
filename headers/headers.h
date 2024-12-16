@@ -113,7 +113,7 @@ void cleanup(GtkWidget *window, gpointer data);
 void closeup(GtkWidget *button_close, gpointer data);
 void copy_statement(GtkWidget *button_copy, gpointer data);
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer user_data);
-void concat_command(GtkEditable *self, gpointer data);
+void concat_command(GtkEditable *self, Data_passer *data_passer);
 void filename_changed(GtkEntry *text_filename, gpointer data);
 
 void change_commas_to_tabs(gchar **csv_line_ptr);
