@@ -80,8 +80,10 @@ void concat_command(GtkEditable *self, Data_passer *data_passer) {
  * @returns Number of columns in the CSV file.
  */
 guint get_number_of_columns(GHashTable *field_analysis_hash) {
-	GList *keys = g_hash_table_get_keys(field_analysis_hash);
-	return g_list_length(keys);
+	GList *keys = g_hash_table_get_keys(field_analysis_hash); /* GSList freed below. */
+	guint number_of_columns = g_list_length(keys);
+	g_list_free (keys);
+	return number_of_columns;
 }
 
 /**

@@ -62,16 +62,15 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 	the headings. Adding just the token to the list of headings generates a memory error,
 	maybe a dangling pointer?
 	 */
-	gchar *temporary_token;
 	while ((token = strsep(&local_csv_line, "\t")) != NULL) {
 		if (field_quoting != NEVER) {
 			strip_quotes(&token);
 		}
-		temporary_token = g_strdup(token);
+		gchar *temporary_token = g_strdup(token);
 		data_passer -> headings = g_slist_append(data_passer -> headings, temporary_token);
+		g_free(temporary_token);
 	}
 	g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
-	g_free(temporary_token);
 	g_free(local_csv_line);
 }
 
