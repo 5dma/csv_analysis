@@ -24,36 +24,36 @@
  * @param data Pointer to the data-passer structure.
  */
 void initialize_field_analysis(gpointer heading, gpointer data) {
-    gchar *key = (gchar *)heading;
+	gchar *key = (gchar *)heading;
 
-    Data_passer *data_passer = (Data_passer *)data;
+	Data_passer *data_passer = (Data_passer *)data;
 
-    GHashTable *field_analysis_hash = data_passer->field_analysis_hash;
+	GHashTable *field_analysis_hash = data_passer->field_analysis_hash;
 
-    gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
+	gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
-    Field_analysis *field_analysis_struct = g_new(Field_analysis, 1);
+	Field_analysis *field_analysis_struct = g_new(Field_analysis, 1);
 
-    field_analysis_struct->field_type = GARBAGE;
-    field_analysis_struct->sql_signed = FALSE;
-    field_analysis_struct->char_width = 0;
-    field_analysis_struct->precision = 0;
-    field_analysis_struct->scale = 0;
-    field_analysis_struct->last_line_change = (has_header_line)  ? 2 : 1;
-    /*field_analysis_struct->determining_value implicitly assigned NULL in all positions. */
+	field_analysis_struct->field_type = GARBAGE;
+	field_analysis_struct->sql_signed = FALSE;
+	field_analysis_struct->char_width = 0;
+	field_analysis_struct->precision = 0;
+	field_analysis_struct->scale = 0;
+	field_analysis_struct->last_line_change = (has_header_line)  ? 2 : 1;
+	/*field_analysis_struct->determining_value implicitly assigned NULL in all positions. */
 
-    gboolean success = g_hash_table_insert(field_analysis_hash, key, field_analysis_struct);
-    if (success == FALSE) {
-        g_print("Critical! The key %s is a duplicate. Ensure all your column headings are unique.\n", key);
-    }
+	gboolean success = g_hash_table_insert(field_analysis_hash, key, field_analysis_struct);
+	if (success == FALSE) {
+		g_print("Critical! The key %s is a duplicate. Ensure all your column headings are unique.\n", key);
+	}
 }
 
 void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis *field_analysis) {
-    field_analysis->field_type = CHAR;
-    guint csv_value_length = strlen(csv_value);
-    if (field_analysis->char_width < csv_value_length) {
-        field_analysis->char_width = csv_value_length;
-        field_analysis->last_line_change = current_line_number;
-        g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
-    }
+	field_analysis->field_type = CHAR;
+	guint csv_value_length = strlen(csv_value);
+	if (field_analysis->char_width < csv_value_length) {
+		field_analysis->char_width = csv_value_length;
+		field_analysis->last_line_change = current_line_number;
+		g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+	}
 }

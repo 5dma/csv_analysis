@@ -18,32 +18,32 @@
  * @param data Pointer to the data-passer structure.
  */
 void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
-    gchar *heading = (gchar *)original_heading_ptr;
-    gchar *clean_string = NULL;
+	gchar *heading = (gchar *)original_heading_ptr;
+	gchar *clean_string = NULL;
 
-    clean_string = g_strdup(heading); /* Memory freed below */
-    clean_string = g_strchomp(clean_string);
-    clean_string = g_ascii_strdown(clean_string, -1);
+	clean_string = g_strdup(heading); /* Memory freed below */
+	clean_string = g_strchomp(clean_string);
+	clean_string = g_ascii_strdown(clean_string, -1);
 
-    /* Examine each character; if not in set [a-z-_] the replace with underscore */
-    char *ptr = clean_string;
+	/* Examine each character; if not in set [a-z-_] the replace with underscore */
+	char *ptr = clean_string;
 
-    while (*ptr) {
-        /* Ignore non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
-        We may need to also check g_unichar_iszerowidth */
-        if (g_unichar_isprint(*ptr)) {
-            if (!g_unichar_isalnum(*ptr) &&
-                (*ptr != '_') &&
-                (*ptr != '-')) {
-                *ptr = '_';
-            }
-        }
+	while (*ptr) {
+		/* Ignore non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
+		We may need to also check g_unichar_iszerowidth */
+		if (g_unichar_isprint(*ptr)) {
+			if (!g_unichar_isalnum(*ptr) &&
+				(*ptr != '_') &&
+				(*ptr != '-')) {
+				*ptr = '_';
+			}
+		}
 
-        ptr++;
-    }
-    /* Copy the normalized string into the memory holding the original string. */
-    strcpy(heading, clean_string);
-    g_free(clean_string);
+		ptr++;
+	}
+	/* Copy the normalized string into the memory holding the original string. */
+	strcpy(heading, clean_string);
+	g_free(clean_string);
 }
 
 /**
@@ -53,25 +53,25 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
  * @param data_passer Pointer to the data-passer structure.
  */
 void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Data_passer *data_passer) {
-    /* Need to understand why need a copy of csv_line; required by strsep? */
-    gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
-    char *token = NULL;
-    /* Also need to understand why we need temporary_token. 
-    Currently we copy the token into temporary_token, and then add temporary_token to
-    the headings. Adding just the token to the list of headings generates a memory error,
-    maybe a dangling pointer?
-     */
+	/* Need to understand why need a copy of csv_line; required by strsep? */
+	gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
+	char *token = NULL;
+	/* Also need to understand why we need temporary_token. 
+	Currently we copy the token into temporary_token, and then add temporary_token to
+	the headings. Adding just the token to the list of headings generates a memory error,
+	maybe a dangling pointer?
+	 */
 
-    gchar *temporary_token;
-    while ((token = strsep(&local_csv_line, "\t")) != NULL) {
-        if (field_quoting != NEVER) {
-            strip_quotes(&token);
-        }
-        temporary_token = g_strdup(token);
-        data_passer -> headings = g_slist_append(data_passer -> headings, temporary_token);
-    }
-    g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
-    g_free(local_csv_line);
+	gchar *temporary_token;
+	while ((token = strsep(&local_csv_line, "\t")) != NULL) {
+		if (field_quoting != NEVER) {
+			strip_quotes(&token);
+		}
+		temporary_token = g_strdup(token);
+		data_passer -> headings = g_slist_append(data_passer -> headings, temporary_token);
+	}
+	g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
+	g_free(local_csv_line);
 }
 
 /**
@@ -79,25 +79,25 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
  * @param csv_line First line from a CSV file.
  */
 GSList *make_forced_headings(char *csv_line) {
-    gchar *local_csv_line = strdup(csv_line);
-    char *token;
-    GSList *local_list = NULL;
+	gchar *local_csv_line = strdup(csv_line);
+	char *token;
+	GSList *local_list = NULL;
 
-    int number_columns = 0;
-    while (strsep(&local_csv_line, "\t") != NULL) {
-        number_columns++;
-    }
+	int number_columns = 0;
+	while (strsep(&local_csv_line, "\t") != NULL) {
+		number_columns++;
+	}
 
-    gchar *prefix = strdup("column_");
-    gchar suffix[3];
-    for (gdouble i = 0; i < number_columns; i++) {
-        g_ascii_formatd(suffix, sizeof(suffix), "%02.0f", i);
-        gchar *buffer = g_strconcat(prefix, suffix, NULL);
+	gchar *prefix = strdup("column_");
+	gchar suffix[3];
+	for (gdouble i = 0; i < number_columns; i++) {
+		g_ascii_formatd(suffix, sizeof(suffix), "%02.0f", i);
+		gchar *buffer = g_strconcat(prefix, suffix, NULL);
 
-        local_list = g_slist_append(local_list, buffer);
-    }
-    g_free(prefix);
-    return local_list;
+		local_list = g_slist_append(local_list, buffer);
+	}
+	g_free(prefix);
+	return local_list;
 }
 
 
@@ -106,32 +106,32 @@ GSList *make_forced_headings(char *csv_line) {
  * @param quoted_string_ptr Passed value from the CSV file.
  */
 void strip_quotes(gchar **quoted_string_ptr) {
-    /*
-    If so, do the following:
-    a) Find the quoted string's length.
-    b) Duplicate the quoted string starting from the character AFTER the first quote.
-    c) Copy the duplicated string back into csv_value EXCEPT for the last quote.
-    d) Free the duplicate quoted string.
-    */
+	/*
+	If so, do the following:
+	a) Find the quoted string's length.
+	b) Duplicate the quoted string starting from the character AFTER the first quote.
+	c) Copy the duplicated string back into csv_value EXCEPT for the last quote.
+	d) Free the duplicate quoted string.
+	*/
 
-    gchar *quoted_string = *quoted_string_ptr;
-    glong quoted_string_length = g_utf8_strlen(quoted_string, -1);
-    gchar *unquoted;
+	gchar *quoted_string = *quoted_string_ptr;
+	glong quoted_string_length = g_utf8_strlen(quoted_string, -1);
+	gchar *unquoted;
 
-    if ((*quoted_string == '"') && (*(quoted_string + quoted_string_length - 1) == '"')) {
-        gchar left_three_chars[4];
-        gchar right_three_chars[4];
+	if ((*quoted_string == '"') && (*(quoted_string + quoted_string_length - 1) == '"')) {
+		gchar left_three_chars[4];
+		gchar right_three_chars[4];
 
-        g_utf8_strncpy(left_three_chars, quoted_string, 3);
-        g_utf8_strncpy(right_three_chars, quoted_string + quoted_string_length - 3, 3);
+		g_utf8_strncpy(left_three_chars, quoted_string, 3);
+		g_utf8_strncpy(right_three_chars, quoted_string + quoted_string_length - 3, 3);
 
-        if ((g_strcmp0(left_three_chars, "\"\"\"") == 0) && (g_strcmp0(right_three_chars, "\"\"\"") == 0)) {
-            unquoted = g_strdup(quoted_string + 2); /* Memory freed below */
-            g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 3);
-        } else {
-            unquoted = g_strdup(quoted_string + 1);  /* Memory freed below */
-            g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 2);
-        }
-        g_free(unquoted);
-    }
+		if ((g_strcmp0(left_three_chars, "\"\"\"") == 0) && (g_strcmp0(right_three_chars, "\"\"\"") == 0)) {
+			unquoted = g_strdup(quoted_string + 2); /* Memory freed below */
+			g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 3);
+		} else {
+			unquoted = g_strdup(quoted_string + 1);  /* Memory freed below */
+			g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 2);
+		}
+		g_free(unquoted);
+	}
 }
