@@ -1,7 +1,5 @@
 #include <gtk/gtk.h>
 #include <regex.h>
-#ifndef __HEADER
-#define __HEADER
 /**
  * @file headers.h
  * @brief C headers.
@@ -126,7 +124,5 @@ regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
 
 
-static gchar *STATUS_BAR_CONTEXT_INFO = "STATUS_BAR_CONTEXT_INFO"; /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
-static guint WINDOW_WIDTH = 400; /**< Width of the application window. */
-
-#endif
+#define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
+#define WINDOW_WIDTH 400 /**< Width of the application window. */

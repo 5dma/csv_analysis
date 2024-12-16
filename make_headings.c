@@ -80,7 +80,6 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
  */
 GSList *make_forced_headings(char *csv_line) {
 	gchar *local_csv_line = strdup(csv_line);
-	char *token;
 	GSList *local_list = NULL;
 
 	int number_columns = 0;

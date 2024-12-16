@@ -17,7 +17,6 @@
  */
 gboolean line_number_in_status_bar(gpointer data) {
 	Data_passer *data_passer = (Data_passer *)data;
-	data_passer->current_line_number;
 
 	guint status_bar_context_info = gtk_statusbar_get_context_id(GTK_STATUSBAR(data_passer->status_bar), STATUS_BAR_CONTEXT_INFO);
 
@@ -123,7 +122,6 @@ gboolean process_thread(gpointer data) {
 
 		int column_number = 0;
 		gchar *key = NULL;
-		gpointer value = NULL;
 
 		while ((token = strsep(&csv_line, "\t")) != NULL) {
 			/* Strip whitespace from the current token. */

@@ -162,13 +162,12 @@ void display_results(Data_passer *data_passer) {
  * @return  `FALSE` if an allowed key was pressed, `TRUE` otherwise.
  */
 gboolean table_name_formatter(GtkWidget *widget, GdkEventKey *event, gpointer data) {
-	Data_passer *data_passer = (Data_passer *)data;
 
 	if (
-		(event->keyval >= GDK_KEY_0) && (event->keyval <= GDK_KEY_9) ||
-		(event->keyval >= GDK_KEY_KP_0) && (event->keyval <= GDK_KEY_KP_9) ||
-		(event->keyval >= GDK_KEY_A) && (event->keyval <= GDK_KEY_Z) ||
-		(event->keyval >= GDK_KEY_a) && (event->keyval <= GDK_KEY_z) ||
+		((event->keyval >= GDK_KEY_0) && (event->keyval <= GDK_KEY_9)) ||
+		((event->keyval >= GDK_KEY_KP_0) && (event->keyval <= GDK_KEY_KP_9)) ||
+		((event->keyval >= GDK_KEY_A) && (event->keyval <= GDK_KEY_Z)) ||
+		((event->keyval >= GDK_KEY_a) && (event->keyval <= GDK_KEY_z)) ||
 		(event->keyval == GDK_KEY_dollar) ||
 		(event->keyval == GDK_KEY_underscore) ||
 		(event->keyval == GDK_KEY_BackSpace) ||

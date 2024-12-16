@@ -1,5 +1,4 @@
 #include <gtk/gtk.h>
-
 #include <headers.h>
 /**
  * @file view.c
@@ -85,7 +84,6 @@ GtkWidget *make_window(Data_passer *data_passer) {
 	GtkListStore *list_store_results = gtk_list_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING); /* Reference count decremented below, after being assigned to the tree. */
 	data_passer->list_store_results = list_store_results;
 
-	GtkTreeIter iter;
 	GtkWidget *tree;
 
 	/* Tree view for displaying the results. */
