@@ -72,7 +72,7 @@ void cleanup(GtkWidget *window, gpointer data) {
 		g_slist_foreach (data_passer->headings, delete_heading, NULL);
 		g_slist_free (data_passer->headings);
 
-//		g_slist_free_full(data_passer->headings, (GDestroyNotify)delete_heading);
+		g_slist_free_full(data_passer->headings, (GDestroyNotify)delete_heading);
 	}
 
 	if (data_passer->field_analysis_hash != NULL) {

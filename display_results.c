@@ -67,6 +67,7 @@ void concat_command(GtkEditable *self, Data_passer *data_passer) {
 
 	gtk_label_set_text(GTK_LABEL(data_passer->label_mysql_command), complete_command);
 
+	g_free(complete_command);
 	g_free(create_command);
 	g_free(basename);    
 	g_free(field_enclosed_by);

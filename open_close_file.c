@@ -114,9 +114,6 @@ gboolean process_thread(gpointer data) {
 			}
 
 			g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer);
-			g_print("After initialize_field_analysis\n");
-			g_slist_foreach(data_passer->headings, crap, NULL);
-			g_print("The heading length is %d\n", g_slist_length (data_passer->headings));
 
 			if (has_header_line) {
 				continue;
@@ -124,9 +121,9 @@ gboolean process_thread(gpointer data) {
 		}
 
 		int column_number = 0;
-		gchar *key = NULL;
 
-		while ((token = strsep(&csv_line, "\t")) != NULL) {
+		gchar *crawler = csv_line;
+		while ((token = strsep(&crawler, "\t")) != NULL) {
 			/* Strip whitespace from the current token. */
 			gchar *csv_value = g_strstrip(token);
 
@@ -140,7 +137,7 @@ gboolean process_thread(gpointer data) {
 			}
 
 			/* Memory freed after this while loop. */
-			key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
+			gchar *key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
 
 			Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
@@ -148,6 +145,7 @@ gboolean process_thread(gpointer data) {
 				g_print("There was a critical failure in looking up the key.\n");
 				exit(-1);
 			}
+			g_free(key);
 
 			enum data_types field_type = field_analysis->field_type;
 
@@ -864,14 +862,12 @@ gboolean process_thread(gpointer data) {
 			}
 			column_number++;
 		}
-		if (key != NULL) {
-			g_free(key);
-		}
 	}
 	regfree(&decimal_regex);
 	regfree(&timestamp_regex);
 
 	g_main_loop_quit(data_passer->gloop);
+	g_free(csv_line);
 }
 
 /**

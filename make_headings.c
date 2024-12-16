@@ -59,6 +59,7 @@ void crap(gpointer original_heading_ptr, gpointer data) {
 void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Data_passer *data_passer) {
 	/* Need to understand why need a copy of csv_line; required by strsep? */
 	gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
+	gchar *crawler = local_csv_line;
 	char *token = NULL;
 
 	/* Also need to understand why we need temporary_token. 
@@ -66,7 +67,7 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 	the headings. Adding just the token to the list of headings generates a memory error,
 	maybe a dangling pointer?
 	 */
-	while ((token = strsep(&local_csv_line, "\t")) != NULL) {
+	while ((token = strsep(&crawler, "\t")) != NULL) {
 		if (field_quoting != NEVER) {
 			strip_quotes(&token);
 		}
@@ -78,7 +79,7 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 	g_slist_foreach(data_passer -> headings, crap, NULL);
 	g_print("The heading length is %d\n", g_slist_length (data_passer->headings));
 
-	g_free(local_csv_line); /* Not sure this frees local_csv_line, because it moved during strsep. */
+	g_free(crawler); /* Not sure this frees local_csv_line, because it moved during strsep. */
 }
 
 /**
