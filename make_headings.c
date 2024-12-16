@@ -19,14 +19,13 @@
  */
 void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 	gchar *heading = (gchar *)original_heading_ptr;
-	gchar *clean_string = NULL;
-
-	clean_string = g_strdup(heading); /* Memory freed below */
-	clean_string = g_strchomp(clean_string);
-	clean_string = g_ascii_strdown(clean_string, -1);
+	
+	gchar *clean_string_step1 = g_strdup(heading); /* Memory freed below */
+	g_strchomp(clean_string_step1);
+	gchar *clean_string_step2 = g_ascii_strdown(clean_string_step1, -1);
 
 	/* Examine each character; if not in set [a-z-_] the replace with underscore */
-	char *ptr = clean_string;
+	char *ptr = clean_string_step2;
 
 	while (*ptr) {
 		/* Ignore non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
@@ -42,8 +41,9 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 		ptr++;
 	}
 	/* Copy the normalized string into the memory holding the original string. */
-	strcpy(heading, clean_string);
-	g_free(clean_string);
+	strcpy(heading, clean_string_step2);
+	g_free(clean_string_step2);
+	g_free(clean_string_step1);
 }
 
 /**
@@ -56,12 +56,12 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 	/* Need to understand why need a copy of csv_line; required by strsep? */
 	gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
 	char *token = NULL;
+
 	/* Also need to understand why we need temporary_token. 
 	Currently we copy the token into temporary_token, and then add temporary_token to
 	the headings. Adding just the token to the list of headings generates a memory error,
 	maybe a dangling pointer?
 	 */
-
 	gchar *temporary_token;
 	while ((token = strsep(&local_csv_line, "\t")) != NULL) {
 		if (field_quoting != NEVER) {
@@ -71,6 +71,7 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 		data_passer -> headings = g_slist_append(data_passer -> headings, temporary_token);
 	}
 	g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
+	g_free(temporary_token);
 	g_free(local_csv_line);
 }
 

@@ -18,7 +18,7 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
 	GtkWindow *window = (GtkWindow *)data_passer -> window;
 	GtkWidget *dialog;
 
-	gchar *filename = NULL;
+
 	dialog = gtk_file_chooser_dialog_new("Choose file", window,
 										 GTK_FILE_CHOOSER_ACTION_OPEN,
 										 "Cancel", GTK_RESPONSE_CANCEL,
@@ -28,10 +28,12 @@ void button_choose_clicked(GtkButton *button, gpointer data) {
 	gint result = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	if (result == GTK_RESPONSE_OK) {
+		gchar *filename = NULL;
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 		data_passer -> filename = strdup(filename);
 
 		gtk_entry_set_text(GTK_ENTRY(data_passer -> text_filename), filename);
+		g_free(filename);
 	}
 	gtk_widget_destroy(dialog);
 }
