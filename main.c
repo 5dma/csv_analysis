@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
-#include "headers.h"
+#include <headers.h>
 
 /**
  * @file main.c

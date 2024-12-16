@@ -1,7 +1,7 @@
 #include <ctype.h>
 #include <gtk/gtk.h>
 
-#include "headers.h"
+#include <headers.h>
 /**
  * @file make_headings.c
  * @brief Defines functions for creating the MySQL field names using column headings.

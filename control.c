@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include "headers.h"
+#include <headers.h>
 /**
  * @file control.c
  * @brief Defines callback functions that run after various signals emitted in the application window.

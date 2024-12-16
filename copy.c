@@ -1,6 +1,6 @@
 #include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
-#include "headers.h"
+#include <headers.h>
 /**
  * @file copy.c
  * @brief Defines a function that copies the MySQL command into the clipboard.

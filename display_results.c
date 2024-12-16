@@ -1,7 +1,7 @@
 #include <glib-2.0/glib.h>
 #include <gtk/gtk.h>
 
-#include "headers.h"
+#include <headers.h>
 /**
  * @file display_results.c
  * @brief Defines functions for displaying the results of the CSV scan.

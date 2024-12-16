@@ -4,8 +4,7 @@
 #include <stdio.h>
 #define G_LOG_USE_STRUCTURED
 #include <glib-2.0/glib.h>
-
-#include "headers.h"
+#include <headers.h>
 /**
  * @file open_close_file.c
  * @brief Functions for processing the CSV file.
