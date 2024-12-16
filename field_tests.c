@@ -21,6 +21,8 @@ gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max) {
 	gboolean success = g_ascii_string_to_unsigned(token, 10, min, max, &num, &error);
 	if (success) {
 		return TRUE;
+	} else {
+		g_error_free (error);
 	}
 	return FALSE;
 }
