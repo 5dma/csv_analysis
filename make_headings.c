@@ -45,6 +45,10 @@ void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
 	g_free(clean_string_step2);
 	g_free(clean_string_step1);
 }
+void crap(gpointer original_heading_ptr, gpointer data) {
+	gchar *heading = (gchar *)original_heading_ptr;
+	g_print("%p %s\n", &heading, heading);
+}
 
 /**
  * Makes individual headings from the first line in a CSV file, placing all of them in a `GSList`. This function relies on `strsep` to tokenize between tab characters.
@@ -66,12 +70,15 @@ void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Da
 		if (field_quoting != NEVER) {
 			strip_quotes(&token);
 		}
-		gchar *temporary_token = g_strdup(token);
-		data_passer -> headings = g_slist_append(data_passer -> headings, temporary_token);
-		g_free(temporary_token);
+		data_passer -> headings = g_slist_append(data_passer -> headings, token);
+		g_slist_foreach(data_passer -> headings, crap, NULL);
 	}
 	g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
-	g_free(local_csv_line);
+	g_print("After cleaning column headings\n");
+	g_slist_foreach(data_passer -> headings, crap, NULL);
+	g_print("The heading length is %d\n", g_slist_length (data_passer->headings));
+
+	g_free(local_csv_line); /* Not sure this frees local_csv_line, because it moved during strsep. */
 }
 
 /**

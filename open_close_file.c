@@ -114,6 +114,9 @@ gboolean process_thread(gpointer data) {
 			}
 
 			g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer);
+			g_print("After initialize_field_analysis\n");
+			g_slist_foreach(data_passer->headings, crap, NULL);
+			g_print("The heading length is %d\n", g_slist_length (data_passer->headings));
 
 			if (has_header_line) {
 				continue;
@@ -136,6 +139,7 @@ gboolean process_thread(gpointer data) {
 				continue;
 			}
 
+			/* Memory freed after this while loop. */
 			key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
 
 			Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
@@ -859,6 +863,9 @@ gboolean process_thread(gpointer data) {
 					assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 			}
 			column_number++;
+		}
+		if (key != NULL) {
+			g_free(key);
 		}
 	}
 	regfree(&decimal_regex);

@@ -14,7 +14,8 @@
  */
 void delete_heading(gpointer heading, gpointer data) {
 	gchar *key = (gchar *)heading;
-	g_free(key);
+	g_print("The deleted heading is %s\n", key);
+	//g_free(key);
 }
 
 /**
@@ -66,7 +67,12 @@ void cleanup(GtkWidget *window, gpointer data) {
 	}
 
 	if (data_passer->headings != NULL) {
-		g_slist_free_full(data_passer->headings, (GDestroyNotify)delete_heading);
+		g_print("In cleanup, the length is %d\n", g_slist_length (data_passer->headings));
+
+		g_slist_foreach (data_passer->headings, delete_heading, NULL);
+		g_slist_free (data_passer->headings);
+
+//		g_slist_free_full(data_passer->headings, (GDestroyNotify)delete_heading);
 	}
 
 	if (data_passer->field_analysis_hash != NULL) {

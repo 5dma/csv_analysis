@@ -40,6 +40,8 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
 	gboolean success = g_ascii_string_to_signed(token, 10, min, max, &num, &error);
 	if (success) {
 		return TRUE;
+	} else {
+		g_error_free (error);
 	}
 	return FALSE;
 }
