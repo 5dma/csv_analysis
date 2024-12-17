@@ -126,6 +126,3 @@ regex_t make_timestamp_regex();
 
 #define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
 #define WINDOW_WIDTH 400 /**< Width of the application window. */
-
-
-void crap(gpointer original_heading_ptr, gpointer data);

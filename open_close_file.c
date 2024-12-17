@@ -865,9 +865,9 @@ gboolean process_thread(gpointer data) {
 	}
 	regfree(&decimal_regex);
 	regfree(&timestamp_regex);
+	g_free(csv_line);
 
 	g_main_loop_quit(data_passer->gloop);
-	g_free(csv_line);
 }
 
 /**
