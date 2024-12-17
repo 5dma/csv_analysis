@@ -54,7 +54,8 @@ void clean_column_heading(gchar **heading) {
 	}
 
 	/* Copy the normalized string into the memory holding the original string. */
-	g_strlcpy(*heading, clean_string_step2, sizeof(*heading));
+
+	g_strlcpy(*heading, clean_string_step2, strlen(*heading) + 1);
 	g_free(clean_string_step2);
 	g_free(clean_string_step1);
 }
@@ -69,7 +70,8 @@ void clean_column_heading(gchar **heading) {
  */
 GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
 	/* Need to understand why need a copy of csv_line; required by strsep? */
-	gchar *crawler = csv_line;
+	gchar *local_line = g_strdup(csv_line);
+	gchar *crawler = local_line;
 	gchar *token = NULL;
 	GSList *local_list = NULL;
 
@@ -81,6 +83,7 @@ GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting)
 		gchar *actual_entry = g_strdup(token); /* Call these entries are freed in cleanup. */
 		local_list = g_slist_append(local_list, actual_entry);
 	}
+	g_free(local_line);
 	return local_list;
 }
 
