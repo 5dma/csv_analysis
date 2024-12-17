@@ -11,7 +11,7 @@
  * Creates two MySQL commands pertaining to the analyzed CSV file: a `CREATE TABLE` command and a `LOAD DATA` command. Both appear in the application window.
  *
  * @param self A [GtkEditable](https://docs.gtk.org/gtk3/iface.Editable.html) containing the MySQL table name.
- * @param data Pointer to the data-passer hash.
+ * @param data_passer Pointer to the data-passer hash.
  * @see [CREATE TABLE Statement](https://dev.mysql.com/doc/refman/5.7/en/create-table.html)
  * @see [LOAD DATA Statement](https://dev.mysql.com/doc/refman/5.7/en/load-data.html)
  */

@@ -12,15 +12,15 @@
  */
 
 /**
- * Callback for iterating over the raw headings read from the CSV file. The
- * function does the following:
+ * Cleans a heading in place. The function does the following:
  * -# Removes trailing whitespace.
  * -# Transforms all alpha to lower case.
+ * -# Removes Byte-Order-Mark (BOM) characters that may be in the first heading.
  * -# Replaces any character not in set [a-z-_] with underscore
- * @param original_heading_ptr Raw string.
- * @param data Pointer to the data-passer structure.
+ * @param heading Double pointer to the passed heading.
  */
 void clean_column_heading(gchar **heading) {
+
 	gchar *clean_string_step1 = g_strdup(*heading); /* Memory freed below */
 	g_strchomp(clean_string_step1);
 	gchar *clean_string_step2 = g_ascii_strdown(clean_string_step1, -1);
@@ -30,8 +30,8 @@ void clean_column_heading(gchar **heading) {
 
 	char *ptr = clean_string_step2;
 
-	/* Ignore non-print characters in the string, such as BOM in the first 2-3
-	bytes of a text file. We may need to also check g_unichar_iszerowidth */
+	/* Remove non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
+	The "removal" actually shifts the characters so that they override the BOMs. */
 	if (!g_unichar_isprint(*ptr)) {
 		gchar *tracker = ptr + 1;
 		while (*tracker != '\0') {
@@ -44,6 +44,7 @@ void clean_column_heading(gchar **heading) {
 		*ptr = '\0';
 	}
 
+	/* Replace non-alphanum/dash characters with underscore. */
 	ptr = clean_string_step2;
 	while (*ptr != '\0') {
 		if (!g_ascii_isalnum(*ptr) && (*ptr != '_') && (*ptr != '-')) {
@@ -63,9 +64,8 @@ void clean_column_heading(gchar **heading) {
  * them in a `GSList`. This function relies on `strsep` to tokenize between tab
  * characters.
  * @param csv_line First line from a CSV file.
- * @param field_quoting Type of quoting around the fields (never, always,
- * optional).
- * @param data_passer Pointer to the data-passer structure.
+ * @param field_quoting Type of quoting around the fields (never, always, optional).
+ * @return A `GSList` of character arrays.
  */
 GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
 	/* Need to understand why need a copy of csv_line; required by strsep? */
@@ -87,6 +87,7 @@ GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting)
 /**
  * Makes artifical column headings `column_00`, `column_01`, etc., placing all of them in a `GSList`.
  * @param csv_line First line from a CSV file.
+ * @return A `GSList` of character arrays.
  */
 GSList *make_forced_headings(char *csv_line) {
 	GSList *local_list = NULL;
