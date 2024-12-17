@@ -108,7 +108,7 @@ gboolean process_thread(gpointer data) {
 		if (on_first_line) {
 			on_first_line = FALSE;
 			if (has_header_line) {
-				make_headings(csv_line, field_quoting, data_passer);
+				data_passer->headings = make_headings(csv_line, field_quoting);
 			} else {
 				data_passer->headings = make_forced_headings(csv_line);
 			}

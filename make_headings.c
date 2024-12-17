@@ -1,77 +1,94 @@
 #include <ctype.h>
 #include <gtk/gtk.h>
-
 #include <headers.h>
 /**
  * @file make_headings.c
- * @brief Defines functions for creating the MySQL field names using column headings.
- * 
- * If possible, the application creates field names from column headings in the CSV file. If column headings are not in the CSV file, the application creates them using strings starting with `column_` followed by a number.
+ * @brief Defines functions for creating the MySQL field names using column
+ * headings.
+ *
+ * If possible, the application creates field names from column headings in the
+ * CSV file. If column headings are not in the CSV file, the application
+ * creates them using strings starting with `column_` followed by a number.
  */
 
 /**
- * Callback for iterating over the raw headings read from the CSV file. The function does the following:
+ * Callback for iterating over the raw headings read from the CSV file. The
+ * function does the following:
  * -# Removes trailing whitespace.
  * -# Transforms all alpha to lower case.
  * -# Replaces any character not in set [a-z-_] with underscore
  * @param original_heading_ptr Raw string.
  * @param data Pointer to the data-passer structure.
  */
-void clean_column_headings(gpointer original_heading_ptr, gpointer data) {
-	gchar *heading = (gchar *)original_heading_ptr;
-	
-	gchar *clean_string_step1 = g_strdup(heading); /* Memory freed below */
+void clean_column_heading(gchar **heading) {
+	gchar *clean_string_step1 = g_strdup(*heading); /* Memory freed below */
 	g_strchomp(clean_string_step1);
 	gchar *clean_string_step2 = g_ascii_strdown(clean_string_step1, -1);
 
-	/* Examine each character; if not in set [a-z-_] the replace with underscore */
+	/* Examine each character; if not in set [a-z-_] the replace with underscore
+	 */
+
 	char *ptr = clean_string_step2;
 
-	while (*ptr) {
-		/* Ignore non-print characters in the string, such as BOM in the first 2-3 bytes of a text file.
-		We may need to also check g_unichar_iszerowidth */
-		if (g_unichar_isprint(*ptr)) {
-			if (!g_unichar_isalnum(*ptr) &&
-				(*ptr != '_') &&
-				(*ptr != '-')) {
-				*ptr = '_';
+	/* Ignore non-print characters in the string, such as BOM in the first 2-3
+	bytes of a text file. We may need to also check g_unichar_iszerowidth */
+	if (!g_unichar_isprint(*ptr)) {
+		gchar *tracker = ptr + 1;
+		while (*tracker != '\0') {
+			if (g_unichar_isprint(*tracker)) {
+				*ptr = *tracker;
+				ptr++;
 			}
+			tracker++;
 		}
+		*ptr = '\0';
+	}
 
+	ptr = clean_string_step2;
+	while (*ptr != '\0') {
+		if (!g_ascii_isalnum(*ptr) && (*ptr != '_') && (*ptr != '-')) {
+			*ptr = '_';
+		}
 		ptr++;
 	}
+
 	/* Copy the normalized string into the memory holding the original string. */
-	strcpy(heading, clean_string_step2);
+	g_strlcpy(*heading, clean_string_step2, sizeof(*heading));
 	g_free(clean_string_step2);
 	g_free(clean_string_step1);
 }
 
-
 /**
- * Makes individual headings from the first line in a CSV file, placing all of them in a `GSList`. This function relies on `strsep` to tokenize between tab characters.
+ * Makes individual headings from the first line in a CSV file, placing all of
+ * them in a `GSList`. This function relies on `strsep` to tokenize between tab
+ * characters.
  * @param csv_line First line from a CSV file.
- * @param field_quoting Type of quoting around the fields (never, always, optional).
+ * @param field_quoting Type of quoting around the fields (never, always,
+ * optional).
  * @param data_passer Pointer to the data-passer structure.
  */
-void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Data_passer *data_passer) {
+GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
 	/* Need to understand why need a copy of csv_line; required by strsep? */
 	gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
 	gchar *crawler = local_csv_line;
-	char *token = NULL;
+	gchar *token = NULL;
+	GSList *local_list = NULL;
 
-	/* Also need to understand why we need temporary_token. 
-	Currently we copy the token into temporary_token, and then add temporary_token to
-	the headings. Adding just the token to the list of headings generates a memory error,
-	maybe a dangling pointer?
+	/* Also need to understand why we need temporary_token.
+	Currently we copy the token into temporary_token, and then add
+	temporary_token to the headings. Adding just the token to the list of
+	headings generates a memory error, maybe a dangling pointer?
 	 */
 	while ((token = strsep(&crawler, "\t")) != NULL) {
 		if (field_quoting != NEVER) {
 			strip_quotes(&token);
 		}
-		data_passer -> headings = g_slist_append(data_passer -> headings, token);
+		clean_column_heading(&token);
+		gchar *actual_entry = g_strdup(token); /* Call these entries are freed in cleanup. */
+		local_list = g_slist_append(local_list, actual_entry);
 	}
-	g_slist_foreach(data_passer -> headings, clean_column_headings, NULL);
-	g_free(crawler); 
+	g_free(local_csv_line);
+	return local_list;
 }
 
 /**
@@ -92,16 +109,16 @@ GSList *make_forced_headings(char *csv_line) {
 	for (gdouble i = 0; i < number_columns; i++) {
 		g_ascii_formatd(suffix, sizeof(suffix), "%02.0f", i);
 		gchar *buffer = g_strconcat(prefix, suffix, NULL);
-
 		local_list = g_slist_append(local_list, buffer);
 	}
 	g_free(prefix);
 	return local_list;
 }
 
-
 /**
- * Removes quotes surrounding a value. The strip accounts for the possibility of escaped quotes surrounding the value, such as `"""123 Main Street"""`, which in output appears as `"123 Main Street".`
+ * Removes quotes surrounding a value. The strip accounts for the possibility
+ * of escaped quotes surrounding the value, such as `"""123 Main Street"""`,
+ * which in output appears as `"123 Main Street".`
  * @param quoted_string_ptr Passed value from the CSV file.
  */
 void strip_quotes(gchar **quoted_string_ptr) {
@@ -117,18 +134,20 @@ void strip_quotes(gchar **quoted_string_ptr) {
 	glong quoted_string_length = g_utf8_strlen(quoted_string, -1);
 	gchar *unquoted;
 
-	if ((*quoted_string == '"') && (*(quoted_string + quoted_string_length - 1) == '"')) {
+	if ((*quoted_string == '"') &&
+		(*(quoted_string + quoted_string_length - 1) == '"')) {
 		gchar left_three_chars[4];
 		gchar right_three_chars[4];
 
 		g_utf8_strncpy(left_three_chars, quoted_string, 3);
 		g_utf8_strncpy(right_three_chars, quoted_string + quoted_string_length - 3, 3);
 
-		if ((g_strcmp0(left_three_chars, "\"\"\"") == 0) && (g_strcmp0(right_three_chars, "\"\"\"") == 0)) {
+		if ((g_strcmp0(left_three_chars, "\"\"\"") == 0) &&
+			(g_strcmp0(right_three_chars, "\"\"\"") == 0)) {
 			unquoted = g_strdup(quoted_string + 2); /* Memory freed below */
 			g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 3);
 		} else {
-			unquoted = g_strdup(quoted_string + 1);  /* Memory freed below */
+			unquoted = g_strdup(quoted_string + 1); /* Memory freed below */
 			g_utf8_strncpy(quoted_string, unquoted, quoted_string_length - 2);
 		}
 		g_free(unquoted);

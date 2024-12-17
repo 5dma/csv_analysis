@@ -96,7 +96,7 @@ GtkWidget *make_window(Data_passer *data_passer);
 void button_choose_clicked(GtkButton *button, gpointer data);
 
 gboolean process_file(GtkButton *button, gpointer data);
-void make_headings(gchar *csv_line, enum field_quoting_options field_quoting, Data_passer *data_passer);
+GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting);
 GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
