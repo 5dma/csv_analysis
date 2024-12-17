@@ -69,16 +69,10 @@ void clean_column_heading(gchar **heading) {
  */
 GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting) {
 	/* Need to understand why need a copy of csv_line; required by strsep? */
-	gchar *local_csv_line = g_strdup(csv_line); /* Memory freed below */
-	gchar *crawler = local_csv_line;
+	gchar *crawler = csv_line;
 	gchar *token = NULL;
 	GSList *local_list = NULL;
 
-	/* Also need to understand why we need temporary_token.
-	Currently we copy the token into temporary_token, and then add
-	temporary_token to the headings. Adding just the token to the list of
-	headings generates a memory error, maybe a dangling pointer?
-	 */
 	while ((token = strsep(&crawler, "\t")) != NULL) {
 		if (field_quoting != NEVER) {
 			strip_quotes(&token);
@@ -87,7 +81,6 @@ GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting)
 		gchar *actual_entry = g_strdup(token); /* Call these entries are freed in cleanup. */
 		local_list = g_slist_append(local_list, actual_entry);
 	}
-	g_free(local_csv_line);
 	return local_list;
 }
 
@@ -96,11 +89,10 @@ GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting)
  * @param csv_line First line from a CSV file.
  */
 GSList *make_forced_headings(char *csv_line) {
-	gchar *local_csv_line = strdup(csv_line);
 	GSList *local_list = NULL;
 
 	int number_columns = 0;
-	while (strsep(&local_csv_line, "\t") != NULL) {
+	while (strsep(&csv_line, "\t") != NULL) {
 		number_columns++;
 	}
 
