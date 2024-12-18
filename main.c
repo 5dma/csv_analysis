@@ -22,7 +22,7 @@
  * @see [Optimizing Schema and Data Types](https://www.oreilly.com/library/view/high-performance-mysql/9781449332471/ch04.html)
  *
  * \section algorithm Algorithm
- * The application opens a CSV file, and counts the number of columns (fields). Each field is assumed to be the smallest data type, `TINYINT`. The application then reads each line in the CSV file. For each line in the file, the application examines each column. If the column is no longer a `TINYINT`, it assigns the smallest data type that represents the current column. As the application reads line after line, and column after column in each line, it preogressively determines the smallest data type for all the values read so far in the column.
+ * The application opens a CSV file, and counts the number of columns (fields). Each field is assumed to be the smallest data type, `TINYINT`. The application then reads each line in the CSV file. For each line in the file, the application examines each column. If the column is no longer a `TINYINT`, it assigns the smallest data type that represents the current column. As the application reads line after line, and column after column in each line, it progressively determines the smallest data type for all the values read so far in the column.
  * 
  * \section user_interface User interface
  * The application runs on the GTK runtime. Users specify the following:
@@ -34,7 +34,12 @@
  * The output includes the corresponding `CREATE TABLE` and `LOAD DATA` commands.
  */
 
-
+/**
+ * Program entry function. Instantiates the GtkApplication, connects a signal for `activate`, runs the application, and returns the status.
+ * @param argc Number of arguments passed from the command line.
+ * @param argv Character array of arguments passed from the command line.
+ * @return Result of `g_application_run()`.
+ */
 int main(int argc, char *argv[]) {
 
 	GtkApplication *app = gtk_application_new(

@@ -1,14 +1,24 @@
 #include <gtk/gtk.h>
 #include <math.h>
-#include <regex.h>
-#include <stdio.h>
-#define G_LOG_USE_STRUCTURED
-#include <glib-2.0/glib.h>
 #include <headers.h>
 /**
- * @file my_sql_tests.c
+ * @file mysql_tests.c
  * @brief Statements for determining the MySQL data type of a character string.
  */
+
+/**
+ * Determines the MySQL data type of a passed value read from the CSV file. The passed value is a `gchar *`, and the objective is to determine the smallest data type that value represents. For example, a value `12` corresponds to the MySQL `TINYINT_UNSIGNED`.
+ * 
+ * The field tests go from smallest to largest. For example, the first test checks if the value is a `TINYINT_UNSIGNED`. If not that, the next check is for `SMALLINT_UNSIGNED`, and so on. If all tests fail, the value is assumed to be `CHAR(N)`, where `N` is the value's length.
+ * 
+ * The field tests are cumulative such that a field can never return to a smaller data type. For example, once a field is determined to be `BIGINT_SIGNED`, it can never go back to `TINYINT_UNSIGNED` even if all subsequent values are indeed `TINYINT_UNSIGNED`.
+ * 
+ * @see [MySQL data types](https://www.mysqldatatypes.com/)
+ * 
+ * @param csv_value Value in the CSV file whose MySQL type we want to determine.
+ * @param field_analysis The column's current Field_analysis.
+ * @param data_passer Pointer to the data-passer structure.
+ *  */
 void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data_passer *data_passer) {
 	enum data_types original_field_type = field_analysis->field_type;
 	gboolean passes_test = FALSE;
