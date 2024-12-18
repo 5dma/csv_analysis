@@ -5,90 +5,88 @@
  * @brief C headers.
  */
 
-
 /**
  * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html)). This enumeration is used in Field_analysis.
  */
 enum data_types_mysql {
-    GARBAGE, /**< Artificial type for initialization */
-    TINYINT_UNSIGNED, /**< 0 - 255 */
-    SMALLINT_UNSIGNED, /**< 0 - 65535 */
-    MEDIUMINT_UNSIGNED, /**< 0 - 16777215 */
-    INT_UNSIGNED, /**< 0 - 4294967295 */
-    BIGINT_UNSIGNED, /**< 0 - 2<sup>64</sup> &minus; 1 */
-    TINYINT_SIGNED, /**<  &minus;128 - 127 */
-    SMALLINT_SIGNED, /**<  &minus;32768 - 32767 */
-    MEDIUMINT_SIGNED, /**<  &minus;8388608 - 8388607 */
-    INT_SIGNED, /**<  &minus;2147483648 - 2147483647 */
-    BIGINT_SIGNED, /**< &minus;2<sup>63</sup> - 2<sup>63</sup> &minus; 1 */
-    DECIMAL, /**< Fixed number with an optional decimal point */
-    FLOAT, /**<  Floating number */
-    TIMESTAMP, /**< A timestamp */
-    CHAR /**< Any character string */
+	GARBAGE, /**< Artificial type for initialization */
+	TINYINT_UNSIGNED, /**< 0 - 255 */
+	SMALLINT_UNSIGNED, /**< 0 - 65535 */
+	MEDIUMINT_UNSIGNED, /**< 0 - 16777215 */
+	INT_UNSIGNED, /**< 0 - 4294967295 */
+	BIGINT_UNSIGNED, /**< 0 - 2<sup>64</sup> &minus; 1 */
+	TINYINT_SIGNED, /**<  &minus;128 - 127 */
+	SMALLINT_SIGNED, /**<  &minus;32768 - 32767 */
+	MEDIUMINT_SIGNED, /**<  &minus;8388608 - 8388607 */
+	INT_SIGNED, /**<  &minus;2147483648 - 2147483647 */
+	BIGINT_SIGNED, /**< &minus;2<sup>63</sup> - 2<sup>63</sup> &minus; 1 */
+	DECIMAL, /**< Fixed number with an optional decimal point */
+	FLOAT, /**<  Floating number */
+	TIMESTAMP, /**< A timestamp */
+	CHAR /**< Any character string */
 };
-
 
 /**
  * Enum for describing how fields are surrounded by double quotes.
  */
 enum field_quoting_options {
-    NEVER, /**< Fields never surrounded by double quotes. */
-    ALWAYS, /**< Fields always surrounded by double quotes. */
-    OPTIONAL /**< Fields may be surrounded by double quotes. */
+	NEVER, /**< Fields never surrounded by double quotes. */
+	ALWAYS, /**< Fields always surrounded by double quotes. */
+	OPTIONAL /**< Fields may be surrounded by double quotes. */
 };
 
 /**
  * Structure containing the results of a column.
  */
 typedef struct {
-    enum data_types_mysql field_type;  /**< One of the possible MySQL field types enumerated in [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
-    gboolean sql_signed; /**< Indicates if the data type is signed. */
-    int char_width; /**< Width of a `CHAR` field. */
-    int precision;  /**< Precision (number of digits) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
-    int scale;  /**< Scale (number of digits after decimal point) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
-    int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
-    gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
+	enum data_types_mysql field_type; /**< One of the possible MySQL field types enumerated in [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
+	gboolean sql_signed; /**< Indicates if the data type is signed. */
+	int char_width; /**< Width of a `CHAR` field. */
+	int precision; /**< Precision (number of digits) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
+	int scale; /**< Scale (number of digits after decimal point) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
+	int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
+	gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
 } Field_analysis;
 
 /**
  * Enum for declaring a list store of results.
  */
 enum {
-    COLUMN_NAME,      /**< 0 */
-    DATA_TYPE,        /**< 1 */
-    DETERMINING_LINE, /**< 2 */
-    DETERMINING_VALUE, /**< 3 */
-    N_COLUMNS         /**< 4 */
+	COLUMN_NAME, /**< 0 */
+	DATA_TYPE, /**< 1 */
+	DETERMINING_LINE, /**< 2 */
+	DETERMINING_VALUE, /**< 3 */
+	N_COLUMNS /**< 4 */
 };
 
 /**
  * Structure for passing data between functions.
-*/ 
+ */
 typedef struct {
-    GtkWidget *window; /**< Application's window */
-    gchar *filename; /**< Path and filename of the CSV file. */
-    GApplication *app;  /**< Application */
-    GtkWidget *text_filename;  /**< Path and filename of the CSV file (in the UI) */
-    GtkWidget *checkbox_has_headers; /**< Path and filename of the CSV file (in the UI) */
-    GHashTable *field_analysis_hash;  /**< Hash keyed by column name; values are the analysis of the values in the column. See Field_analysis. */
-    gchar *datatype_strings[15]; /**< List of MySQL data types. See [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
-    GtkListStore *list_store_results; /**< List store containing the analysis results. There is one element in the store for each column in the CSV file. */
-    GtkWidget *entry_table_name; /**< MySQL table name in the UI. */
-    gchar **column_strings; /**< List of strings used for column names in a MySQL table. */
-    guint current_column_number; /**< Current column number as we iterate over all columns in a single CSV row. */
-    GtkWidget *label_mysql_command; /**< Final MySQL command displayed in the UI. */
-    GtkWidget *status_bar; /**< Status bar in the I. */
-    guint status_bar_context_info_message_id;  /**< Status bar's context ID.  */
-    gchar *field_clause;  /**< Clause in a MySQL field definition, such as `CHAR(30)`.  */
-    GtkWidget *button_go; /**< \b Go button in the UI. */
-    GtkWidget *button_copy;  /**< \b Copy button in the UI. */
-    GSList *headings; /**< GSList containing column headings. */
-    guint number_of_columns; /**< Number of columns in the CSV file. */
-    GtkWidget *combo_field_delimeter; /**< UI control specifying the field delimiter. */
-    GtkWidget *combo_fields_enclosed; /**< UI control specifying if fields are always, never, or optionally surrounded by double quotes. */
-    guint current_line_number; /**< Current line number we are reading from the CSV file. */
-    FILE *fp; /**< Handle for the CSV file. */
-    GMainLoop *gloop; /**< The main loop, required to set up the threading. */
+	GtkWidget *window; /**< Application's window */
+	gchar *filename; /**< Path and filename of the CSV file. */
+	GApplication *app; /**< Application */
+	GtkWidget *text_filename; /**< Path and filename of the CSV file (in the UI) */
+	GtkWidget *checkbox_has_headers; /**< Path and filename of the CSV file (in the UI) */
+	GHashTable *field_analysis_hash; /**< Hash keyed by column name; values are the analysis of the values in the column. See Field_analysis. */
+	gchar *datatype_strings[15]; /**< List of MySQL data types. See [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
+	GtkListStore *list_store_results; /**< List store containing the analysis results. There is one element in the store for each column in the CSV file. */
+	GtkWidget *entry_table_name; /**< MySQL table name in the UI. */
+	gchar **column_strings; /**< List of strings used for column names in a MySQL table. */
+	guint current_column_number; /**< Current column number as we iterate over all columns in a single CSV row. */
+	GtkWidget *label_mysql_command; /**< Final MySQL command displayed in the UI. */
+	GtkWidget *status_bar; /**< Status bar in the I. */
+	guint status_bar_context_info_message_id; /**< Status bar's context ID.  */
+	gchar *field_clause; /**< Clause in a MySQL field definition, such as `CHAR(30)`.  */
+	GtkWidget *button_go; /**< \b Go button in the UI. */
+	GtkWidget *button_copy; /**< \b Copy button in the UI. */
+	GSList *headings; /**< GSList containing column headings. */
+	guint number_of_columns; /**< Number of columns in the CSV file. */
+	GtkWidget *combo_field_delimeter; /**< UI control specifying the field delimiter. */
+	GtkWidget *combo_fields_enclosed; /**< UI control specifying if fields are always, never, or optionally surrounded by double quotes. */
+	guint current_line_number; /**< Current line number we are reading from the CSV file. */
+	FILE *fp; /**< Handle for the CSV file. */
+	GMainLoop *gloop; /**< The main loop, required to set up the threading. */
 	regex_t decimal_regex; /**< Regular expression for determining if a value is a MySQL decimal. See make_decimal_regex(). */
 	regex_t timestamp_regex; /**< Regular expression for determining if a value is a MySQL timestamp.  See make_timestamp_regex(). */
 } Data_passer;
@@ -125,7 +123,6 @@ regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
 
 void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data_passer *data_passer);
-
 
 #define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
 #define WINDOW_WIDTH 400 /**< Width of the application window. */
