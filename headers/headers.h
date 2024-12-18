@@ -103,7 +103,6 @@ GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
 void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis *field_analysis);
-GDestroyNotify free_headings(gpointer data);
 void display_results(Data_passer *data_passer);
 
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max);
