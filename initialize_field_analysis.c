@@ -47,7 +47,13 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
 		g_print("Critical! The key %s is a duplicate. Ensure all your column headings are unique.\n", key);
 	}
 }
-
+\
+/**
+ * Assigns a MySQL `CHAR(n)` data type to the passed field. This function is called for a field if it doesn't pass any of the other data-type tests, and effectively assigned the default data type to the field.
+ * @param csv_value CSV value that did not pass any other data-type test.
+ * @param current_line_number Current line number in the CSV file.
+ * @param field_analysis Field_analysis structure containing the field's column.
+ */
 void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis *field_analysis) {
 	field_analysis->field_type = CHAR;
 	guint csv_value_length = strlen(csv_value);

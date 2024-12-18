@@ -89,6 +89,8 @@ typedef struct {
     guint current_line_number; /**< Current line number we are reading from the CSV file. */
     FILE *fp; /**< Handle for the CSV file. */
     GMainLoop *gloop; /**< The main loop, required to set up the threading. */
+	regex_t decimal_regex;
+	regex_t timestamp_regex;
 } Data_passer;
 
 void on_app_activate(GApplication *app, gpointer data);
@@ -122,6 +124,8 @@ void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr);
 
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
+
+void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data_passer *data_passer);
 
 
 #define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */

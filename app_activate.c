@@ -23,6 +23,8 @@ void on_app_activate(GApplication *app, gpointer data) {
 	data_passer -> current_line_number = 0;
 	data_passer -> fp = NULL;
 	data_passer -> gloop = NULL;
+	data_passer->decimal_regex = make_decimal_regex();
+	data_passer->timestamp_regex = make_timestamp_regex();
 
 	/* Memory for all these strings is freed in cleanup(). */
 	data_passer -> datatype_strings[0] = strdup("GARBAGE"); /* Corresponds to initialization value. */

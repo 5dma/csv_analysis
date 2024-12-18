@@ -55,6 +55,9 @@ void cleanup(GtkWidget *window, gpointer data) {
 		g_free (data_passer -> datatype_strings[i]);
 	}
 
+	regfree(&(data_passer->decimal_regex));
+	regfree(&(data_passer->timestamp_regex));
+
 	if (data_passer->number_of_columns != 0) {
 		for (gint i = 0; i < data_passer->number_of_columns; i++) {
 			g_free(data_passer -> column_strings[i]);
