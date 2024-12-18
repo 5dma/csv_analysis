@@ -100,7 +100,7 @@ void display_single_result(gpointer heading, gpointer data) {
 	gchar *key = (gchar *)heading;
 	Data_passer *data_passer = (Data_passer *)data;
 
-	Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
+	Field_analysis_mysql *field_analysis = (Field_analysis_mysql *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
 	enum data_types_mysql field_type = (field_analysis->field_type == GARBAGE) ? CHAR : field_analysis->field_type;
 

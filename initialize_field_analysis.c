@@ -32,7 +32,7 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
 
 	gboolean has_header_line = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data_passer->checkbox_has_headers));
 
-	Field_analysis *field_analysis_struct = g_new(Field_analysis, 1);
+	Field_analysis_mysql *field_analysis_struct = g_new(Field_analysis_mysql, 1);
 
 	field_analysis_struct->field_type = GARBAGE;
 	field_analysis_struct->sql_signed = FALSE;
@@ -54,7 +54,7 @@ void initialize_field_analysis(gpointer heading, gpointer data) {
  * @param current_line_number Current line number in the CSV file.
  * @param field_analysis Field_analysis structure containing the field's column.
  */
-void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis *field_analysis) {
+void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis_mysql *field_analysis) {
 	field_analysis->field_type = CHAR;
 	guint csv_value_length = strlen(csv_value);
 	if (field_analysis->char_width < csv_value_length) {

@@ -138,7 +138,7 @@ gboolean process_thread(gpointer data) {
 			gchar *key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
 
 			/* Get the current field's current field analysis, which includes its MySQL data type. */
-			Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
+			Field_analysis_mysql *field_analysis = (Field_analysis_mysql *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
 			if (field_analysis == NULL) {
 				g_print("There was a critical failure in looking up the key.\n");

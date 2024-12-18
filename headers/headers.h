@@ -27,6 +27,17 @@ enum data_types_mysql {
 };
 
 /**
+ * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Storage Classes and Datatypes](https://sqlite.org/datatype3.html#storage_classes_and_datatypes). This enumeration is used in Field_analysis.
+ */
+enum data_types_sqlite {
+	TRASH, /**< Artificial type for initialization */
+	NULL_S, /** SQLite null value */
+	INTEGER, /** Integer */
+	REAL, /**< Real number */
+	TEXT /**< Text string */
+};
+
+/**
  * Enum for describing how fields are surrounded by double quotes.
  */
 enum field_quoting_options {
@@ -46,7 +57,7 @@ typedef struct {
 	int scale; /**< Scale (number of digits after decimal point) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
 	int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
 	gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
-} Field_analysis;
+} Field_analysis_mysql;
 
 /**
  * Enum for declaring a list store of results.
@@ -100,7 +111,7 @@ GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting)
 GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
 void initialize_field_analysis(gpointer heading, gpointer data);
-void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis *field_analysis);
+void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis_mysql *field_analysis);
 void display_results(Data_passer *data_passer);
 
 gboolean is_unsigned_int(const gchar *token, gshort min, guint64 max);
@@ -122,7 +133,7 @@ void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr);
 regex_t make_decimal_regex();
 regex_t make_timestamp_regex();
 
-void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data_passer *data_passer);
+void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis, Data_passer *data_passer);
 
 #define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
 #define WINDOW_WIDTH 400 /**< Width of the application window. */

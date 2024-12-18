@@ -18,14 +18,14 @@ void delete_heading(gpointer heading, gpointer data) {
 }
 
 /**
- * Callback that runs on each element of the field analysis hash. The function frees the memory associated with the passed value, which is a `Field_analysis`.
+ * Callback that runs on each element of the field analysis hash. The function frees the memory associated with the passed value, which is a `Field_analysis_mysql`.
  * @param key Passed key.
  * @param value Passed value.
  * @param data Pointer to user data (`NULL` in this case).
  * @return `TRUE` to remove the key and value from the hash table, as descrbed in [HRFunc](https://docs.gtk.org/glib/callback.HRFunc.html).
  */
 gboolean free_field_analysis_hash(gpointer key, gpointer value, gpointer data) {
-	Field_analysis *field_analysis = (Field_analysis *)value;
+	Field_analysis_mysql *field_analysis = (Field_analysis_mysql *)value;
 	g_free(field_analysis);
 	return TRUE;
 }
