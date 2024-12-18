@@ -10,9 +10,9 @@
  * @brief Statements for determining the MySQL data type of a character string.
  */
 void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data_passer *data_passer) {
-	enum data_types field_type = field_analysis->field_type;
+	enum data_types original_field_type = field_analysis->field_type;
 	gboolean passes_test = FALSE;
-	switch (field_type) {
+	switch (original_field_type) {
 		case GARBAGE: /* GARBAGE is a field's initial data type, basically unitialized. */
 			passes_test = is_unsigned_int(csv_value, 0, 255);
 			if (passes_test) {
@@ -524,7 +524,10 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 		default:
 			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 	}
-	if (!passes_test) {
-		assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
-	}
+
+	gboolean status_changed = (original_field_type != field_analysis->field_type);
+	if (passes_test && status_changed) {
+		field_analysis->last_line_change = data_passer->current_line_number;
+		g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
+	};
 }
