@@ -41,6 +41,16 @@ GtkWidget *make_window(Data_passer *data_passer) {
 	gtk_box_pack_start(GTK_BOX(hbox_file_choose), text_filename, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox_file_choose), button_choose, FALSE, FALSE, 10);
 
+
+
+	/* Control for type of SQL */
+	GtkWidget *label_sql_type = gtk_label_new("SQL type:");
+	GtkWidget *combo_sql_type = gtk_combo_box_text_new();
+	gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_sql_type), "0", "SQLite");
+	gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_sql_type), "1", "MySQL");
+	gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_sql_type), "0");
+	data_passer->combo_sql_type = combo_sql_type;
+
 	/* Control for field delimiter */
 	GtkWidget *label_field_delimiter = gtk_label_new("Field delimiter:");
 	GtkWidget *combo_field_delimeter = gtk_combo_box_text_new();
@@ -48,6 +58,12 @@ GtkWidget *make_window(Data_passer *data_passer) {
 	gtk_combo_box_text_append(GTK_COMBO_BOX_TEXT(combo_field_delimeter), "1", "Commas");
 	gtk_combo_box_set_active_id(GTK_COMBO_BOX(combo_field_delimeter), "0");
 	data_passer->combo_field_delimeter = combo_field_delimeter;
+
+
+	/* Hbox for type of SQL and label. */
+	GtkWidget *hbox_sql_type = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	gtk_box_pack_start(GTK_BOX(hbox_sql_type), label_sql_type, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox_sql_type), combo_sql_type, FALSE, FALSE, 5);
 
 	/* Hbox for field delimiter and label. */
 	GtkWidget *hbox_field_delimiter = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
@@ -193,16 +209,17 @@ GtkWidget *make_window(Data_passer *data_passer) {
 	GtkWidget *grid = gtk_grid_new();
 	gtk_widget_set_margin_top(grid, 20);
 	gtk_grid_attach(GTK_GRID(grid), hbox_file_choose, 0, 0, 2, 1);
-	gtk_grid_attach(GTK_GRID(grid), hbox_field_delimiter, 0, 1, 2, 1);
-	gtk_grid_attach(GTK_GRID(grid), hbox_fields_enclosed, 0, 2, 2, 1);
-	gtk_grid_attach(GTK_GRID(grid), checkbox_has_headers, 0, 3, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), button_go, 1, 3, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), scrolled_window, 0, 4, 2, 1);
-	gtk_grid_attach(GTK_GRID(grid), hbox_table_name, 0, 5, 2, 1);
-	gtk_grid_attach(GTK_GRID(grid), scrolled_window_command, 0, 6, 2, 1);
-	gtk_grid_attach(GTK_GRID(grid), button_close, 0, 7, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), button_copy, 1, 7, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), status_bar, 0, 8, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), hbox_sql_type, 0, 1, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), hbox_field_delimiter, 0, 2, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), hbox_fields_enclosed, 0, 3, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), checkbox_has_headers, 0, 4, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), button_go, 1, 4, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), scrolled_window, 0, 5, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), hbox_table_name, 0, 6, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), scrolled_window_command, 0, 7, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), button_close, 0, 8, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), button_copy, 1, 8, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), status_bar, 0, 9, 2, 1);
 
 	gtk_grid_set_row_spacing(GTK_GRID(grid), 20);
 	gtk_grid_set_column_spacing(GTK_GRID(grid), 20);

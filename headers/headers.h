@@ -95,6 +95,7 @@ typedef struct {
 	guint number_of_columns; /**< Number of columns in the CSV file. */
 	GtkWidget *combo_field_delimeter; /**< UI control specifying the field delimiter. */
 	GtkWidget *combo_fields_enclosed; /**< UI control specifying if fields are always, never, or optionally surrounded by double quotes. */
+	GtkWidget *combo_sql_type; /**< UI control specifying the type of SQL for which the CSV is being analyzed. */
 	guint current_line_number; /**< Current line number we are reading from the CSV file. */
 	FILE *fp; /**< Handle for the CSV file. */
 	GMainLoop *gloop; /**< The main loop, required to set up the threading. */
