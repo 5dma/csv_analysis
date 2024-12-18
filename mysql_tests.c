@@ -89,6 +89,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				field_analysis->field_type = TIMESTAMP;
 				break;
 			}
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 			break;
 		case TINYINT_UNSIGNED:
 			passes_test = is_unsigned_int(csv_value, 0, 255);
@@ -154,6 +155,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case SMALLINT_UNSIGNED:
 			passes_test = is_unsigned_int(csv_value, 0, 65535);
 			if (passes_test) break;
@@ -213,6 +215,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case MEDIUMINT_UNSIGNED:
 			passes_test = is_unsigned_int(csv_value, 0, 16777215);
 			if (passes_test) break;
@@ -267,6 +270,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case INT_UNSIGNED:
 			passes_test = is_unsigned_int(csv_value, 0, 4294967295);
 			if (passes_test) break;
@@ -316,6 +320,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case BIGINT_UNSIGNED:
 			passes_test = is_unsigned_int(csv_value, 0, (guint64)pow(2, 64) - 1);
 			if (passes_test) break;
@@ -360,6 +365,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case TINYINT_SIGNED:
 			passes_test = is_signed_int(csv_value, -128, 127);
 			if (passes_test) break;
@@ -399,6 +405,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case SMALLINT_SIGNED:
 			passes_test = is_signed_int(csv_value, -32768, 32767);
 			if (passes_test) break;
@@ -433,6 +440,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case MEDIUMINT_SIGNED:
 			passes_test = is_signed_int(csv_value, -8388608, 8388607);
 			if (passes_test) break;
@@ -462,6 +470,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case INT_SIGNED:
 			passes_test = is_signed_int(csv_value, -2147483648, 2147483647);
 			if (passes_test) break;
@@ -486,6 +495,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case BIGINT_SIGNED:
 			passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
 			if (passes_test) break;
@@ -505,6 +515,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case DECIMAL:
 			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
 			if (passes_test) break;
@@ -519,6 +530,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case FLOAT:
 			passes_test = is_float(csv_value);
 			if (passes_test) break;
@@ -528,9 +540,11 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data
 				break;
 			}
 			break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case TIMESTAMP:
 			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
 			if (passes_test) break;
+			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		default:
 			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 	}
