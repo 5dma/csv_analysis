@@ -20,7 +20,7 @@
  * @param data_passer Pointer to the data-passer structure.
  *  */
 void do_mysql_tests(const gchar *csv_value, Field_analysis *field_analysis, Data_passer *data_passer) {
-	enum data_types original_field_type = field_analysis->field_type;
+	enum data_types_mysql original_field_type = field_analysis->field_type;
 	gboolean passes_test = FALSE;
 	switch (original_field_type) {
 		case GARBAGE: /* GARBAGE is a field's initial data type, basically unitialized. */

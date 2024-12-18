@@ -102,7 +102,7 @@ void display_single_result(gpointer heading, gpointer data) {
 
 	Field_analysis *field_analysis = (Field_analysis *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
-	enum data_types field_type = (field_analysis->field_type == GARBAGE) ? CHAR : field_analysis->field_type;
+	enum data_types_mysql field_type = (field_analysis->field_type == GARBAGE) ? CHAR : field_analysis->field_type;
 
 	/* The following string holds a formatted string of the MySQL type, such as `TINYINT` or `CHAR(40)`. */
 	gchar datatype_string[100];

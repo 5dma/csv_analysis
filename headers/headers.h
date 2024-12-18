@@ -9,7 +9,7 @@
 /**
  * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html)). This enumeration is used in Field_analysis.
  */
-enum data_types {
+enum data_types_mysql {
     GARBAGE, /**< Artificial type for initialization */
     TINYINT_UNSIGNED, /**< 0 - 255 */
     SMALLINT_UNSIGNED, /**< 0 - 65535 */
@@ -41,7 +41,7 @@ enum field_quoting_options {
  * Structure containing the results of a column.
  */
 typedef struct {
-    enum data_types field_type;  /**< One of the possible MySQL field types enumerated in [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
+    enum data_types_mysql field_type;  /**< One of the possible MySQL field types enumerated in [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
     gboolean sql_signed; /**< Indicates if the data type is signed. */
     int char_width; /**< Width of a `CHAR` field. */
     int precision;  /**< Precision (number of digits) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
