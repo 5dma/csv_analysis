@@ -38,6 +38,14 @@ enum data_types_sqlite {
 };
 
 /**
+ * Enum for the available types of SQL.
+ */
+enum sql_types {
+	SQLITE, /**< Corresponds to SQLite. */
+	MYSQL /**< Corresponds to MySQL. */
+};
+
+/**
  * Enum for describing how fields are surrounded by double quotes.
  */
 enum field_quoting_options {
@@ -99,8 +107,8 @@ typedef struct {
 	guint current_line_number; /**< Current line number we are reading from the CSV file. */
 	FILE *fp; /**< Handle for the CSV file. */
 	GMainLoop *gloop; /**< The main loop, required to set up the threading. */
-	regex_t decimal_regex; /**< Regular expression for determining if a value is a MySQL decimal. See make_decimal_regex(). */
-	regex_t timestamp_regex; /**< Regular expression for determining if a value is a MySQL timestamp.  See make_timestamp_regex(). */
+	regex_t *decimal_regex; /**< Regular expression for determining if a value is a MySQL decimal. See make_decimal_regex(). */
+	regex_t *timestamp_regex; /**< Regular expression for determining if a value is a MySQL timestamp.  See make_timestamp_regex(). */
 } Data_passer;
 
 void on_app_activate(GApplication *app, gpointer data);
@@ -131,8 +139,8 @@ void change_commas_to_tabs(gchar **csv_line_ptr);
 void change_commas_to_tabs_with_quotes(gchar **csv_line_ptr);
 void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr);
 
-regex_t make_decimal_regex();
-regex_t make_timestamp_regex();
+regex_t *make_decimal_regex();
+regex_t *make_timestamp_regex();
 
 void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis, Data_passer *data_passer);
 

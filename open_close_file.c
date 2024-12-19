@@ -1,8 +1,5 @@
 #include <gtk/gtk.h>
-#include <math.h>
-#include <regex.h>
 #include <stdio.h>
-#define G_LOG_USE_STRUCTURED
 #include <glib-2.0/glib.h>
 #include <headers.h>
 /**
@@ -56,6 +53,20 @@ gboolean process_thread(gpointer data) {
 	gboolean on_first_line = TRUE;
 
 	char *token;
+
+	/* Retrieve the type of SQL */
+	enum sql_types sql_type;
+	const char *selected_sql_type = gtk_combo_box_get_active_id((GtkComboBox *) data_passer->combo_sql_type);
+	switch (*selected_sql_type) {
+		case '0':
+			sql_type = SQLITE;
+			break;
+		case '1':
+			sql_type = MYSQL;
+			break;
+		default:
+			sql_type = SQLITE;
+	}
 
 	/* Retrieve the field delimiter */
 	char *delimiter = (g_strcmp0(gtk_combo_box_get_active_id((GtkComboBox *)(data_passer->combo_field_delimeter)), "0") == 0) ? "\t" : ",";
@@ -146,7 +157,18 @@ gboolean process_thread(gpointer data) {
 			}
 			g_free(key);
 
-			do_mysql_tests(csv_value, field_analysis, data_passer);
+			switch (sql_type){
+				case SQLITE:
+					//do_mysql_tests(csv_value, field_analysis, data_passer);
+					g_print("got to sqlite\n");
+					break;
+				case MYSQL:
+					do_mysql_tests(csv_value, field_analysis, data_passer);
+					break;
+				default:
+					g_print("You need to specify a type of SQL database. Exiting.\n");
+					exit(1); 
+			}
 			column_number++;
 		}
 	}

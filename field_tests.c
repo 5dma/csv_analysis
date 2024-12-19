@@ -57,7 +57,6 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max) {
 */
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
 	regmatch_t pmatch[2];
-
 	int success = regexec(decimal_regex, token, 1, pmatch, 0);
 	return (success == 0);
 }

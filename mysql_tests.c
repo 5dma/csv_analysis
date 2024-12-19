@@ -74,7 +74,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -84,7 +84,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -139,7 +139,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -149,7 +149,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -199,7 +199,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -209,7 +209,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -254,7 +254,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -264,7 +264,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -304,7 +304,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -314,7 +314,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -349,7 +349,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -359,7 +359,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -389,7 +389,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -399,7 +399,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -424,7 +424,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -434,7 +434,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -454,7 +454,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -464,7 +464,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -479,7 +479,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = BIGINT_SIGNED;
 				break;
 			}
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -489,7 +489,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -499,7 +499,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 		case BIGINT_SIGNED:
 			passes_test = is_signed_int(csv_value, -((gint64)pow(2, 63) - 1), (gint64)(pow(2, 63) - 1));
 			if (passes_test) break;
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) {
 				field_analysis->field_type = DECIMAL;
 				break;
@@ -509,7 +509,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -517,14 +517,14 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 			break;
 			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case DECIMAL:
-			passes_test = is_decimal(csv_value, &(data_passer->decimal_regex));
+			passes_test = is_decimal(csv_value, data_passer->decimal_regex);
 			if (passes_test) break;
 			passes_test = is_float(csv_value);
 			if (passes_test) {
 				field_analysis->field_type = FLOAT;
 				break;
 			}
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -534,7 +534,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 		case FLOAT:
 			passes_test = is_float(csv_value);
 			if (passes_test) break;
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) {
 				field_analysis->field_type = TIMESTAMP;
 				break;
@@ -542,7 +542,7 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 			break;
 			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		case TIMESTAMP:
-			passes_test = is_timestamp(csv_value, &(data_passer->timestamp_regex));
+			passes_test = is_timestamp(csv_value, data_passer->timestamp_regex);
 			if (passes_test) break;
 			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 		default:

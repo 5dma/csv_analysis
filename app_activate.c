@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
 #include <headers.h>
+#include <stdlib.h>
+	
 /**
  * @file app_activate.c
  * @brief Builds the view.
