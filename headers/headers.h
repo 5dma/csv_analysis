@@ -30,11 +30,11 @@ enum data_types_mysql {
  * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Storage Classes and Datatypes](https://sqlite.org/datatype3.html#storage_classes_and_datatypes). This enumeration is used in Field_analysis.
  */
 enum data_types_sqlite {
-	TRASH, /**< Artificial type for initialization */
-	NULL_S, /** SQLite null value */
-	INTEGER, /** Integer */
-	REAL, /**< Real number */
-	TEXT /**< Text string */
+	TRASH, /**< Artificial type for initialization. */
+	NULL_S, /** SQLite `NULL` value. */
+	INTEGER, /** Integer. */
+	REAL, /**< Real number. */
+	TEXT /**< Text string. */
 };
 
 /**
@@ -68,6 +68,16 @@ typedef struct {
 } Field_analysis_mysql;
 
 /**
+ * Structure containing the results of a column.
+ */
+typedef struct {
+	enum data_types_sqlite field_type; /**< One of the possible SQLite field types enumerated in [Storage Classes and Datatypes](https://sqlite.org/datatype3.html#storage_classes_and_datatypes). */
+	int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
+	gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
+} Field_analysis_sqlite;
+
+
+/**
  * Enum for declaring a list store of results.
  */
 enum {
@@ -87,7 +97,7 @@ typedef struct {
 	GApplication *app; /**< Application */
 	GtkWidget *text_filename; /**< Path and filename of the CSV file (in the UI) */
 	GtkWidget *checkbox_has_headers; /**< Path and filename of the CSV file (in the UI) */
-	GHashTable *field_analysis_hash; /**< Hash keyed by column name; values are the analysis of the values in the column. See Field_analysis. */
+	GHashTable *field_analysis_hash; /**< Hash keyed by column name; values are the analysis of the values in the column. See Field_analysis_mysql and Field_analysis_sqlite. */
 	gchar *datatype_strings[15]; /**< List of MySQL data types. See [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html). */
 	GtkListStore *list_store_results; /**< List store containing the analysis results. There is one element in the store for each column in the CSV file. */
 	GtkWidget *entry_table_name; /**< MySQL table name in the UI. */
@@ -119,7 +129,8 @@ gboolean process_file(GtkButton *button, gpointer data);
 GSList *make_headings(gchar *csv_line, enum field_quoting_options field_quoting);
 GSList *make_forced_headings(char *csv_line);
 void strip_quotes(gchar **quoted_string_ptr);
-void initialize_field_analysis(gpointer heading, gpointer data);
+void initialize_mysql_field_analysis(gpointer heading, gpointer data);
+void initialize_sqlite_field_analysis(gpointer heading, gpointer data);
 void assign_char_field_type(const char *csv_value, const int current_line_number, Field_analysis_mysql *field_analysis);
 void display_results(Data_passer *data_passer);
 
@@ -143,6 +154,7 @@ regex_t *make_decimal_regex();
 regex_t *make_timestamp_regex();
 
 void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis, Data_passer *data_passer);
+void do_sqlite_tests(const gchar *csv_value, Field_analysis_sqlite *field_analysis, Data_passer *data_passer);
 
 #define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
 #define WINDOW_WIDTH 400 /**< Width of the application window. */

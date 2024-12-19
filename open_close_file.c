@@ -122,7 +122,17 @@ gboolean process_thread(gpointer data) {
 				data_passer->headings = make_forced_headings(csv_line);
 			}
 
-			g_slist_foreach(data_passer->headings, initialize_field_analysis, data_passer);
+			switch (sql_type) {
+				case SQLITE:
+					g_slist_foreach(data_passer->headings, initialize_sqlite_field_analysis, data_passer);
+					break;
+				case MYSQL:
+					g_slist_foreach(data_passer->headings, initialize_mysql_field_analysis, data_passer);
+					break;
+				default:
+					g_print("No initialization found for requested SQL type. Exiting.\n");
+					exit(-2);
+			}
 
 			if (has_header_line) {
 				continue;
@@ -159,8 +169,7 @@ gboolean process_thread(gpointer data) {
 
 			switch (sql_type){
 				case SQLITE:
-					//do_mysql_tests(csv_value, field_analysis, data_passer);
-					g_print("got to sqlite\n");
+					do_sqlite_tests(csv_value, field_analysis, data_passer);
 					break;
 				case MYSQL:
 					do_mysql_tests(csv_value, field_analysis, data_passer);

@@ -62,6 +62,16 @@ gboolean is_decimal(const gchar *token, regex_t *decimal_regex) {
 }
 
 /**
+ * Checks if a passed value is an SQLite `NULL`.
+ * @param token A character string.
+ * @return `TRUE` if the passed character string's first character is `\0`, `FALSE` otherwise.
+*/
+gboolean is_null(const gchar *token) {
+	return (*token == '\0');
+}
+
+
+/**
  * Checks if a passed value is a float.
  * This function relies on [g_ascii_strtod](https://docs.gtk.org/glib/func.ascii_strtod.html). This function scans the passed token, and returns the float (or double) corresponding to all the characters that can comprise a float as well as the pointer to the last such character. If the function cannot do any such conversation (such as if the first character is alphabetic), the function returns `0.0`. 
  * 
