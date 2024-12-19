@@ -55,17 +55,17 @@ gboolean process_thread(gpointer data) {
 	char *token;
 
 	/* Retrieve the type of SQL */
-	enum sql_types sql_type;
 	const char *selected_sql_type = gtk_combo_box_get_active_id((GtkComboBox *) data_passer->combo_sql_type);
 	switch (*selected_sql_type) {
 		case '0':
-			sql_type = SQLITE;
+			data_passer->sql_type = SQLITE;
 			break;
 		case '1':
-			sql_type = MYSQL;
+			data_passer->sql_type = MYSQL;
 			break;
 		default:
-			sql_type = SQLITE;
+			data_passer->sql_type = NONE;
+			g_print("No SQL type detected, results may be unreliable.\n");
 	}
 
 	/* Retrieve the field delimiter */
@@ -122,7 +122,7 @@ gboolean process_thread(gpointer data) {
 				data_passer->headings = make_forced_headings(csv_line);
 			}
 
-			switch (sql_type) {
+			switch (data_passer->sql_type) {
 				case SQLITE:
 					g_slist_foreach(data_passer->headings, initialize_sqlite_field_analysis, data_passer);
 					break;
@@ -159,7 +159,7 @@ gboolean process_thread(gpointer data) {
 			g_strlcpy (key, (gchar *)g_slist_nth_data(data_passer->headings, column_number), LONGEST_STRING);
 		
 			void *field_analysis = NULL;
-			switch (sql_type) {
+			switch (data_passer->sql_type) {
 				case MYSQL:
 					/* Get the current field's current field analysis, which includes its MySQL data type. */
 					field_analysis = (Field_analysis_mysql *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
@@ -173,7 +173,7 @@ gboolean process_thread(gpointer data) {
 					g_print("There was a critical failure in looking up the key.\n");
 				}
 		
-				switch (sql_type) {
+				switch (data_passer->sql_type) {
 					case SQLITE:
 						do_sqlite_tests(csv_value, field_analysis, data_passer);
 						break;

@@ -46,6 +46,7 @@ enum data_types_sqlite {
  * Enum for the available types of SQL.
  */
 enum sql_types {
+	NONE, /**< Default. */
 	SQLITE, /**< Corresponds to SQLite. */
 	MYSQL /**< Corresponds to MySQL. */
 };
@@ -124,6 +125,7 @@ typedef struct {
 	GMainLoop *gloop; /**< The main loop, required to set up the threading. */
 	regex_t *decimal_regex; /**< Regular expression for determining if a value is a MySQL decimal. See make_decimal_regex(). */
 	regex_t *timestamp_regex; /**< Regular expression for determining if a value is a MySQL timestamp.  See make_timestamp_regex(). */
+	enum sql_types sql_type; /**< SQL type selected by the user. */
 } Data_passer;
 
 void on_app_activate(GApplication *app, gpointer data);

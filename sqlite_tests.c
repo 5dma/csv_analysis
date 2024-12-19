@@ -88,7 +88,7 @@ void do_sqlite_tests(const gchar *csv_value, void *field_dummy, Data_passer *dat
 	}
 
 	gboolean status_changed = (original_field_type != field_analysis->field_type);
-	if (passes_test && status_changed) {
+	if ((passes_test && status_changed)  || (original_field_type == TRASH)) {
 		field_analysis->last_line_change = data_passer->current_line_number;
 		g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
 	};
