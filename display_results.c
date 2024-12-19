@@ -88,7 +88,7 @@ guint get_number_of_columns(GHashTable *field_analysis_hash) {
 }
 
 /**
- * Displays the result for a single column in the CSV file.
+ * Displays the result for a single MySQL column in the CSV file.
  * 
  * The result is added to the list store holding the results, and also added to an allocated array of character strings. This function is a callback from an iterator over the list of headings.
  * 
@@ -96,7 +96,7 @@ guint get_number_of_columns(GHashTable *field_analysis_hash) {
  * @param heading Hash table desribing each column in the CSV file.
  * @param data Pointer to the data-passer structure.
  */
-void display_single_result(gpointer heading, gpointer data) {
+void display_single_mysql_result(gpointer heading, gpointer data) {
 	gchar *key = (gchar *)heading;
 	Data_passer *data_passer = (Data_passer *)data;
 
@@ -131,13 +131,56 @@ void display_single_result(gpointer heading, gpointer data) {
 	(data_passer->current_column_number)++;
 }
 
+
+/**
+ * Displays the result for a single MySQL column in the CSV file.
+ * 
+ * The result is added to the list store holding the results, and also added to an allocated array of character strings. This function is a callback from an iterator over the list of headings.
+ * 
+ * If a column was empty, it never received an update to its initialization, which means its data type is `GARBAGE`. In such cases, we declare the data type to be `CHAR` with width zero.
+ * @param heading Hash table desribing each column in the CSV file.
+ * @param data Pointer to the data-passer structure.
+ */
+void display_single_sqlite_result(gpointer heading, gpointer data) {
+	gchar *key = (gchar *)heading;
+	Data_passer *data_passer = (Data_passer *)data;
+
+	Field_analysis_sqlite *field_analysis = (Field_analysis_sqlite *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
+
+	enum data_types_sqlite field_type = (field_analysis->field_type == TRASH) ? TEXT : field_analysis->field_type;
+
+	/* The following string holds a formatted string of the SQLite type, such as INTEGER or TEXT. */
+	gchar datatype_string[100];
+	g_snprintf(datatype_string, 50, "%s", *(data_passer->datatype_strings + field_type));
+
+
+	GtkTreeIter iter;
+	gtk_list_store_append(data_passer->list_store_results, &iter);
+
+	gtk_list_store_set(data_passer->list_store_results, &iter,
+					   COLUMN_NAME, key,
+					   DATA_TYPE, datatype_string,
+					   DETERMINING_LINE, field_analysis->last_line_change,
+					   DETERMINING_VALUE, field_analysis->determining_value,
+					   -1);
+
+	/* Retrieve the current column number, which is an index into the array of character
+	   strings of the results. Copy the current formatted string into that index. */
+	gchar *intermediate = g_strconcat(key, " ", datatype_string, NULL);
+	*(data_passer->column_strings + data_passer->current_column_number) = g_strdup(intermediate);
+	g_free(intermediate);
+
+	(data_passer->current_column_number)++;
+}
+
+
 /**
  * Iterates over the accumulated results, displaying each one. The function does the following:
  * -# Declare an array of strings, each a MySQL type. Insert the array into pointer-passer.
  * -# Get the number of columns in the field analysis (which is the number of columns in the CSV file). Insert into the pointer-passer.
  * -# Declare an array of empty character strings. The length of the array is the number of columns from the previous step.
  * -# Retrieve the list of headings from pointer passer.
- * -# Iterate over the list of headings, formatting the results. Doing so ensures the results appear in the same order as they are in the original CSV file. See display_single_result().
+ * -# Iterate over the list of headings, formatting the results. Doing so ensures the results appear in the same order as they are in the original CSV file. See display_single_mysql_result().
  *
  * @param data_passer Pointer to the data-passer structure.
  */
@@ -153,7 +196,18 @@ void display_results(Data_passer *data_passer) {
 
 	data_passer->current_column_number = 0;
 
-	g_slist_foreach(data_passer->headings, display_single_result, data_passer);
+	switch (data_passer->sql_type) {
+		case MYSQL:
+			g_slist_foreach(data_passer->headings, display_single_mysql_result, data_passer);
+			break;
+		case SQLITE:
+			/* Get the current field's current field analysis, which includes its MySQL data type. */
+			g_slist_foreach(data_passer->headings, display_single_sqlite_result, data_passer);
+			break;
+		default:
+			g_print("No SQL type was selected, results are unreliable.\n");
+	}
+
 
 	/* Following memory is freed in cleanup(). */
 	data_passer->field_clause = g_strjoinv(", ", data_passer->column_strings);
