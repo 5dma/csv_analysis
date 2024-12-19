@@ -549,8 +549,15 @@ void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis
 			assign_char_field_type(csv_value, data_passer->current_line_number, field_analysis);
 	}
 
+	/*
+		We need to update the field_analysis status if the following conditions are true:
+		- The data type changed, such as from TINYINT to BIGINT.
+		- The value passed one of the type tests.
+		Due to the way these tests are structured, we have to check the initial case that the
+		original field type was GARBAGE. If it was, then the data type changed.
+	*/
 	gboolean status_changed = (original_field_type != field_analysis->field_type);
-	if (passes_test && status_changed) {
+	if ((passes_test && status_changed) || (original_field_type == GARBAGE)) {
 		field_analysis->last_line_change = data_passer->current_line_number;
 		g_strlcpy(field_analysis->determining_value, csv_value, g_utf8_strlen(csv_value, 500) + 1);
 	};

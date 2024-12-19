@@ -133,7 +133,6 @@ gboolean process_thread(gpointer data) {
 					g_print("No initialization found for requested SQL type. Exiting.\n");
 					exit(-2);
 			}
-
 			if (has_header_line) {
 				continue;
 			}
@@ -157,31 +156,44 @@ gboolean process_thread(gpointer data) {
 
 			/* Memory freed after this while loop. */
 			gchar *key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
-
-			/* Get the current field's current field analysis, which includes its MySQL data type. */
-			Field_analysis_mysql *field_analysis = (Field_analysis_mysql *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
-
-			if (field_analysis == NULL) {
-				g_print("There was a critical failure in looking up the key.\n");
-				exit(-1);
-			}
-			g_free(key);
-
-			switch (sql_type){
-				case SQLITE:
-					do_sqlite_tests(csv_value, field_analysis, data_passer);
-					break;
+		
+			Field_analysis_mysql *field_analysis_mysql = NULL;
+			Field_analysis_sqlite *field_analysis_sqlite = NULL;
+			switch (sql_type) {
 				case MYSQL:
-					do_mysql_tests(csv_value, field_analysis, data_passer);
-					break;
-				default:
-					g_print("You need to specify a type of SQL database. Exiting.\n");
-					exit(1); 
-			}
-			column_number++;
-		}
-	}
+					/* Get the current field's current field analysis, which includes its MySQL data type. */
+					field_analysis_mysql = (Field_analysis_mysql *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 
+					if (field_analysis_mysql == NULL) {
+						g_print("There was a critical failure in looking up the key.\n");
+					}
+					break;
+				case SQLITE:
+					/* Get the current field's current field analysis, which includes its MySQL data type. */
+					field_analysis_sqlite = (Field_analysis_sqlite *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
+					if (field_analysis_sqlite == NULL) {
+						g_print("There was a critical failure in looking up the key.\n");
+					}
+					break;
+				}
+		
+				g_free(key);
+
+
+				switch (sql_type) {
+					case SQLITE:
+						do_sqlite_tests(csv_value, field_analysis_sqlite, data_passer);
+						break;
+					case MYSQL:
+						do_mysql_tests(csv_value, field_analysis_mysql, data_passer);
+						break;
+					default:
+						g_print("You need to specify a type of SQL database. Exiting.\n");
+						exit(1); 
+				}
+				column_number++;
+			}
+	}
 	g_free(csv_line);
 
 	g_main_loop_quit(data_passer->gloop);
