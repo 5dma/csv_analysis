@@ -158,6 +158,6 @@ void change_commas_to_tabs_with_optional_quotes(gchar **csv_line_ptr);
 regex_t *make_decimal_regex();
 regex_t *make_timestamp_regex();
 
-void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis, Data_passer *data_passer);
+void do_mysql_tests(const gchar *csv_value, void *field_dummy, Data_passer *data_passer);
 void do_sqlite_tests(const gchar *csv_value, Field_analysis_sqlite *field_analysis, Data_passer *data_passer);
 
