@@ -144,6 +144,7 @@ gboolean is_signed_int(const gchar *token, gint64 min, gint64 max);
 gboolean is_decimal(const gchar *token, regex_t *decimal_regex);
 gboolean is_float(const gchar *token);
 gboolean is_timestamp(const gchar *token, regex_t *timestamp_regex);
+gboolean is_null(const gchar *token);
 void cleanup(GtkWidget *window, gpointer data);
 void closeup(GtkWidget *button_close, gpointer data);
 void copy_statement(GtkWidget *button_copy, gpointer data);
@@ -159,5 +160,5 @@ regex_t *make_decimal_regex();
 regex_t *make_timestamp_regex();
 
 void do_mysql_tests(const gchar *csv_value, void *field_dummy, Data_passer *data_passer);
-void do_sqlite_tests(const gchar *csv_value, Field_analysis_sqlite *field_analysis, Data_passer *data_passer);
+void do_sqlite_tests(const gchar *csv_value, void *field_dummy, Data_passer *data_passer);
 

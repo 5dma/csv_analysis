@@ -19,7 +19,8 @@
  * @param field_analysis The column's current Field_analysis_sqlite.
  * @param data_passer Pointer to the data-passer structure.
  *  */
-void do_sqlite_tests(const gchar *csv_value, Field_analysis_sqlite *field_analysis, Data_passer *data_passer) {
+void do_sqlite_tests(const gchar *csv_value, void *field_dummy, Data_passer *data_passer) {
+	Field_analysis_sqlite *field_analysis = (Field_analysis_sqlite *) field_dummy;
 	enum data_types_sqlite original_field_type = field_analysis->field_type;
 	gboolean passes_test = FALSE;
 	switch (original_field_type) {
