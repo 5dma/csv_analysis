@@ -5,6 +5,11 @@
  * @brief C headers.
  */
 
+#define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
+#define WINDOW_WIDTH 400 /**< Width of the application window. */
+#define LONGEST_STRING 4096
+
+
 /**
  * Enum for declaring a list store of accounts. These correspond to the MySQL data types (see [Data Types](https://dev.mysql.com/doc/refman/5.7/en/data-types.html)). This enumeration is used in Field_analysis.
  */
@@ -64,7 +69,7 @@ typedef struct {
 	int precision; /**< Precision (number of digits) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
 	int scale; /**< Scale (number of digits after decimal point) of a `DECIMAL`. See [Fixed-Point Types (Exact Value) - DECIMAL, NUMERIC](https://dev.mysql.com/doc/refman/5.7/en/fixed-point-types.html). */
 	int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
-	gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
+	gchar determining_value[LONGEST_STRING]; /**< Most recent value in the column that determined the column's type. */
 } Field_analysis_mysql;
 
 /**
@@ -73,7 +78,7 @@ typedef struct {
 typedef struct {
 	enum data_types_sqlite field_type; /**< One of the possible SQLite field types enumerated in [Storage Classes and Datatypes](https://sqlite.org/datatype3.html#storage_classes_and_datatypes). */
 	int last_line_change; /**< Most recent line in the CSV file that determined the column's type. */
-	gchar determining_value[4096]; /**< Most recent value in the column that determined the column's type. */
+	gchar determining_value[LONGEST_STRING]; /**< Most recent value in the column that determined the column's type. */
 } Field_analysis_sqlite;
 
 
@@ -156,5 +161,3 @@ regex_t *make_timestamp_regex();
 void do_mysql_tests(const gchar *csv_value, Field_analysis_mysql *field_analysis, Data_passer *data_passer);
 void do_sqlite_tests(const gchar *csv_value, Field_analysis_sqlite *field_analysis, Data_passer *data_passer);
 
-#define STATUS_BAR_CONTEXT_INFO "STATUS_BAR_CONTEXT_INFO" /**< Context description for the status bar. See [get_context_id](https://docs.gtk.org/gtk3/method.Statusbar.get_context_id.html). */
-#define WINDOW_WIDTH 400 /**< Width of the application window. */
