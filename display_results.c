@@ -150,9 +150,27 @@ void display_single_sqlite_result(gpointer heading, gpointer data) {
 	enum data_types_sqlite field_type = (field_analysis->field_type == TRASH) ? TEXT : field_analysis->field_type;
 
 	/* The following string holds a formatted string of the SQLite type, such as INTEGER or TEXT. */
-	gchar datatype_string[100];
-	g_snprintf(datatype_string, 50, "%s", *(data_passer->datatype_strings + field_type));
+	gchar datatype_string[50];
 
+	switch (field_type) {
+		case TRASH:
+			g_strlcpy(datatype_string, "UNKNOWN", 50);
+			break;
+		case NULL_S:
+			g_strlcpy(datatype_string, "NULL", 50);
+			break;
+		case INTEGER: 
+			g_strlcpy(datatype_string, "INTEGER", 50);
+			break;
+		case REAL:
+			g_strlcpy(datatype_string, "REAL", 50);
+			break;
+		case TEXT:
+			g_strlcpy(datatype_string, "TEXT", 50);
+			break;
+		default:
+			g_strlcpy(datatype_string, "UNKNOWN", 50);
+	}
 
 	GtkTreeIter iter;
 	gtk_list_store_append(data_passer->list_store_results, &iter);
