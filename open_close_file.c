@@ -147,11 +147,6 @@ gboolean process_thread(gpointer data) {
 			if (field_quoting != NEVER) {
 				strip_quotes(&csv_value);
 			}
-			/* Skip a value that is empty. */
-			if (g_utf8_strlen(csv_value, -1) == 0) {
-				column_number++;
-				continue;
-			}
 
 			/* Memory freed after this while loop. */
 			g_strlcpy (key, (gchar *)g_slist_nth_data(data_passer->headings, column_number), LONGEST_STRING);
