@@ -141,6 +141,7 @@ gboolean process_thread(gpointer data) {
 		int column_number = 0;
 
 		gchar *crawler = csv_line;
+		gchar key[LONGEST_STRING];
 		while ((token = strsep(&crawler, "\t")) != NULL) {
 			/* Strip whitespace from the current token. */
 			gchar *csv_value = g_strstrip(token);
@@ -155,7 +156,7 @@ gboolean process_thread(gpointer data) {
 			}
 
 			/* Memory freed after this while loop. */
-			gchar *key = strdup((gchar *)g_slist_nth_data(data_passer->headings, column_number));
+			g_strlcpy (key, (gchar *)g_slist_nth_data(data_passer->headings, column_number), LONGEST_STRING);
 		
 			Field_analysis_mysql *field_analysis_mysql = NULL;
 			Field_analysis_sqlite *field_analysis_sqlite = NULL;
@@ -177,7 +178,7 @@ gboolean process_thread(gpointer data) {
 					break;
 				}
 		
-				g_free(key);
+
 
 
 				switch (sql_type) {
