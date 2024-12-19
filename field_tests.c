@@ -89,7 +89,7 @@ gboolean is_float(const gchar *token) {
 	size_t token_length = strlen(token);
 	gdouble result = g_ascii_strtod(token, &end_ptr);
 
- if (((result == 0) && (*token != '0')) || (token + token_length - 1 != end_ptr)) {
+ if (((result == 0) && (*token != '0')) || (token + token_length != end_ptr)) {
 		return FALSE;
 	} else {
 		return TRUE;

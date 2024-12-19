@@ -95,8 +95,6 @@ gboolean process_thread(gpointer data) {
 	while (getline(&csv_line, &len, data_passer->fp) != -1) {
 		data_passer->current_line_number++;
 
-	   // g_print("Current lin number %d\n",data_passer->current_line_number);
-
 		/* Send line number to main loop. */
 		gdk_threads_add_idle((GSourceFunc)line_number_in_status_bar, data);
 
@@ -168,6 +166,8 @@ gboolean process_thread(gpointer data) {
 					/* Get the current field's current field analysis, which includes its MySQL data type. */
 					field_analysis = (Field_analysis_mysql *)g_hash_table_lookup(data_passer->field_analysis_hash, key);
 					break;
+				default:
+					g_print("No SQL type was selected, results may be unreliable.\n");
 				}
 				if (field_analysis == NULL) {
 					g_print("There was a critical failure in looking up the key.\n");
